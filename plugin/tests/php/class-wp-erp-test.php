@@ -230,6 +230,14 @@ class WP_ERP_Test extends WP_UnitTestCase {
 			'/wp-erp/v1/invoices',
 			'/wp-erp/v1/expenses',
 			'/wp-erp/v1/food-pass',
+			'/wp-erp/v1/auth/me',
+			'/wp-erp/v1/content/dashboard',
+			'/wp-erp/v1/content/daily-darshan',
+			'/wp-erp/v1/content/daily-quotes',
+			'/wp-erp/v1/content/daily-updates',
+			'/wp-erp/v1/content/daily-satsang',
+			'/wp-erp/v1/content/daily-programs',
+			'/wp-erp/v1/content/calendar-events',
 		);
 		
 		foreach ( $expected_routes as $route ) {

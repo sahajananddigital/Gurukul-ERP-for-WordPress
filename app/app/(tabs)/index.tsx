@@ -6,6 +6,7 @@ import { useColorScheme } from '../../components/useColorScheme';
 import i18n from '../../services/i18n';
 import React, { useEffect, useState } from 'react';
 import api from '../../services/api';
+import { useAuth } from '../../services/AuthContext';
 
 // Image Assets
 const Images = {
@@ -19,6 +20,7 @@ const Images = {
 
 export default function TabOneScreen() {
   const colorScheme = useColorScheme();
+  const { user } = useAuth();
   const [gridItems, setGridItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,7 +66,9 @@ export default function TabOneScreen() {
     <ThemedView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.greeting}>{i18n.t('jaySwaminarayan')}</Text>
-        <Text style={styles.subGreeting}>{i18n.t('welcome')}, User</Text>
+        <Text style={styles.subGreeting}>
+          {i18n.t('welcome')}, {user ? user.name : 'User'}
+        </Text>
       </View>
 
       {loading ? (

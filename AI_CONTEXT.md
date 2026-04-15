@@ -54,7 +54,7 @@
     - Tool: `i18n-js`.
     - Service: `services/i18n.ts` manages translations.
 - **API Client**: `axios` configured in `services/api.ts` with `BASE_URL` pointing to local WP.
-    - Use platform-specific hosts (e.g., `10.0.2.2` for Android Emulator, `localhost` for iOS Simulator).
+    - Use platform-specific hosts (e.g., 127.0.0.1 for Android Emulator, localhost for iOS Simulator).
 - **Components**:
     - Reusable UI elements in `components/` (e.g., `Themed.tsx`).
 
@@ -136,18 +136,7 @@
 
 **Solutions**:
 
-1. **API URL Patching** (Backend - `class-wp-erp-api-content.php`):
-   ```php
-   $url = wp_get_attachment_image_url( $img_id, 'large' ); // Use 'large' not 'full'
-   if ( $url ) {
-       // Replace localhost with actual LAN IP for mobile access
-       $url = str_replace( 'http://127.0.0.1', 'http://192.168.1.52', $url );
-       $url = str_replace( 'http://localhost', 'http://192.168.1.52', $url );
-   }
-   ```
-   **Note**: Update `192.168.1.52` to match your development machine's LAN IP.
-
-2. **Fallback Image Component** (Frontend):
+1. **Fallback Image Component** (Frontend):
    ```tsx
    const DarshanImage = ({ uri }: { uri: string }) => {
        const [error, setError] = useState(false);
@@ -165,12 +154,12 @@
    };
    ```
 
-3. **Cache Busting** (when needed):
+2. **Cache Busting** (when needed):
    ```tsx
    uri={`${img.url}?t=${new Date().getTime()}`}
    ```
 
-4. **Android Cleartext Traffic**: Ensure `app/app.json` includes:
+3. **Android Cleartext Traffic**: Ensure `app/app.json` includes:
    ```json
    "android": {
      "usesCleartextTraffic": true
@@ -179,9 +168,9 @@
 
 ### C. API Configuration
 - **BASE_URL** in `app/services/api.ts` must match your environment:
-  - **Android Emulator**: `http://10.0.2.2:9400/wp-json/wp-erp/v1`
-  - **Physical Device (LAN)**: `http://192.168.1.52:9400/wp-json/wp-erp/v1`
-  - **iOS Simulator**: `http://localhost:9400/wp-json/wp-erp/v1`
+  - **Android Emulator**: `http://127.0.0.1:9400/wp-json/wp-erp/v1`
+  - **iOS Simulator / Web**: `http://localhost:9400/wp-json/wp-erp/v1`
+  - **Physical Device**: Use your machine's LAN IP if testing on a real device.
 
 ### D. Metro Bundler Cache Issues
 When adding new screens/routes:

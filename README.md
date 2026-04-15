@@ -176,7 +176,7 @@ Edit `app/services/api.ts`:
 const BASE_URL = 'http://192.168.1.X:9400/wp-json/wp-erp/v1';
 
 // For Android emulator
-const BASE_URL = 'http://10.0.2.2:9400/wp-json/wp-erp/v1';
+const BASE_URL = 'http://127.0.0.1:9400/wp-json/wp-erp/v1';
 ```
 
 ### Image URL Configuration

@@ -1,4 +1,5 @@
-import { StyleSheet, TouchableOpacity, FlatList, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, FlatList, View, Alert } from 'react-native';
+import { router } from 'expo-router';
 import { Text, View as ThemedView } from '../../components/Themed';
 import { Colors } from '../../constants/Colors';
 import { useColorScheme } from '../../components/useColorScheme';
@@ -9,13 +10,23 @@ export default function FrontDeskScreen() {
   const colorScheme = useColorScheme();
 
   const menuItems = [
-    { id: 'connect', title: i18n.t('gurukulConnect'), icon: 'comments' },
-    { id: 'events', title: i18n.t('gurukulEvents'), icon: 'star' },
-    { id: 'ravi_sabha', title: i18n.t('raviSabha'), icon: 'book' },
+    { id: 'connect', title: i18n.t('gurukulConnect'), icon: 'comments', route: '/dashboard/connect' },
+    { id: 'events', title: i18n.t('gurukulEvents'), icon: 'star', route: '/dashboard/calendar' }, // Reusing calendar for events
+    { id: 'ravi_sabha', title: i18n.t('raviSabha'), icon: 'book', route: '/dashboard/ravi-sabha' },
+    { id: 'donations', title: 'Donations', icon: 'heart', route: '/dashboard/donations' },
   ];
 
   const renderItem = ({ item }) => (
-    <TouchableOpacity style={[styles.card, { backgroundColor: Colors[colorScheme ?? 'light'].card }]}>
+    <TouchableOpacity 
+      style={[styles.card, { backgroundColor: Colors[colorScheme ?? 'light'].card }]}
+      onPress={() => {
+        if (item.route) {
+          router.push(item.route);
+        } else {
+          Alert.alert("Info", "This feature is coming soon!");
+        }
+      }}
+    >
       <FontAwesome name={item.icon} size={32} color={Colors[colorScheme ?? 'light'].tint} style={{ marginBottom: 10 }} />
       <Text style={styles.cardTitle}>{item.title}</Text>
     </TouchableOpacity>

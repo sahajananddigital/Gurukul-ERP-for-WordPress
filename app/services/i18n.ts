@@ -21,6 +21,13 @@ const translations = {
         changeLanguage: 'Change Language',
         editProfile: 'Edit Profile',
         deleteAccount: 'Delete Account',
+        login: 'Login',
+        username: 'Username',
+        password: 'Password',
+        signIn: 'Sign In',
+        authenticating: 'Authenticating...',
+        invalidCredentials: 'Invalid username or password',
+        loginSuccess: 'Login successful',
     },
     gu: {
         welcome: 'નમસ્તે',
@@ -40,6 +47,13 @@ const translations = {
         changeLanguage: 'ભાષા બદલો',
         editProfile: 'પ્રોફાઇલ સંપાદિત કરો',
         deleteAccount: 'ખાતું કાઢી નાખો',
+        login: 'લોગિન',
+        username: 'વપરાશકર્તા નામ',
+        password: 'પાસવર્ડ',
+        signIn: 'સાઇન ઇન',
+        authenticating: 'પ્રમાણિત કરી રહ્યું છે...',
+        invalidCredentials: 'ખોટું વપરાશકર્તા નામ અથવા પાસવર્ડ',
+        loginSuccess: 'લોગિન સફળ',
     },
 };
 

@@ -36,6 +36,7 @@ class WP_ERP_API_Content extends WP_ERP_API_Controller {
             array(
 				'methods' => WP_REST_Server::CREATABLE,
 				'callback' => array( $this, 'create_daily_darshan' ),
+				'permission_callback' => array( $this, 'check_permission' ),
 			),
 		) );
         
@@ -148,9 +149,6 @@ class WP_ERP_API_Content extends WP_ERP_API_Controller {
                         
                         if ( $url ) {
                             // Fix for mobile: Replace localhost/127.0.0.1 with LAN IP
-                            $url = str_replace( 'http://127.0.0.1', 'http://192.168.1.52', $url );
-                            $url = str_replace( 'http://localhost', 'http://192.168.1.52', $url );
-                            
                             $images[] = array(
                                 'id' => (int) $img_id,
                                 'url' => $url,

@@ -62,9 +62,6 @@ class WP_ERP_API_Quotes extends WP_ERP_API_Controller {
                 }
                 
                 if ( $image_url ) {
-                    // Fix for mobile: Replace localhost/127.0.0.1 with LAN IP
-                    $image_url = str_replace( 'http://127.0.0.1', 'http://192.168.1.52', $image_url );
-                    $image_url = str_replace( 'http://localhost', 'http://192.168.1.52', $image_url );
                     $results[$key]->image_url = $image_url;
                 }
             }

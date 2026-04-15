@@ -61,6 +61,20 @@ final class WP_ERP {
 	public $user_management;
 	
 	/**
+	 * User Sync instance
+	 *
+	 * @var WP_ERP_User_Sync
+	 */
+	public $user_sync;
+
+	/**
+	 * API instance
+	 *
+	 * @var WP_ERP_API
+	 */
+	public $api;
+
+	/**
 	 * Get plugin instance
 	 *
 	 * @return WP_ERP
@@ -78,6 +92,7 @@ final class WP_ERP {
 	private function __construct() {
 		$this->includes();
 		$this->init_hooks();
+        $this->api = new WP_ERP_API();
 	}
 	
 	/**
@@ -89,6 +104,7 @@ final class WP_ERP {
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-module-manager.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-addon-manager.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-user-management.php';
+		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-user-sync.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-api.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-admin.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/functions.php';
@@ -130,6 +146,7 @@ final class WP_ERP {
 		$this->modules = new WP_ERP_Module_Manager();
 		$this->addons = new WP_ERP_Addon_Manager();
 		$this->user_management = new WP_ERP_User_Management();
+		$this->user_sync = new WP_ERP_User_Sync();
 		
 		// Load core modules
 		$this->modules->register_module( 'crm', new WP_ERP_CRM() );
@@ -241,8 +258,7 @@ final class WP_ERP {
 	 * Register REST API routes
 	 */
 	public function register_rest_routes() {
-		$api = new WP_ERP_API();
-		$api->register_routes();
+		$this->api->register_routes();
 	}
 }
 
