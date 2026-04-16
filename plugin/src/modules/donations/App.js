@@ -3,8 +3,14 @@
  */
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody, CardHeader, Notice, TabPanel } from '@wordpress/components';
-import { fetchLedgers as fetchLedgersApi, fetchDonations as fetchDonationsApi } from './services/api';
+import {
+	Notice,
+	TabPanel,
+} from '@wordpress/components';
+import {
+	fetchLedgers as fetchLedgersApi,
+	fetchDonations as fetchDonationsApi,
+} from './services/api';
 import CreateDonation from './components/CreateDonation';
 import DonationHistory from './components/DonationHistory';
 import LedgerSettings from './components/LedgerSettings';

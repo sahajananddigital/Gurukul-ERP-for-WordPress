@@ -57,8 +57,21 @@ class WP_ERP_API_Donations extends WP_ERP_API_Controller {
 		global $wpdb;
 		$table = $wpdb->prefix . 'erp_donations';
 		
-		$data = $request->get_json_params();
-        $data['created_by'] = get_current_user_id();
+		$params = $request->get_json_params();
+        
+        $data = array(
+            'donor_name' => sanitize_text_field( $params['donor_name'] ?? '' ),
+            'phone'      => sanitize_text_field( $params['phone'] ?? '' ),
+            'ledger'     => sanitize_text_field( $params['ledger'] ?? '' ),
+            'amount'     => floatval( $params['amount'] ?? 0 ),
+            'notes'      => sanitize_textarea_field( $params['notes'] ?? '' ),
+            'issue_date' => sanitize_text_field( $params['issue_date'] ?? current_time( 'Y-m-d' ) ),
+            'created_by' => get_current_user_id(),
+        );
+
+        if ( empty( $data['donor_name'] ) || empty( $data['amount'] ) ) {
+            return new WP_Error( 'missing_fields', __( 'Donor name and amount are required.', 'wp-erp' ), array( 'status' => 400 ) );
+        }
         
 		$result = $wpdb->insert( $table, $data );
 		

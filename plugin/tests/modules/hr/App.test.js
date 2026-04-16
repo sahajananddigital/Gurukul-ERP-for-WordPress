@@ -17,8 +17,10 @@ describe( 'HRApp', () => {
 		render( <HRApp /> );
 		await waitFor( () => {
 			// Check if tab is present
-			expect( screen.getAllByText( /Employees/i )[0] ).toBeInTheDocument();
-		});
+			expect(
+				screen.getAllByText( /Employees/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'fetches and displays employees', async () => {
@@ -44,7 +46,9 @@ describe( 'HRApp', () => {
 	it( 'displays leaves view', async () => {
 		render( <HRApp view="leaves" /> );
 		await waitFor( () => {
-			expect( screen.getAllByText( /Leave Requests/i )[0] ).toBeInTheDocument();
-		});
+			expect(
+				screen.getAllByText( /Leave Requests/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 } );

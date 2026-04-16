@@ -88,9 +88,18 @@ const ExpensesApp = ( { view = 'list' } ) => {
 					>
 						{ ( tab ) => {
 							if ( tab.name === 'list' ) {
-								return <ExpensesList expenses={ expenses } loading={ loading } />;
+								return (
+									<ExpensesList
+										expenses={ expenses }
+										loading={ loading }
+									/>
+								);
 							}
-							return <CreateExpense onExpenseCreated={ handleExpenseCreated } />;
+							return (
+								<CreateExpense
+									onExpenseCreated={ handleExpenseCreated }
+								/>
+							);
 						} }
 					</TabPanel>
 				</CardBody>

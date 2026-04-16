@@ -17,8 +17,8 @@
 		}
 	},
 	"scripts": {
-		"phpcs": "phpcs --standard=WordPress .",
-		"phpcbf": "phpcbf --standard=WordPress ."
+		"phpcs": "vendor/bin/phpcs",
+		"phpcbf": "vendor/bin/phpcbf"
 	},
 	"config": {
 		"allow-plugins": {

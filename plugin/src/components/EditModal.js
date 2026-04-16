@@ -10,7 +10,6 @@ import {
 	SelectControl,
 	TextareaControl,
 	Flex,
-	FlexBlock,
 } from '@wordpress/components';
 
 const EditModal = ( { title, isOpen, onClose, onSave, data, fields } ) => {

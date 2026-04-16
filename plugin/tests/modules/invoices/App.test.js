@@ -15,9 +15,11 @@ describe( 'InvoicesApp', () => {
 	it( 'renders Invoices module', async () => {
 		apiFetch.mockResolvedValue( [] );
 		render( <InvoicesApp /> );
-		await waitFor(() => {
-			expect( screen.getAllByText( /All Invoices/i )[0] ).toBeInTheDocument();
-		});
+		await waitFor( () => {
+			expect(
+				screen.getAllByText( /All Invoices/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'fetches and displays invoices', async () => {
@@ -43,8 +45,10 @@ describe( 'InvoicesApp', () => {
 	it( 'renders create invoice form', async () => {
 		apiFetch.mockResolvedValue( [] );
 		render( <InvoicesApp view="create" /> );
-		await waitFor(() => {
-			expect( screen.getAllByText( /Invoice Date/i )[0] ).toBeInTheDocument();
-		});
+		await waitFor( () => {
+			expect(
+				screen.getAllByText( /Invoice Date/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 } );

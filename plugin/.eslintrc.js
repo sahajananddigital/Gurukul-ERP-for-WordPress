@@ -13,6 +13,9 @@ module.exports = {
 			jsx: true,
 		},
 	},
+	globals: {
+		wpErp: 'readonly',
+	},
 	rules: {
 		'@wordpress/no-unsafe-wp-apis': 'warn',
 	},

@@ -1,104 +1,76 @@
-# WP ERP - WordPress ERP Plugin
+# Gurukul ERP for WordPress
 
-A comprehensive ERP solution for WordPress with extensible addon support. Includes CRM, Accounting, HR, and Helpdesk modules built with Gutenberg native UI.
+A comprehensive ERP solution for WordPress with extensible addon support. Includes CRM, Accounting, HR, and Helpdesk modules built with Gutenberg native UI. Specifically tailored for Gurukul management.
 
 ## Features
 
-- **Modular Architecture**: Extensible plugin structure for custom addons
-- **Gutenberg UI**: Native WordPress Gutenberg components for modern interface
+- **Modular Architecture**: Extensible plugin structure for custom addons.
+- **Gutenberg UI**: Native WordPress Gutenberg components for a modern interface.
 - **Core Modules**:
-  - **CRM**: Contact management, lead tracking, customer relationships
-  - **Accounting**: Chart of accounts, transactions, billing
-  - **Invoices:** Create and manage invoices for your clients.
-  - **HR**: Employee management, leave requests
-  - **Helpdesk**: Ticket management system
-- **Expenses:** Track and categorize your company expenses.
-- **Food Pass:** Manage daily meal passes for students/employees with lunch notes and reporting.
-- **Donations:** Donation receipting system with donor history, ledger management, and instant printing.ystem
-- **REST API**: Full REST API for all modules
-- **Addon System**: Easy to create and install custom extensions
-- **Testing**: Includes PHPUnit and Jest tests
-- **User Management**: Granular access control to assign specific modules to specific users (includes 'ERP Staff' role)
+  - **CRM**: Contact management, lead tracking, customer relationships.
+    - **Import/Export**: Import contacts from CSV; Export as CSV or PDF.
+    - **Sample Template**: Downloadable sample CSV for easy data prep.
+  - **Accounting**: Chart of accounts, transactions, billing.
+  - **Invoices**: Create and manage invoices for your clients.
+  - **HR**: Employee management, leave requests.
+  - **Helpdesk**: Ticket management system.
+- **Specialized Modules**:
+  - **Daily Darshan**: Manage and display daily sacred images with zoom and slide capabilities.
+  - **Daily Quotes**: Manage spiritual quotes and thoughts of the day.
+  - **Satsang & Programs**: Schedule and manage daily programs and satsang updates.
+  - **Expenses**: Track and categorize your company/institution expenses.
+  - **Food Pass**: Manage daily meal passes for students/employees with reporting.
+  - **Donations**: Donation receipting system with donor history and ledger management.
+- **Bidirectional WP User Sync**: Automatically sync CRM contacts with WordPress users. Users created in CRM can log in to the website/app instantly.
+- **REST API**: Full REST API for all modules, powering the integrated Mobile App.
+- **User Management**: Granular access control to assign specific modules to specific users.
 
 ## Installation
 
-1. Upload the plugin to `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. The plugin will automatically create necessary database tables
+1. Upload the plugin to the `/wp-content/plugins/` directory.
+2. Activate the plugin through the 'Plugins' menu in WordPress.
+3. The plugin will automatically create/update necessary database tables using `dbDelta`.
 
-## Development Setup
+## Development Workflow
+
+We use a unified Node.js environment to manage both JavaScript and PHP tools.
 
 ### Prerequisites
-
 - Node.js 16+ and npm
 - PHP 7.4+
-- WordPress 5.8+
-- Composer (for PHP dependencies)
+- Composer (managed via npm)
 
-### Install Dependencies
-
+### Setup
 ```bash
 npm install
+npm run composer install
 ```
 
-### Build Assets
-
+### Build & Format
 ```bash
-# Development build with watch mode
+# Build production assets
+npm run build
+
+# Watch for development changes
 npm start
 
-# Production build
-npm run build
+# Format code (JS and PHP)
+npm run format
 ```
 
-### Running Tests
-
+### Quality Assurance
 ```bash
-# JavaScript tests
-npm test
+# Lint JavaScript code
+npm run lint:js
 
-# PHP tests (requires WordPress test suite)
-vendor/bin/phpunit
-```
+# Lint PHP code (WordPress Coding Standards)
+npm run lint:php
 
-## Creating Addons
+# Run unit tests (Jest)
+npm run test
 
-Addons can be installed in `/wp-content/wp-erp-addons/` directory. Each addon should follow this structure:
-
-```
-wp-erp-addons/
-  your-addon/
-    your-addon.php
-    package.json (optional)
-    src/ (optional)
-```
-
-### Example Addon
-
-```php
-<?php
-/**
- * Plugin Name: WP ERP Addon - Your Addon
- * Description: Custom addon for WP ERP
- * Version: 1.0.0
- */
-
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
-}
-
-class WP_ERP_Addon_Your_Addon {
-    
-    public function __construct() {
-        add_action( 'wp_erp_init', array( $this, 'init' ) );
-    }
-    
-    public function init() {
-        // Your addon initialization code
-    }
-}
-
-new WP_ERP_Addon_Your_Addon();
+# Run E2E tests (Playwright + wp-env)
+npm run test:e2e
 ```
 
 ## API Endpoints
@@ -106,49 +78,18 @@ new WP_ERP_Addon_Your_Addon();
 ### CRM
 - `GET /wp-erp/v1/crm/contacts` - Get all contacts
 - `POST /wp-erp/v1/crm/contacts` - Create contact
-- `GET /wp-erp/v1/crm/contacts/{id}` - Get contact
-- `PUT /wp-erp/v1/crm/contacts/{id}` - Update contact
-- `DELETE /wp-erp/v1/crm/contacts/{id}` - Delete contact
+- `POST /wp-erp/v1/crm/import` - Import contacts via CSV
+- `GET /wp-erp/v1/crm/export` - Export contacts (format: `csv` or `pdf`)
+- `GET /wp-erp/v1/crm/import/sample` - Download sample CSV template
 
-### Accounting
-- `GET /wp-erp/v1/accounting/accounts` - Get chart of accounts
-- `GET /wp-erp/v1/accounting/transactions` - Get transactions
-- `POST /wp-erp/v1/accounting/transactions` - Create transaction
-
-### HR
-- `GET /wp-erp/v1/hr/employees` - Get employees
-
-### Helpdesk
-- `GET /wp-erp/v1/helpdesk/tickets` - Get tickets
-- `POST /wp-erp/v1/helpdesk/tickets` - Create ticket
-
-## Database Schema
-
-The plugin creates the following tables:
-- `wp_erp_crm_contacts` - CRM contacts
-- `wp_erp_crm_activities` - CRM activities
-- `wp_erp_accounting_chart_of_accounts` - Chart of accounts
-- `wp_erp_accounting_transactions` - Accounting transactions
-- `wp_erp_accounting_transaction_entries` - Transaction entries
-- `wp_erp_hr_employees` - HR employees
-- `wp_erp_hr_leave_requests` - Leave requests
-- `wp_erp_helpdesk_tickets` - Helpdesk tickets
-- `wp_erp_helpdesk_ticket_replies` - Ticket replies
-- `wp_erp_addons` - Installed addons
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+### Content (Darshan/Quotes)
+- `GET /wp-erp/v1/content/daily-darshan` - Get latest darshan images
+- `POST /wp-erp/v1/content/daily-darshan` - Upload/Manage darshan
 
 ## License
 
-GPL v2 or later
+GPL v3 or later
 
 ## Credits
 
-Inspired by ERPNext - an open-source ERP system.
-
+Developed by Sahajanand Digital.

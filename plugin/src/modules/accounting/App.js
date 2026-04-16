@@ -10,7 +10,10 @@ import {
 	Notice,
 	TabPanel,
 } from '@wordpress/components';
-import { fetchAccounts as fetchAccountsApi, fetchTransactions as fetchTransactionsApi } from './services/api';
+import {
+	fetchAccounts as fetchAccountsApi,
+	fetchTransactions as fetchTransactionsApi,
+} from './services/api';
 import AccountsList from './components/AccountsList';
 import TransactionsList from './components/TransactionsList';
 import CreateTransaction from './components/CreateTransaction';
@@ -113,11 +116,27 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 					>
 						{ ( tab ) => {
 							if ( tab.name === 'accounts' ) {
-								return <AccountsList accounts={ accounts } loading={ loading } />;
+								return (
+									<AccountsList
+										accounts={ accounts }
+										loading={ loading }
+									/>
+								);
 							} else if ( tab.name === 'transactions' ) {
-								return <TransactionsList transactions={ transactions } loading={ loading } />;
+								return (
+									<TransactionsList
+										transactions={ transactions }
+										loading={ loading }
+									/>
+								);
 							}
-							return <CreateTransaction onTransactionCreated={ handleTransactionCreated } />;
+							return (
+								<CreateTransaction
+									onTransactionCreated={
+										handleTransactionCreated
+									}
+								/>
+							);
 						} }
 					</TabPanel>
 				</CardBody>

@@ -92,7 +92,7 @@ final class WP_ERP {
 	private function __construct() {
 		$this->includes();
 		$this->init_hooks();
-        $this->api = new WP_ERP_API();
+		$this->api = new WP_ERP_API();
 	}
 	
 	/**
@@ -142,6 +142,9 @@ final class WP_ERP {
 		// Load text domain
 		load_plugin_textdomain( 'wp-erp', false, dirname( WP_ERP_PLUGIN_BASENAME ) . '/languages' );
 		
+		// Check for updates
+		WP_ERP_Install::check_for_updates();
+
 		// Initialize managers
 		$this->modules = new WP_ERP_Module_Manager();
 		$this->addons = new WP_ERP_Addon_Manager();

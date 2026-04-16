@@ -54,9 +54,11 @@ abstract class WP_ERP_API_Controller {
 	 * @param string $last_modified Last modified timestamp (e.g. '2023-01-01 12:00:00')
 	 */
 	protected function set_cache_headers( $last_modified ) {
-		$timestamp = dirname( strtotime( $last_modified ) ); // wait, dirname? no.
-        // Correction: just strtotime
-        $timestamp = strtotime( $last_modified );
+		if ( empty( $last_modified ) ) {
+			return;
+		}
+
+		$timestamp = strtotime( $last_modified );
 		
         if ( ! $timestamp ) {
             return;

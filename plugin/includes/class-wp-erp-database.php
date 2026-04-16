@@ -42,6 +42,9 @@ class WP_ERP_Database {
 		
 		// Food Pass Tables
 		self::create_food_pass_tables( $charset_collate );
+
+		// Donations Tables
+		self::create_donations_table( $charset_collate );
 		
 		// Addons table
 		self::create_addons_table( $charset_collate );
@@ -509,6 +512,34 @@ class WP_ERP_Database {
 			KEY date (date),
 			KEY category (category),
 			KEY status (status)
+		) $charset_collate;";
+		
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+	}
+	
+	/**
+	 * Create Donations tables
+	 */
+	private static function create_donations_table( $charset_collate ) {
+		global $wpdb;
+		
+		$table_name = $wpdb->prefix . 'erp_donations';
+		
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			donor_name varchar(255) NOT NULL,
+			phone varchar(50) NOT NULL,
+			ledger varchar(100) NOT NULL,
+			amount decimal(10,2) NOT NULL,
+			notes text,
+			issue_date date NOT NULL,
+			created_by bigint(20) unsigned DEFAULT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY donor_name (donor_name),
+			KEY phone (phone),
+			KEY issue_date (issue_date)
 		) $charset_collate;";
 		
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );

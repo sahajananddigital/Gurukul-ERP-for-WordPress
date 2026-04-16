@@ -7,7 +7,9 @@ import { __ } from '@wordpress/i18n';
 export const fetchContacts = async ( params = {} ) => {
 	try {
 		const queryString = new URLSearchParams( params ).toString();
-		return await apiFetch( { path: `/wp-erp/v1/crm/contacts?${ queryString }` } );
+		return await apiFetch( {
+			path: `/wp-erp/v1/crm/contacts?${ queryString }`,
+		} );
 	} catch ( err ) {
 		throw new Error(
 			err.message || __( 'Failed to fetch contacts', 'wp-erp' )

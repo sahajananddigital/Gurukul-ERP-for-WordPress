@@ -12,14 +12,14 @@ import {
 	Button,
 	Flex,
 	FlexItem,
-	Spinner
+	Spinner,
 } from '@wordpress/components';
 import { fetchContacts } from '../services/api';
 
 const Reports = () => {
 	const [ contacts, setContacts ] = useState( [] );
 	const [ loading, setLoading ] = useState( false );
-	
+
 	// Filters
 	const [ search, setSearch ] = useState( '' );
 	const [ status, setStatus ] = useState( 'all' );
@@ -48,12 +48,14 @@ const Reports = () => {
 				search,
 				status,
 				type,
-				birthday_month: birthdayMonth
+				birthday_month: birthdayMonth,
 			};
-			
+
 			// Remove empty
-			Object.keys( params ).forEach( key => params[key] === '' && delete params[key] );
-			
+			Object.keys( params ).forEach(
+				( key ) => params[ key ] === '' && delete params[ key ]
+			);
+
 			const data = await fetchContacts( params );
 			setContacts( data );
 		} catch ( err ) {
@@ -74,7 +76,14 @@ const Reports = () => {
 			</CardHeader>
 			<CardBody>
 				{ /* Filters */ }
-				<div style={ { marginBottom: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '4px' } }>
+				<div
+					style={ {
+						marginBottom: '20px',
+						padding: '15px',
+						background: '#f8f9fa',
+						borderRadius: '4px',
+					} }
+				>
 					<Flex gap={ 4 } wrap={ true } align="end">
 						<FlexItem>
 							<TextControl
@@ -92,8 +101,14 @@ const Reports = () => {
 									{ label: 'All', value: 'all' },
 									{ label: 'Lead', value: 'lead' },
 									{ label: 'Customer', value: 'customer' },
-									{ label: 'Opportunity', value: 'opportunity' },
-									{ label: 'Subscriber', value: 'subscriber' },
+									{
+										label: 'Opportunity',
+										value: 'opportunity',
+									},
+									{
+										label: 'Subscriber',
+										value: 'subscriber',
+									},
 								] }
 								onChange={ setStatus }
 							/>
@@ -119,8 +134,8 @@ const Reports = () => {
 							/>
 						</FlexItem>
 						<FlexItem>
-							<Button 
-								variant="primary" 
+							<Button
+								variant="primary"
 								onClick={ fetchReport }
 								isBusy={ loading }
 							>
@@ -132,7 +147,9 @@ const Reports = () => {
 
 				{ /* Table */ }
 				{ loading ? (
-					<Flex justify="center"><Spinner /></Flex>
+					<Flex justify="center">
+						<Spinner />
+					</Flex>
 				) : (
 					<>
 						<p>Total Records: { contacts.length }</p>
@@ -148,17 +165,27 @@ const Reports = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{ contacts.length > 0 ? contacts.map( ( c ) => (
-									<tr key={ c.id }>
-										<td>{ c.id }</td>
-										<td>{ c.first_name } { c.last_name }</td>
-										<td>{ c.email }</td>
-										<td>{ c.phone }</td>
-										<td>{ c.status }</td>
-										<td>{ new Date( c.created_at ).toLocaleDateString() }</td>
+								{ contacts.length > 0 ? (
+									contacts.map( ( c ) => (
+										<tr key={ c.id }>
+											<td>{ c.id }</td>
+											<td>
+												{ c.first_name } { c.last_name }
+											</td>
+											<td>{ c.email }</td>
+											<td>{ c.phone }</td>
+											<td>{ c.status }</td>
+											<td>
+												{ new Date(
+													c.created_at
+												).toLocaleDateString() }
+											</td>
+										</tr>
+									) )
+								) : (
+									<tr>
+										<td colSpan="6">No records found.</td>
 									</tr>
-								) ) : (
-									<tr><td colSpan="6">No records found.</td></tr>
 								) }
 							</tbody>
 						</table>

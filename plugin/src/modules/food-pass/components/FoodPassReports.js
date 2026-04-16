@@ -29,7 +29,12 @@ const FoodPassReports = ( { foodPasses } ) => {
 		setReportEndDate( lastDay );
 	}, [] );
 
-	const filteredData = getFilteredReports( foodPasses, reportStartDate, reportEndDate, reportFilterType );
+	const filteredData = getFilteredReports(
+		foodPasses,
+		reportStartDate,
+		reportEndDate,
+		reportFilterType
+	);
 
 	// Calculate Stats for Filtered Data
 	let totalQty = 0;
@@ -44,18 +49,26 @@ const FoodPassReports = ( { foodPasses } ) => {
 
 		try {
 			const notesData = pass.notes ? JSON.parse( pass.notes ) : {};
-			if ( notesData.amount )
+			if ( notesData.amount ) {
 				revenue = parseFloat( notesData.amount );
-			else revenue = qty * 90;
-			if ( notesData.mealType ) type = notesData.mealType;
+			} else {
+				revenue = qty * 90;
+			}
+			if ( notesData.mealType ) {
+				type = notesData.mealType;
+			}
 		} catch ( e ) {
 			revenue = qty * 90;
 		}
 
 		totalQty += qty;
 		totalRevenue += revenue;
-		if ( type === 'Lunch' ) lunchCount += qty;
-		if ( type === 'Dinner' ) dinnerCount += qty;
+		if ( type === 'Lunch' ) {
+			lunchCount += qty;
+		}
+		if ( type === 'Dinner' ) {
+			dinnerCount += qty;
+		}
 	} );
 
 	return (
@@ -68,9 +81,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 							label={ __( 'Start Date', 'wp-erp' ) }
 							type="date"
 							value={ reportStartDate }
-							onChange={ ( val ) =>
-								setReportStartDate( val )
-							}
+							onChange={ ( val ) => setReportStartDate( val ) }
 						/>
 					</FlexBlock>
 					<FlexBlock>
@@ -108,9 +119,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 								<option value="all">
 									{ __( 'All Types' ) }
 								</option>
-								<option value="lunch">
-									{ __( 'Lunch' ) }
-								</option>
+								<option value="lunch">{ __( 'Lunch' ) }</option>
 								<option value="dinner">
 									{ __( 'Dinner' ) }
 								</option>
@@ -230,14 +239,12 @@ const FoodPassReports = ( { foodPasses } ) => {
 									const notesData = pass.notes
 										? JSON.parse( pass.notes )
 										: {};
-									if ( notesData.amount )
+									if ( notesData.amount ) {
 										amount = `₹${ notesData.amount }`;
-									else if ( pass.total_meals )
-										amount = `₹${
-											pass.total_meals * 90
-										}`;
-									mealType =
-										notesData.mealType || 'Lunch';
+									} else if ( pass.total_meals ) {
+										amount = `₹${ pass.total_meals * 90 }`;
+									}
+									mealType = notesData.mealType || 'Lunch';
 								} catch ( e ) {
 									amount = `₹${ pass.total_meals * 90 }`;
 									mealType = 'Lunch';

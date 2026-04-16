@@ -24,7 +24,7 @@ describe( 'FoodPassApp', () => {
 				id: 123,
 				issue_date: '2024-01-01',
 				total_meals: 1,
-				notes: JSON.stringify({ amount: 90, mealType: 'Lunch' }),
+				notes: JSON.stringify( { amount: 90, mealType: 'Lunch' } ),
 				status: 'active',
 			},
 		];
@@ -43,6 +43,8 @@ describe( 'FoodPassApp', () => {
 		render( <FoodPassApp view="create" /> );
 		// Check for form-specific field
 		expect( screen.getByLabelText( /Quantity:/i ) ).toBeInTheDocument();
-		expect( screen.getByText( /Total Amount to Pay:/i ) ).toBeInTheDocument();
+		expect(
+			screen.getByText( /Total Amount to Pay:/i )
+		).toBeInTheDocument();
 	} );
 } );

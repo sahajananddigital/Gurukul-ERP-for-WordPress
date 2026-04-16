@@ -60,6 +60,7 @@ class WP_ERP_Donations {
 			amount decimal(10,2) NOT NULL,
 			notes text DEFAULT '',
 			issue_date date NOT NULL,
+			created_by bigint(20) unsigned DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			PRIMARY KEY  (id)
 		) $charset_collate;";

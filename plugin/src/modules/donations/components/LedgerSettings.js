@@ -3,7 +3,15 @@
  */
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody, CardHeader, Flex, TextControl, Button, Notice } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	Flex,
+	TextControl,
+	Button,
+	Notice,
+} from '@wordpress/components';
 import { createLedger } from '../services/api';
 
 const LedgerSettings = ( { ledgers, onLedgersUpdated } ) => {
@@ -12,12 +20,14 @@ const LedgerSettings = ( { ledgers, onLedgersUpdated } ) => {
 	const [ isSaving, setIsSaving ] = useState( false );
 
 	const addLedger = async () => {
-		if ( ! newLedger ) return;
+		if ( ! newLedger ) {
+			return;
+		}
 		setIsSaving( true );
 		setError( null );
-		
+
 		const updated = [ ...ledgers, newLedger ];
-		
+
 		try {
 			await createLedger( updated );
 			onLedgersUpdated( updated );

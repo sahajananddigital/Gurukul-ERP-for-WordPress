@@ -3,7 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import { useState } from '@wordpress/element';
-import { Card, CardBody, CardHeader, Spinner, Flex, Button } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	Spinner,
+	Flex,
+	Button,
+} from '@wordpress/components';
 import EditModal from '../../../components/EditModal';
 import { updateDonation } from '../services/api';
 
@@ -36,12 +43,26 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 	}
 
 	const donationFields = [
-		{ key: 'donor_name', label: __( 'Donor Name', 'wp-erp' ), type: 'text' },
+		{
+			key: 'donor_name',
+			label: __( 'Donor Name', 'wp-erp' ),
+			type: 'text',
+		},
 		{ key: 'phone', label: __( 'Phone', 'wp-erp' ), type: 'text' },
 		{ key: 'ledger', label: __( 'Ledger', 'wp-erp' ), type: 'text' }, // Ideally a select but keeping simple text for now
-		{ key: 'amount', label: __( 'Amount', 'wp-erp' ), type: 'text', inputType: 'number' },
+		{
+			key: 'amount',
+			label: __( 'Amount', 'wp-erp' ),
+			type: 'text',
+			inputType: 'number',
+		},
 		{ key: 'notes', label: __( 'Notes', 'wp-erp' ), type: 'textarea' },
-		{ key: 'issue_date', label: __( 'Date', 'wp-erp' ), type: 'text', inputType: 'date' },
+		{
+			key: 'issue_date',
+			label: __( 'Date', 'wp-erp' ),
+			type: 'text',
+			inputType: 'date',
+		},
 	];
 
 	return (

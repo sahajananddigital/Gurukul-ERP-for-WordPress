@@ -36,7 +36,7 @@ const CreateTransaction = ( { onTransactionCreated } ) => {
 
 		try {
 			await createTransaction( formData );
-			
+
 			// Reset form
 			setFormData( {
 				voucher_no: '',

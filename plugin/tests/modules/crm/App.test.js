@@ -18,8 +18,10 @@ describe( 'CRMApp', () => {
 		render( <CRMApp /> );
 		// "Contacts" appears in header and tab list, use getAll or check for specific header
 		await waitFor( () => {
-			expect( screen.getAllByText( /Contacts/i )[0] ).toBeInTheDocument();
-		});
+			expect(
+				screen.getAllByText( /Contacts/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'fetches and displays contacts', async () => {

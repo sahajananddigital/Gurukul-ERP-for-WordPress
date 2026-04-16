@@ -15,12 +15,14 @@ describe( 'HelpdeskApp', () => {
 	it( 'renders Helpdesk module', async () => {
 		apiFetch.mockResolvedValue( [] );
 		render( <HelpdeskApp /> );
-		await waitFor(() => {
+		await waitFor( () => {
 			// "Tickets" or "Create Ticket" depending on default view?
 			// HelpdeskApp default is 'tickets' (list) usually, unless changed.
 			// Let's check for "Helpdesk" title or "Tickets" tab
-			expect( screen.getAllByText( /Tickets/i )[0] ).toBeInTheDocument();
-		});
+			expect(
+				screen.getAllByText( /Tickets/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'fetches and displays tickets', async () => {
@@ -50,7 +52,7 @@ describe( 'HelpdeskApp', () => {
 		render( <HelpdeskApp /> );
 
 		// Verify component renders placeholder or tab
-		expect( screen.getAllByText( /Tickets/i )[0] ).toBeInTheDocument();
+		expect( screen.getAllByText( /Tickets/i )[ 0 ] ).toBeInTheDocument();
 
 		// Wait for async operations to complete
 		await waitFor(

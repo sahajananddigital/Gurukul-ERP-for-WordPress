@@ -3,7 +3,7 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 	const ctx = canvas.getContext( '2d' );
 
 	const width = 380;
-	// Dynamic height based on content? Start tall and trim? 
+	// Dynamic height based on content? Start tall and trim?
 	// For now, let's pick a safe height.
 	const height = type === 'donation' ? 800 : 600;
 
@@ -43,7 +43,7 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		ctx.stroke();
 		return localY + 20;
 	};
-	
+
 	const drawLine = ( localY ) => {
 		ctx.textAlign = 'center';
 		ctx.fillText( '---------------------------------', centerX, localY );
@@ -72,16 +72,15 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		drawField( 'Time', data.time ); // User's code has time + (period), passed in data.time ideally
 		drawField( 'Quantity', data.quantity );
 		drawField( 'Rate', `₹${ data.rate }` );
-		
+
 		y = drawLine( y );
-		
+
 		ctx.font = 'bold 20px monospace';
 		drawField( 'Total', `₹${ data.amount }` );
-		
+
 		y += 30;
 		ctx.font = 'bold 16px monospace';
 		y = drawCentered( '🙏 Jay Swaminarayan 🙏', y );
-
 	} else if ( type === 'donation' ) {
 		y = drawCentered( 'Shree Swaminarayan Gurukul', y );
 		y = drawCentered( 'Ahmedabad - Nikol', y );
@@ -90,7 +89,7 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		y = drawCentered( 'DONATION', y );
 		ctx.font = 'bold 16px monospace';
 		y += 10;
-		
+
 		const kvX = 20;
 		const alignX = 100;
 
@@ -110,10 +109,10 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		drawField( 'Amount', `₹${ data.amount }` );
 		drawField( 'Phone', data.phone || '-' );
 		drawField( 'Details', data.ledger || '-' ); // Ledger is mapped to "Details" in legacy? Note says "donationNote", user code says "Details: ${note}"
-		// However, in our form we passed ledger to 'ledger' and note to 'notes'. 
-		// User legacy code: `Details: ${note || '-'}`. 
-		// Wait, user's legacy code has a "Note" field and a "Ledger" field. 
-		// In the printed text it says "Details: ${note}". 
+		// However, in our form we passed ledger to 'ledger' and note to 'notes'.
+		// User legacy code: `Details: ${note || '-'}`.
+		// Wait, user's legacy code has a "Note" field and a "Ledger" field.
+		// In the printed text it says "Details: ${note}".
 		// Let's print Note if present, otherwise Ledger? Or both?
 		// Legacy code: `Details: ${note || '-'}`. It seems strict.
 		// I will print Note if passed.
@@ -126,11 +125,11 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		y += 20;
 		y = drawCentered( '✻✻✻✻✻✻✻✻✻✻✻✻✻✻✻✻✻', y );
 		y += 10;
-		
+
 		ctx.textAlign = 'left';
 		ctx.fillText( 'Gurkul Activities:', 20, y );
 		y += lineHeight;
-		
+
 		const activities = [
 			'✻ Morning Evening Aarti',
 			'✻ Daily Shiramani & Pooja',
@@ -138,11 +137,11 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 			'✻ Saturday Youth Sabha',
 			'✻ Poonam Abhishek',
 		];
-		
-		activities.forEach( act => {
+
+		activities.forEach( ( act ) => {
 			ctx.fillText( '  ' + act, 20, y );
 			y += lineHeight;
-		});
+		} );
 
 		y += 20;
 		y = drawCentered( '🙏 🙏 Jay Swaminarayan 🙏 🙏', y );
@@ -157,7 +156,7 @@ export const printReceiptImage = ( imageUrl ) => {
 		alert( 'Please allow popups to print the receipt.' );
 		return;
 	}
-	
+
 	win.document.write( `
 		<html>
 			<head>

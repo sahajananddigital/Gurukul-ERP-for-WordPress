@@ -15,7 +15,10 @@ import {
 } from '@wordpress/components';
 import { createDonation, fetchDonorByPhone } from '../services/api';
 
-import { generateReceiptImage, printReceiptImage } from '../../food-pass/utils/receipt';
+import {
+	generateReceiptImage,
+	printReceiptImage,
+} from '../../food-pass/utils/receipt';
 
 const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 	const [ isCreating, setIsCreating ] = useState( false );
@@ -24,12 +27,14 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 	// Form State
 	const [ donorName, setDonorName ] = useState( '' );
 	const [ phone, setPhone ] = useState( '' );
-	const [ ledger, setLedger ] = useState( ledgers[0] || '' );
+	const [ ledger, setLedger ] = useState( ledgers[ 0 ] || '' );
 	const [ amount, setAmount ] = useState( '' );
 	const [ note, setNote ] = useState( '' );
 
 	const handlePhoneBlur = async () => {
-		if ( ! phone ) return;
+		if ( ! phone ) {
+			return;
+		}
 		const data = await fetchDonorByPhone( phone );
 		if ( data && data.found && data.donor_name ) {
 			setDonorName( data.donor_name );
@@ -46,7 +51,7 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 		const payload = {
 			donor_name: donorName,
 			phone,
-			ledger: ledger || ledgers[0],
+			ledger: ledger || ledgers[ 0 ],
 			amount,
 			notes: note,
 			issue_date: today,
@@ -54,7 +59,7 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 
 		try {
 			const saved = await createDonation( payload );
-			
+
 			// Generate Receipt Data
 			const receiptData = {
 				title: 'DONATION RECEIPT',
@@ -63,9 +68,9 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 				date: today,
 				donor_name: donorName,
 				phone,
-				ledger: ledger || ledgers[0],
-				amount: amount,
-				note: note,
+				ledger: ledger || ledgers[ 0 ],
+				amount,
+				note,
 			};
 
 			// Print
@@ -87,8 +92,6 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 			setIsCreating( false );
 		}
 	};
-
-
 
 	return (
 		<>

@@ -48,7 +48,9 @@ const FoodPassApp = ( { view = 'create' } ) => {
 		// But we probably want to fetch data so 'list' & 'reports' rely on fresh data.
 		// If we stay on 'create', we don't need to fetch immediately unless we want the list prepared.
 		// But let's fetch silently.
-		fetchPassesApi().then( setFoodPasses ).catch( () => {} );
+		fetchPassesApi()
+			.then( setFoodPasses )
+			.catch( () => {} );
 		// Original logic didn't switch tabs, just reset form.
 	};
 
@@ -96,11 +98,24 @@ const FoodPassApp = ( { view = 'create' } ) => {
 					>
 						{ ( tab ) => {
 							if ( tab.name === 'list' ) {
-								return <FoodPassList foodPasses={ foodPasses } loading={ loading } />;
+								return (
+									<FoodPassList
+										foodPasses={ foodPasses }
+										loading={ loading }
+									/>
+								);
 							} else if ( tab.name === 'reports' ) {
-								return <FoodPassReports foodPasses={ foodPasses } />;
+								return (
+									<FoodPassReports
+										foodPasses={ foodPasses }
+									/>
+								);
 							}
-							return <CreateFoodPass onFoodPassCreated={ handleFoodPassCreated } />;
+							return (
+								<CreateFoodPass
+									onFoodPassCreated={ handleFoodPassCreated }
+								/>
+							);
 						} }
 					</TabPanel>
 				</CardBody>

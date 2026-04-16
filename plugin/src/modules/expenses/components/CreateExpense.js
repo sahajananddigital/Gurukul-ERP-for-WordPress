@@ -37,7 +37,7 @@ const CreateExpense = ( { onExpenseCreated } ) => {
 
 		try {
 			await createExpense( formData );
-			
+
 			// Reset form
 			setFormData( {
 				expense_type: 'general',

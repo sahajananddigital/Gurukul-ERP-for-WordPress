@@ -3,7 +3,13 @@
  */
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { Card, CardBody, CardHeader, Notice, TabPanel } from '@wordpress/components';
+import {
+	Card,
+	CardBody,
+	CardHeader,
+	Notice,
+	TabPanel,
+} from '@wordpress/components';
 import { fetchContacts as fetchContactsApi } from './services/api';
 import ContactsList from './components/ContactsList';
 import ContactForm from './components/ContactForm';
@@ -75,11 +81,18 @@ const CRMApp = () => {
 							<>
 								{ tab.name === 'contacts' && (
 									<>
-										<ContactForm onContactCreated={ handleContactCreated } />
+										<ContactForm
+											onContactCreated={
+												handleContactCreated
+											}
+										/>
 										<Card>
 											<CardHeader>
 												<h2 style={ { margin: 0 } }>
-													{ __( 'Contacts', 'wp-erp' ) }
+													{ __(
+														'Contacts',
+														'wp-erp'
+													) }
 												</h2>
 											</CardHeader>
 											<CardBody>

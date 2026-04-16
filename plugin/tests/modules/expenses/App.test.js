@@ -16,8 +16,10 @@ describe( 'ExpensesApp', () => {
 		apiFetch.mockResolvedValue( [] );
 		render( <ExpensesApp /> );
 		await waitFor( () => {
-			expect( screen.getAllByText( /All Expenses/i )[0] ).toBeInTheDocument();
-		});
+			expect(
+				screen.getAllByText( /All Expenses/i )[ 0 ]
+			).toBeInTheDocument();
+		} );
 	} );
 
 	it( 'fetches and displays expenses', async () => {
@@ -43,9 +45,13 @@ describe( 'ExpensesApp', () => {
 
 	it( 'renders create expense form', async () => {
 		render( <ExpensesApp view="create" /> );
-		await waitFor(() => {
-			expect( screen.getAllByText( /Add Expense/i )[0] ).toBeInTheDocument();
-			expect( screen.getByLabelText( /Expense Type/i ) ).toBeInTheDocument();
-		});
+		await waitFor( () => {
+			expect(
+				screen.getAllByText( /Add Expense/i )[ 0 ]
+			).toBeInTheDocument();
+			expect(
+				screen.getByLabelText( /Expense Type/i )
+			).toBeInTheDocument();
+		} );
 	} );
 } );

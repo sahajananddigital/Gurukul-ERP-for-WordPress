@@ -16,7 +16,7 @@ import DonationsApp from './modules/donations/App';
 import ContentApp from './modules/content/App';
 import QuotesApp from './modules/quotes/App';
 import UpdatesApp from './modules/updates/App';
-import SaintsApp from './modules/satsang/App';
+import SatsangApp from './modules/satsang/App';
 import ProgramsApp from './modules/programs/App';
 import CalendarApp from './modules/calendar/App';
 
@@ -25,7 +25,6 @@ function initERP() {
 	// CRM
 	const crmRoot = document.getElementById( 'wp-erp-crm-root' );
 	if ( crmRoot ) {
-		console.log( 'Mounting CRM App' );
 		const root = createRoot( crmRoot );
 		root.render( <CRMApp /> );
 	}
@@ -33,7 +32,6 @@ function initERP() {
 	// Accounting
 	const accountingRoot = document.getElementById( 'wp-erp-accounting-root' );
 	if ( accountingRoot ) {
-		console.log( 'Mounting Accounting App' );
 		const root = createRoot( accountingRoot );
 		root.render( <AccountingApp /> );
 	}
@@ -87,47 +85,47 @@ function initERP() {
 		root.render( <DonationsApp /> );
 	}
 
-    // Content (Daily Darshan)
-    const contentRoot = document.getElementById( 'wp-erp-content-root' );
-    if ( contentRoot ) {
-        const root = createRoot( contentRoot );
-        root.render( <ContentApp /> );
-    }
+	// Content (Daily Darshan)
+	const contentRoot = document.getElementById( 'wp-erp-content-root' );
+	if ( contentRoot ) {
+		const root = createRoot( contentRoot );
+		root.render( <ContentApp /> );
+	}
 
-    // Quotes (Daily Quotes)
-    const quotesRoot = document.getElementById( 'wp-erp-quotes-root' );
-    if ( quotesRoot ) {
-        const root = createRoot( quotesRoot );
-        root.render( <QuotesApp /> );
-    }
+	// Quotes (Daily Quotes)
+	const quotesRoot = document.getElementById( 'wp-erp-quotes-root' );
+	if ( quotesRoot ) {
+		const root = createRoot( quotesRoot );
+		root.render( <QuotesApp /> );
+	}
 
-    // Updates (Daily Updates)
-    const updatesRoot = document.getElementById( 'wp-erp-updates-root' );
-    if ( updatesRoot ) {
-        const root = createRoot( updatesRoot );
-        root.render( <UpdatesApp /> );
-    }
+	// Updates (Daily Updates)
+	const updatesRoot = document.getElementById( 'wp-erp-updates-root' );
+	if ( updatesRoot ) {
+		const root = createRoot( updatesRoot );
+		root.render( <UpdatesApp /> );
+	}
 
-    // Satsang (Daily Satsang)
-    const satsangRoot = document.getElementById( 'wp-erp-satsang-root' );
-    if ( satsangRoot ) {
-        const root = createRoot( satsangRoot );
-        root.render( <SatsangApp /> );
-    }
+	// Satsang (Daily Satsang)
+	const satsangRoot = document.getElementById( 'wp-erp-satsang-root' );
+	if ( satsangRoot ) {
+		const root = createRoot( satsangRoot );
+		root.render( <SatsangApp /> );
+	}
 
-    // Programs (Daily Programs)
-    const programsRoot = document.getElementById( 'wp-erp-programs-root' );
-    if ( programsRoot ) {
-        const root = createRoot( programsRoot );
-        root.render( <ProgramsApp /> );
-    }
+	// Programs (Daily Programs)
+	const programsRoot = document.getElementById( 'wp-erp-programs-root' );
+	if ( programsRoot ) {
+		const root = createRoot( programsRoot );
+		root.render( <ProgramsApp /> );
+	}
 
-    // Calendar
-    const calendarRoot = document.getElementById( 'wp-erp-calendar-root' );
-    if ( calendarRoot ) {
-        const root = createRoot( calendarRoot );
-        root.render( <CalendarApp /> );
-    }
+	// Calendar
+	const calendarRoot = document.getElementById( 'wp-erp-calendar-root' );
+	if ( calendarRoot ) {
+		const root = createRoot( calendarRoot );
+		root.render( <CalendarApp /> );
+	}
 }
 
 // Wait for DOM to be ready

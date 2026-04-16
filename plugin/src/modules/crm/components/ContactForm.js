@@ -44,7 +44,7 @@ const ContactForm = ( { onContactCreated } ) => {
 
 		try {
 			await createContact( formData );
-			
+
 			// Reset form
 			setFormData( {
 				first_name: '',
@@ -97,10 +97,7 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __(
-											'First Name',
-											'wp-erp'
-										) }
+										label={ __( 'First Name', 'wp-erp' ) }
 										value={ formData.first_name }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -113,10 +110,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __(
-											'Last Name',
-											'wp-erp'
-										) }
+										label={ __( 'Last Name', 'wp-erp' ) }
 										value={ formData.last_name }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -174,10 +168,7 @@ const ContactForm = ( { onContactCreated } ) => {
 										value={ formData.status }
 										options={ [
 											{
-												label: __(
-													'Lead',
-													'wp-erp'
-												),
+												label: __( 'Lead', 'wp-erp' ),
 												value: 'lead',
 											},
 											{
@@ -209,7 +200,10 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Address Line 1', 'wp-erp' ) }
+										label={ __(
+											'Address Line 1',
+											'wp-erp'
+										) }
 										value={ formData.address_line_1 }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -221,7 +215,10 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Address Line 2', 'wp-erp' ) }
+										label={ __(
+											'Address Line 2',
+											'wp-erp'
+										) }
 										value={ formData.address_line_2 }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -247,7 +244,10 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'State/Province', 'wp-erp' ) }
+										label={ __(
+											'State/Province',
+											'wp-erp'
+										) }
 										value={ formData.state }
 										onChange={ ( value ) =>
 											setFormData( {

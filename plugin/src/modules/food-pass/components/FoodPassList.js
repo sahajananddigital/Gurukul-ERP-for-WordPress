@@ -174,9 +174,7 @@ const FoodPassList = ( { foodPasses, loading } ) => {
 										amount = `₹${ notesData.amount }`;
 									} else if ( pass.total_meals ) {
 										// Fallback if data not in notes (legacy/manual entry)
-										amount = `₹${
-											pass.total_meals * 90
-										}`;
+										amount = `₹${ pass.total_meals * 90 }`;
 									}
 
 									if ( notesData.mealType ) {
@@ -188,9 +186,7 @@ const FoodPassList = ( { foodPasses, loading } ) => {
 								} catch ( e ) {
 									// Legacy plain text notes or error
 									if ( pass.total_meals ) {
-										amount = `₹${
-											pass.total_meals * 90
-										}`;
+										amount = `₹${ pass.total_meals * 90 }`;
 										mealType = 'Lunch';
 									}
 								}

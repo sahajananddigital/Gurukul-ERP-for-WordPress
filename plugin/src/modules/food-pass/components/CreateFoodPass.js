@@ -22,9 +22,9 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 	const [ rate ] = useState( 90 );
 	const [ isCreating, setIsCreating ] = useState( false );
 	const [ error, setError ] = useState( null );
-	
+
 	const total = quantity * rate;
-	
+
 	const handlePrint = async ( e ) => {
 		e.preventDefault();
 		setIsCreating( true );
@@ -44,16 +44,16 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 			amount: total,
 			date: today,
 			time: currentTime,
-			rate: rate,
-			mealType: mealType,
+			rate,
+			mealType,
 			id: 'PENDING...', // Will be updated if we wait for API? No, we print optimistically first or after?
 			// User wants instant print.
 			// To print with correct ID, we should technically wait for API or use a temp ID?
 			// The original code printed "PENDING..." then updated.
 			// With canvas image, we generate it once.
-			// Let's stick to "PENDING..." or try to save first? 
+			// Let's stick to "PENDING..." or try to save first?
 			// Original requirement was "Prints instantly".
-			// However, for a valid ID on receipt, we must save first. 
+			// However, for a valid ID on receipt, we must save first.
 			// Let's save first to get ID, then print (fast enough usually).
 		};
 
@@ -67,16 +67,16 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 			status: 'active',
 			notes: JSON.stringify( {
 				amount: total,
-				rate: rate,
+				rate,
 				time: currentTime,
-				mealType: mealType,
+				mealType,
 			} ),
 		};
 
 		try {
 			// Save first to get real ID
 			const savedPass = await createFoodPass( apiPayload );
-			
+
 			// Update data with real ID
 			receiptData.id = savedPass.id;
 
@@ -101,7 +101,11 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 	return (
 		<>
 			{ error && (
-				<Notice status="error" isDismissible={ false } onRemove={ () => setError( null ) }>
+				<Notice
+					status="error"
+					isDismissible={ false }
+					onRemove={ () => setError( null ) }
+				>
 					{ error }
 				</Notice>
 			) }
@@ -149,8 +153,16 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 									{ __( 'Print Food Pass', 'wp-erp' ) }
 								</Button>
 							</Flex>
-							<p style={ { fontSize: '12px', color: '#646970', margin: 0 } }>
-								{ __( 'Prints instantly; data queued for syncing.' ) }
+							<p
+								style={ {
+									fontSize: '12px',
+									color: '#646970',
+									margin: 0,
+								} }
+							>
+								{ __(
+									'Prints instantly; data queued for syncing.'
+								) }
 							</p>
 						</Flex>
 					</form>
@@ -161,4 +173,3 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 };
 
 export default CreateFoodPass;
-

@@ -25,11 +25,7 @@ export const getDashboardStats = ( foodPasses ) => {
 	const currentMonth = now.getMonth();
 	const currentYear = now.getFullYear();
 
-	const lastMonthDate = new Date(
-		now.getFullYear(),
-		now.getMonth() - 1,
-		1
-	);
+	const lastMonthDate = new Date( now.getFullYear(), now.getMonth() - 1, 1 );
 	const lastMonth = lastMonthDate.getMonth();
 	const lastMonthYear = lastMonthDate.getFullYear();
 
@@ -54,7 +50,9 @@ export const getDashboardStats = ( foodPasses ) => {
 			} else {
 				amount = ( parseInt( pass.total_meals ) || 0 ) * 90;
 			}
-			if ( notesData.mealType ) mealType = notesData.mealType;
+			if ( notesData.mealType ) {
+				mealType = notesData.mealType;
+			}
 		} catch ( e ) {
 			amount = ( parseInt( pass.total_meals ) || 0 ) * 90;
 		}
@@ -63,8 +61,12 @@ export const getDashboardStats = ( foodPasses ) => {
 
 		// Today's Stats
 		if ( pass.issue_date === today ) {
-			if ( mealType === 'Lunch' ) stats.today.lunch += quantity;
-			if ( mealType === 'Dinner' ) stats.today.dinner += quantity;
+			if ( mealType === 'Lunch' ) {
+				stats.today.lunch += quantity;
+			}
+			if ( mealType === 'Dinner' ) {
+				stats.today.dinner += quantity;
+			}
 			stats.today.total += quantity;
 		}
 
@@ -83,8 +85,15 @@ export const getDashboardStats = ( foodPasses ) => {
 	return stats;
 };
 
-export const getFilteredReports = ( foodPasses, startDate, endDate, filterType ) => {
-	if ( ! startDate || ! endDate ) return [];
+export const getFilteredReports = (
+	foodPasses,
+	startDate,
+	endDate,
+	filterType
+) => {
+	if ( ! startDate || ! endDate ) {
+		return [];
+	}
 
 	const start = new Date( startDate );
 	const end = new Date( endDate );
@@ -94,20 +103,23 @@ export const getFilteredReports = ( foodPasses, startDate, endDate, filterType )
 	return foodPasses.filter( ( pass ) => {
 		const passDate = new Date( pass.issue_date );
 		// Date Filter
-		if ( passDate < start || passDate > end ) return false;
+		if ( passDate < start || passDate > end ) {
+			return false;
+		}
 
 		// Meal Type Filter
 		if ( filterType !== 'all' ) {
 			let mealType = 'Lunch';
 			try {
-				const notesData = pass.notes
-					? JSON.parse( pass.notes )
-					: {};
-				if ( notesData.mealType ) mealType = notesData.mealType;
+				const notesData = pass.notes ? JSON.parse( pass.notes ) : {};
+				if ( notesData.mealType ) {
+					mealType = notesData.mealType;
+				}
 			} catch ( e ) {}
 
-			if ( mealType.toLowerCase() !== filterType.toLowerCase() )
+			if ( mealType.toLowerCase() !== filterType.toLowerCase() ) {
 				return false;
+			}
 		}
 
 		return true;
