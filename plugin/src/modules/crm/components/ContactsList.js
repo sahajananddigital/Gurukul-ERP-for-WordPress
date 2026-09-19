@@ -5,8 +5,9 @@
 /* global wpErp */
 
 import { __ } from '@wordpress/i18n';
-import { useState, useRef } from '@wordpress/element';
-import { Flex, Spinner, Button } from '@wordpress/components';
+import { useState, useRef, useMemo } from '@wordpress/element';
+import { Flex, Spinner, Button, Notice } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import { getStatusColor } from '../utils';
 import EditModal from '../../../components/EditModal';
 import { updateContact } from '../services/api';
@@ -17,6 +18,19 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 	const [ editingContact, setEditingContact ] = useState( null );
 	const [ isImporting, setIsImporting ] = useState( false );
 	const fileInputRef = useRef( null );
+
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'id',
+			direction: 'desc',
+		},
+		search: '',
+		filters: [],
+		fields: [ 'name', 'email', 'phone', 'company', 'status' ],
+	} );
 
 	const handleEdit = ( contact ) => {
 		setEditingContact( contact );
@@ -64,7 +78,6 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 				path: 'wp-erp/v1/crm/import',
 				method: 'POST',
 				body: formData,
-				// apiFetch handles multipart/form-data correctly when body is FormData
 			} );
 			if ( onContactUpdated ) {
 				onContactUpdated();
@@ -82,6 +95,73 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 		}
 	};
 
+	const fields = useMemo( () => [
+		{
+			id: 'name',
+			header: __( 'Name', 'wp-erp' ),
+			getValue: ( { item } ) => `${ item.first_name } ${ item.last_name }`,
+			enableSorting: true,
+		},
+		{
+			id: 'email',
+			header: __( 'Email', 'wp-erp' ),
+			getValue: ( { item } ) => item.email || '-',
+			enableSorting: true,
+		},
+		{
+			id: 'phone',
+			header: __( 'Phone', 'wp-erp' ),
+			getValue: ( { item } ) => item.phone || '-',
+		},
+		{
+			id: 'company',
+			header: __( 'Company', 'wp-erp' ),
+			getValue: ( { item } ) => item.company || '-',
+			enableSorting: true,
+		},
+		{
+			id: 'status',
+			header: __( 'Status', 'wp-erp' ),
+			getValue: ( { item } ) => item.status,
+			render: ( { item } ) => (
+				<span
+					style={ {
+						padding: '4px 8px',
+						borderRadius: '2px',
+						backgroundColor: getStatusColor( item.status ),
+						color: '#fff',
+						fontSize: '12px',
+						textTransform: 'capitalize',
+					} }
+				>
+					{ item.status }
+				</span>
+			),
+			enableSorting: true,
+		},
+	], [] );
+
+	const actions = useMemo( () => [
+		{
+			id: 'edit',
+			label: __( 'Edit', 'wp-erp' ),
+			isPrimary: true,
+			callback: ( items ) => {
+				if ( items.length > 0 ) {
+					handleEdit( items[ 0 ] );
+				}
+			},
+		},
+	], [] );
+
+	const defaultLayouts = {
+		table: {
+			layout: {
+				primaryField: 'name',
+			},
+		},
+	};
+
 	if ( loading ) {
 		return (
 			<Flex justify="center" style={ { padding: '32px' } }>
@@ -91,24 +171,10 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 	}
 
 	const contactFields = [
-		{
-			key: 'first_name',
-			label: __( 'First Name', 'wp-erp' ),
-			type: 'text',
-		},
+		{ key: 'first_name', label: __( 'First Name', 'wp-erp' ), type: 'text' },
 		{ key: 'last_name', label: __( 'Last Name', 'wp-erp' ), type: 'text' },
-		{
-			key: 'email',
-			label: __( 'Email', 'wp-erp' ),
-			type: 'text',
-			inputType: 'email',
-		},
-		{
-			key: 'phone',
-			label: __( 'Phone', 'wp-erp' ),
-			type: 'text',
-			inputType: 'tel',
-		},
+		{ key: 'email', label: __( 'Email', 'wp-erp' ), type: 'text', inputType: 'email' },
+		{ key: 'phone', label: __( 'Phone', 'wp-erp' ), type: 'text', inputType: 'tel' },
 		{ key: 'company', label: __( 'Company', 'wp-erp' ), type: 'text' },
 		{
 			key: 'status',
@@ -120,44 +186,11 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 				{ label: 'Opportunity', value: 'opportunity' },
 			],
 		},
-		{
-			key: 'address_line_1',
-			label: __( 'Address Line 1', 'wp-erp' ),
-			type: 'text',
-		},
-		{
-			key: 'address_line_2',
-			label: __( 'Address Line 2', 'wp-erp' ),
-			type: 'text',
-		},
-		{ key: 'city', label: __( 'City', 'wp-erp' ), type: 'text' },
-		{ key: 'state', label: __( 'State', 'wp-erp' ), type: 'text' },
-		{
-			key: 'postal_code',
-			label: __( 'Postal Code', 'wp-erp' ),
-			type: 'text',
-		},
-		{ key: 'country', label: __( 'Country', 'wp-erp' ), type: 'text' },
-		{
-			key: 'birthday',
-			label: __( 'Birthday', 'wp-erp' ),
-			type: 'text',
-			inputType: 'date',
-		},
-		{
-			key: 'anniversary',
-			label: __( 'Anniversary', 'wp-erp' ),
-			type: 'text',
-			inputType: 'date',
-		},
 	];
 
 	return (
 		<div>
-			<Flex
-				justify="flex-end"
-				style={ { marginBottom: '16px', gap: '8px' } }
-			>
+			<Flex justify="flex-end" style={ { marginBottom: '16px', gap: '8px' } }>
 				<input
 					type="file"
 					ref={ fileInputRef }
@@ -165,102 +198,38 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 					accept=".csv"
 					onChange={ handleFileChange }
 				/>
-				<Button
-					variant="link"
-					onClick={ handleDownloadSample }
-					style={ { textDecoration: 'none' } }
-				>
+				<Button variant="link" onClick={ handleDownloadSample } style={ { textDecoration: 'none' } }>
 					{ __( 'Download Sample', 'wp-erp' ) }
 				</Button>
-				<Button
-					variant="secondary"
-					onClick={ handleImportClick }
-					isBusy={ isImporting }
-				>
+				<Button variant="secondary" onClick={ handleImportClick } isBusy={ isImporting }>
 					{ __( 'Import CSV', 'wp-erp' ) }
 				</Button>
-				<Button
-					variant="secondary"
-					onClick={ () => handleExport( 'csv' ) }
-				>
+				<Button variant="secondary" onClick={ () => handleExport( 'csv' ) }>
 					{ __( 'Export CSV', 'wp-erp' ) }
 				</Button>
-				<Button
-					variant="secondary"
-					onClick={ () => handleExport( 'pdf' ) }
-				>
+				<Button variant="secondary" onClick={ () => handleExport( 'pdf' ) }>
 					{ __( 'Export PDF', 'wp-erp' ) }
 				</Button>
 			</Flex>
 
 			{ contacts.length === 0 ? (
-				<p
-					style={ {
-						padding: '16px',
-						textAlign: 'center',
-						color: '#757575',
-					} }
-				>
+				<Notice status="info" isDismissible={ false }>
 					{ __( 'No contacts found.', 'wp-erp' ) }
-				</p>
+				</Notice>
 			) : (
-				<div style={ { overflowX: 'auto' } }>
-					<table className="wp-list-table widefat fixed striped">
-						<thead>
-							<tr>
-								<th>{ __( 'ID', 'wp-erp' ) }</th>
-								<th>{ __( 'Name', 'wp-erp' ) }</th>
-								<th>{ __( 'Email', 'wp-erp' ) }</th>
-								<th>{ __( 'Phone', 'wp-erp' ) }</th>
-								<th>{ __( 'Company', 'wp-erp' ) }</th>
-								<th>{ __( 'Status', 'wp-erp' ) }</th>
-								<th>{ __( 'Actions', 'wp-erp' ) }</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ contacts.map( ( contact ) => (
-								<tr key={ contact.id }>
-									<td>{ contact.id }</td>
-									<td>
-										<strong>
-											{ contact.first_name }{ ' ' }
-											{ contact.last_name }
-										</strong>
-									</td>
-									<td>{ contact.email || '-' }</td>
-									<td>{ contact.phone || '-' }</td>
-									<td>{ contact.company || '-' }</td>
-									<td>
-										<span
-											style={ {
-												padding: '4px 8px',
-												borderRadius: '2px',
-												backgroundColor: getStatusColor(
-													contact.status
-												),
-												color: '#fff',
-												fontSize: '12px',
-												textTransform: 'capitalize',
-											} }
-										>
-											{ contact.status }
-										</span>
-									</td>
-									<td>
-										<Button
-											isSmall
-											variant="secondary"
-											onClick={ () =>
-												handleEdit( contact )
-											}
-										>
-											{ __( 'Edit', 'wp-erp' ) }
-										</Button>
-									</td>
-								</tr>
-							) ) }
-						</tbody>
-					</table>
+				<div style={ { backgroundColor: '#fff', border: '1px solid #e0e0e0', borderRadius: '4px' } }>
+					<DataViews
+						data={ contacts }
+						fields={ fields }
+						actions={ actions }
+						view={ view }
+						onChangeView={ setView }
+						defaultLayouts={ defaultLayouts }
+						paginationInfo={ {
+							totalItems: contacts.length,
+							totalPages: Math.ceil( contacts.length / view.perPage ),
+						} }
+					/>
 				</div>
 			) }
 

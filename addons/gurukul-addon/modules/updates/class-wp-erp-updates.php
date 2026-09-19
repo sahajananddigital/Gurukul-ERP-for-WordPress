@@ -1,6 +1,6 @@
 <?php
 /**
- * Programs Module
+ * Updates Module
  *
  * @package Gurukul_ERP
  */
@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_ERP_Programs {
+class WP_ERP_Updates {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        // add_action( 'admin_menu', array( , 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
@@ -24,13 +24,13 @@ class WP_ERP_Programs {
      */
     public function add_admin_menu() {
         add_menu_page(
-            __( 'Daily Programs', 'wp-erp' ),
-            __( 'Daily Programs', 'wp-erp' ),
+            __( 'Daily Updates', 'wp-erp' ),
+            __( 'Daily Updates', 'wp-erp' ),
             'manage_options',
-            'wp-erp-programs',
+            'wp-erp-updates',
             array( $this, 'render_page' ),
-            'dashicons-calendar-alt',
-            39
+            'dashicons-megaphone',
+            37
         );
     }
 
@@ -39,7 +39,7 @@ class WP_ERP_Programs {
      */
     public function render_page() {
         ?>
-        <div id="wp-erp-programs-root"></div>
+        <div id="wp-erp-updates-root"></div>
         <?php
     }
 
@@ -47,7 +47,7 @@ class WP_ERP_Programs {
      * Enqueue Scripts
      */
     public function enqueue_scripts( $hook ) {
-        if ( 'toplevel_page_wp-erp-programs' === $hook ) {
+        if ( 'toplevel_page_wp-erp-updates' === $hook ) {
             wp_enqueue_media();
         }
     }

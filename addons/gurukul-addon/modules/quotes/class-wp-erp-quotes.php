@@ -1,6 +1,6 @@
 <?php
 /**
- * Updates Module
+ * Quotes Module
  *
  * @package Gurukul_ERP
  */
@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_ERP_Updates {
+class WP_ERP_Quotes {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        // add_action( 'admin_menu', array( , 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
@@ -24,13 +24,13 @@ class WP_ERP_Updates {
      */
     public function add_admin_menu() {
         add_menu_page(
-            __( 'Daily Updates', 'wp-erp' ),
-            __( 'Daily Updates', 'wp-erp' ),
+            __( 'Daily Quotes', 'wp-erp' ),
+            __( 'Daily Quotes', 'wp-erp' ),
             'manage_options',
-            'wp-erp-updates',
+            'wp-erp-quotes',
             array( $this, 'render_page' ),
-            'dashicons-megaphone',
-            37
+            'dashicons-format-quote',
+            36
         );
     }
 
@@ -39,7 +39,7 @@ class WP_ERP_Updates {
      */
     public function render_page() {
         ?>
-        <div id="wp-erp-updates-root"></div>
+        <div id="wp-erp-quotes-root"></div>
         <?php
     }
 
@@ -47,7 +47,7 @@ class WP_ERP_Updates {
      * Enqueue Scripts
      */
     public function enqueue_scripts( $hook ) {
-        if ( 'toplevel_page_wp-erp-updates' === $hook ) {
+        if ( 'toplevel_page_wp-erp-quotes' === $hook ) {
             wp_enqueue_media();
         }
     }

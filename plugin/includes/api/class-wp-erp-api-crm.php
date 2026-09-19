@@ -116,13 +116,15 @@ class WP_ERP_API_CRM extends WP_ERP_API_Controller {
 		
 		$contacts = $wpdb->get_results( $sql );
 
+		$response = rest_ensure_response( $contacts );
+		
 		// Set Cache Headers based on latest item.
 		if ( ! empty( $contacts ) ) {
 			$latest = $contacts[0]->updated_at ?? $contacts[0]->created_at;
-			$this->set_cache_headers( $latest );
+			$response = $this->set_cache_headers( $response, $latest );
 		}
 
-		return rest_ensure_response( $contacts );
+		return $response;
 	}
 
 	/**
@@ -335,11 +337,13 @@ class WP_ERP_API_CRM extends WP_ERP_API_Controller {
 		$table = $wpdb->prefix . 'erp_crm_contacts';
 		$contact = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $request['id'] ) );
         
+		$response = rest_ensure_response( $contact );
+		
         if ( $contact ) {
-             $this->set_cache_headers( $contact->updated_at ?? $contact->created_at );
+             $response = $this->set_cache_headers( $response, $contact->updated_at ?? $contact->created_at );
         }
         
-		return rest_ensure_response( $contact );
+		return $response;
 	}
 
 	/**

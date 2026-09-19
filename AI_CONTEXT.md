@@ -22,23 +22,21 @@
     - **Base Class**: All controllers extend `WP_ERP_API_Controller`.
     - **Caching**: implement `Cache-Control` headers for GET requests.
     - **Security**: Follow [WP Security Standards](https://developer.wordpress.org/apis/security/) (Sanatization, Escaping, Nonces, Capabilities).
-- **Admin UI Pattern**:
-    - **React-First**: Do NOT use standard WordPress Admin tables or Classic Meta Boxes for complex data.
-    - **Implementation**: Create a custom admin page that renders a root `div` (e.g., `#wp-erp-content-root`). Mount a React App from `plugin/src/modules/{module}/App.js`.
-    - **Components**: Strictly use `@wordpress/components`.
-        - **Shared Component**: Use `plugin/src/components/AdminCrud.js` for all List/Create/Edit/Delete interfaces.
-        - **UX Rule**: NEVER use native `alert()` or `confirm()`. Use `Modal` for confirmations and `Notice` for feedback.
+- **Admin UI Pattern (FSE SPA)**:
+    - **React-First SPA**: The plugin UI completely replaces the standard WordPress admin layout (hiding the default sidebar and top bar). It mounts a single React application on `admin.php?page=wp-erp-app`.
+    - **Implementation**: The SPA uses `react-router-dom` to navigate between modules without page reloads.
+    - **Components**: Strictly use `@wordpress/components` (e.g., Flex, Button, Navigation) to build the layout, and the experimental `@wordpress/dataviews` for modern, FSE-style list/table views.
     - **Reference**: [Gutenberg Storybook](https://wordpress.github.io/gutenberg/?path=/docs/docs-introduction--page).
     - **Media**: Use `wp.media` (WordPress Native Uploader) within the React App for image handling. Enqueue scripts via `admin_enqueue_scripts`.
-    - **Build System**:
+    - **Build System & Testing**:
         - Tools: `@wordpress/scripts`.
         - Command: `npm run build` (Compiles React sources from `src/` to `build/`).
-        - Entry Point: `plugin/src/index.js` (detects DOM IDs like `#wp-erp-content-root` and mounts the corresponding App).
-- **Modules**:
-    - Located in `plugin/modules/`.
-    - Each module (e.g., `content`, `donations`) has a main class (e.g., `WP_ERP_Content`) that registers CPTs and Admin Pages.
-    - **Registry Pattern**: `WP_ERP_API` (`includes/class-wp-erp-api.php`) acts as the central registry, loading individual API controllers.
-    - **Module Manager**: `WP_ERP_Module_Manager` handles module activation/deactivation.
+        - Entry Point: `plugin/src/index.js` renders the Master Layout holding the Sidebar and Routing.
+        - **Unit Tests**: Use `jest` and `@testing-library/react`.
+        - **E2E Tests**: Use `wp-scripts test-e2e` with `@wordpress/env` (Playwright-based).
+- **Modules & Addons**:
+    - **Core Modules**: Located in `plugin/modules/`. Provide free, core functionality.
+    - **Premium Addons**: Managed via `WP_ERP_Addon_Manager` and exposed to the SPA to display active/inactive premium features.
 
 ### B. Frontend (Mobile App)
 - **Framework**: **React Native** with **Expo**.

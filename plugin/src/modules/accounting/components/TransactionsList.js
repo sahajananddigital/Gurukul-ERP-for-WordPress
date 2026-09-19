@@ -1,12 +1,99 @@
 /**
  * Transactions List Component
  */
-import { useState } from '@wordpress/element';
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Flex, Spinner, Button, Modal } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 
 const TransactionsList = ( { transactions, loading } ) => {
 	const [ selectedTransaction, setSelectedTransaction ] = useState( null );
+
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'date',
+			direction: 'desc',
+		},
+		search: '',
+		filters: [],
+		fields: [ 'date', 'account', 'description', 'debit', 'credit' ],
+	} );
+
+	const fields = useMemo(
+		() => [
+			{
+				id: 'date',
+				header: __( 'Date', 'wp-erp' ),
+				getValue: ( { item } ) => item.date || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'account',
+				header: __( 'Account', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					typeof item.account === 'object' && item.account !== null
+						? item.account.name || item.account.code || '-'
+						: item.account || item.account_name || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'description',
+				header: __( 'Description', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.description || item.reference || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'debit',
+				header: __( 'Debit', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.debit !== undefined && item.debit !== null
+						? item.debit
+						: '-',
+				enableSorting: true,
+			},
+			{
+				id: 'credit',
+				header: __( 'Credit', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.credit !== undefined && item.credit !== null
+						? item.credit
+						: '-',
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'view',
+				label: __( 'View', 'wp-erp' ),
+				isPrimary: true,
+				callback: ( items ) => {
+					if ( items.length > 0 ) {
+						setSelectedTransaction( items[ 0 ] );
+					}
+				},
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'date',
+				},
+			},
+		} ),
+		[]
+	);
 
 	if ( loading ) {
 		return (
@@ -16,7 +103,7 @@ const TransactionsList = ( { transactions, loading } ) => {
 		);
 	}
 
-	if ( transactions.length === 0 ) {
+	if ( ! transactions || transactions.length === 0 ) {
 		return (
 			<p
 				style={ {
@@ -32,47 +119,27 @@ const TransactionsList = ( { transactions, loading } ) => {
 
 	return (
 		<>
-			<div style={ { overflowX: 'auto' } }>
-				<table className="wp-list-table widefat fixed striped">
-					<thead>
-						<tr>
-							<th>{ __( 'Voucher No', 'wp-erp' ) }</th>
-							<th>{ __( 'Type', 'wp-erp' ) }</th>
-							<th>{ __( 'Date', 'wp-erp' ) }</th>
-							<th>{ __( 'Reference', 'wp-erp' ) }</th>
-							<th>{ __( 'Total', 'wp-erp' ) }</th>
-							<th>{ __( 'Actions', 'wp-erp' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ transactions.map( ( transaction ) => (
-							<tr key={ transaction.id }>
-								<td>
-									<strong>{ transaction.voucher_no }</strong>
-								</td>
-								<td>{ transaction.type }</td>
-								<td>{ transaction.date }</td>
-								<td>{ transaction.reference || '-' }</td>
-								<td>
-									<strong>{ transaction.total }</strong>
-								</td>
-								<td>
-									<Button
-										variant="secondary"
-										onClick={ () =>
-											setSelectedTransaction(
-												transaction
-											)
-										}
-										isSmall
-									>
-										{ __( 'View', 'wp-erp' ) }
-									</Button>
-								</td>
-							</tr>
-						) ) }
-					</tbody>
-				</table>
+			<div
+				style={ {
+					backgroundColor: '#fff',
+					border: '1px solid #e0e0e0',
+					borderRadius: '4px',
+				} }
+			>
+				<DataViews
+					data={ transactions }
+					fields={ fields }
+					actions={ actions }
+					view={ view }
+					onChangeView={ setView }
+					defaultLayouts={ defaultLayouts }
+					paginationInfo={ {
+						totalItems: transactions.length,
+						totalPages: Math.ceil(
+							transactions.length / view.perPage
+						),
+					} }
+				/>
 			</div>
 
 			{ selectedTransaction && (

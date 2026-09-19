@@ -36,7 +36,7 @@ class WP_ERP_Expenses {
 	 * Initialize module
 	 */
 	private function init() {
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		// add_action( 'admin_menu', array( , 'add_admin_menu' ) );
 	}
 	
 	/**

@@ -40,11 +40,12 @@ class WP_ERP_API_Food_Pass extends WP_ERP_API_Controller {
 		
 		$food_passes = $wpdb->get_results( "SELECT * FROM $table ORDER BY issue_date DESC" );
         
+        $response = rest_ensure_response( $food_passes );
         if ( ! empty( $food_passes ) ) {
-            $this->set_cache_headers( $food_passes[0]->issue_date );
+            $response = $this->set_cache_headers( $response, $food_passes[0]->issue_date );
         }
         
-		return rest_ensure_response( $food_passes );
+        return $response;
 	}
 
 	/**

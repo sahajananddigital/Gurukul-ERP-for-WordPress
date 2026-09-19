@@ -1,6 +1,6 @@
 <?php
 /**
- * Satsang Module
+ * Calendar Module
  *
  * @package Gurukul_ERP
  */
@@ -9,13 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class WP_ERP_Satsang {
+class WP_ERP_Calendar {
 
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        // add_action( 'admin_menu', array( , 'add_admin_menu' ) );
 	}
 
     /**
@@ -23,13 +23,13 @@ class WP_ERP_Satsang {
      */
     public function add_admin_menu() {
         add_menu_page(
-            __( 'Daily Satsang', 'wp-erp' ),
-            __( 'Daily Satsang', 'wp-erp' ),
+            __( 'Calendar', 'wp-erp' ),
+            __( 'Calendar', 'wp-erp' ),
             'manage_options',
-            'wp-erp-satsang',
+            'wp-erp-calendar',
             array( $this, 'render_page' ),
-            'dashicons-video-alt3',
-            38
+            'dashicons-calendar',
+            40
         );
     }
 
@@ -38,7 +38,7 @@ class WP_ERP_Satsang {
      */
     public function render_page() {
         ?>
-        <div id="wp-erp-satsang-root"></div>
+        <div id="wp-erp-calendar-root"></div>
         <?php
     }
 }

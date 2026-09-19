@@ -40,29 +40,8 @@ class WP_ERP_Database {
 		// Expenses Tables
 		self::create_expenses_tables( $charset_collate );
 		
-		// Food Pass Tables
-		self::create_food_pass_tables( $charset_collate );
-
-		// Donations Tables
-		self::create_donations_table( $charset_collate );
-		
 		// Addons table
 		self::create_addons_table( $charset_collate );
-        
-        // Daily Quotes Table
-        self::create_daily_quotes_table( $charset_collate );
-
-        // Daily Updates Table
-        self::create_daily_updates_table( $charset_collate );
-
-        // Daily Satsang Table
-        self::create_daily_satsang_table( $charset_collate );
-
-        // Daily Programs Table
-        self::create_daily_programs_table( $charset_collate );
-
-        // Calendar Events Table
-        self::create_calendar_events_table( $charset_collate );
 	}
 	
 	/**

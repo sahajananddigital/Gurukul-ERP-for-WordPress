@@ -1,7 +1,8 @@
 /**
- * WordPress ERP Plugin - Main Entry Point
+ * WordPress ERP Plugin - Main Entry Point (FSE SPA)
  */
 import { createRoot } from 'react-dom/client';
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Import modules
 import CRMApp from './modules/crm/App';
@@ -11,127 +12,53 @@ import HelpdeskApp from './modules/helpdesk/App';
 import VouchersApp from './modules/vouchers/App';
 import InvoicesApp from './modules/invoices/App';
 import ExpensesApp from './modules/expenses/App';
-import FoodPassApp from './modules/food-pass/App';
-import DonationsApp from './modules/donations/App';
-import ContentApp from './modules/content/App';
-import QuotesApp from './modules/quotes/App';
-import UpdatesApp from './modules/updates/App';
-import SatsangApp from './modules/satsang/App';
-import ProgramsApp from './modules/programs/App';
-import CalendarApp from './modules/calendar/App';
+// Addons will inject their own apps here dynamically in the future.
 
-// Initialize modules based on page
+import { applyFilters } from '@wordpress/hooks';
+import Layout from './components/Layout';
+
+const App = () => {
+	
+	const coreRoutes = [
+		<Route key="dashboard" path="/dashboard" element={<div><h1>Dashboard</h1><p>Welcome to Sahajanand ERP.</p></div>} />,
+		<Route key="crm" path="/crm" element={<CRMApp />} />,
+		<Route key="accounting" path="/accounting" element={<AccountingApp />} />,
+		<Route key="hr" path="/hr" element={<HRApp />} />,
+		<Route key="helpdesk" path="/helpdesk" element={<HelpdeskApp />} />,
+		<Route key="vouchers" path="/vouchers" element={<VouchersApp />} />,
+		<Route key="invoices" path="/invoices" element={<InvoicesApp />} />,
+		<Route key="expenses" path="/expenses" element={<ExpensesApp />} />,
+		<Route key="addons" path="/addons" element={<div><h1>Premium Add-ons</h1><p>Manage your modules here.</p></div>} />,
+		<Route key="settings" path="/settings/*" element={<div><h1>Settings</h1><p>Global configurations.</p></div>} />,
+	];
+
+	// Premium Addons can inject their `<Route />` components here
+	const addonRoutes = applyFilters( 'wpErp.routes', [] );
+
+	return (
+		<HashRouter>
+			<Layout>
+				<Routes>
+					<Route path="/" element={<Navigate to="/dashboard" replace />} />
+					{ coreRoutes }
+					{ addonRoutes }
+				</Routes>
+			</Layout>
+		</HashRouter>
+	);
+};
+
+// Wait for DOM to be ready
 function initERP() {
-	// CRM
-	const crmRoot = document.getElementById( 'wp-erp-crm-root' );
-	if ( crmRoot ) {
-		const root = createRoot( crmRoot );
-		root.render( <CRMApp /> );
-	}
-
-	// Accounting
-	const accountingRoot = document.getElementById( 'wp-erp-accounting-root' );
-	if ( accountingRoot ) {
-		const root = createRoot( accountingRoot );
-		root.render( <AccountingApp /> );
-	}
-
-	// HR
-	const hrRoot = document.getElementById( 'wp-erp-hr-root' );
-	if ( hrRoot ) {
-		const root = createRoot( hrRoot );
-		root.render( <HRApp /> );
-	}
-
-	// Helpdesk
-	const helpdeskRoot = document.getElementById( 'wp-erp-helpdesk-root' );
-	if ( helpdeskRoot ) {
-		const root = createRoot( helpdeskRoot );
-		root.render( <HelpdeskApp /> );
-	}
-
-	// Vouchers
-	const vouchersRoot = document.getElementById( 'wp-erp-vouchers-root' );
-	if ( vouchersRoot ) {
-		const root = createRoot( vouchersRoot );
-		root.render( <VouchersApp /> );
-	}
-
-	// Invoices
-	const invoicesRoot = document.getElementById( 'wp-erp-invoices-root' );
-	if ( invoicesRoot ) {
-		const root = createRoot( invoicesRoot );
-		root.render( <InvoicesApp /> );
-	}
-
-	// Expenses
-	const expensesRoot = document.getElementById( 'wp-erp-expenses-root' );
-	if ( expensesRoot ) {
-		const root = createRoot( expensesRoot );
-		root.render( <ExpensesApp /> );
-	}
-
-	// Food Pass
-	const foodPassRoot = document.getElementById( 'wp-erp-food-pass-root' );
-	if ( foodPassRoot ) {
-		const root = createRoot( foodPassRoot );
-		root.render( <FoodPassApp /> );
-	}
-
-	// Donations
-	const donationsRoot = document.getElementById( 'wp-erp-donations-root' );
-	if ( donationsRoot ) {
-		const root = createRoot( donationsRoot );
-		root.render( <DonationsApp /> );
-	}
-
-	// Content (Daily Darshan)
-	const contentRoot = document.getElementById( 'wp-erp-content-root' );
-	if ( contentRoot ) {
-		const root = createRoot( contentRoot );
-		root.render( <ContentApp /> );
-	}
-
-	// Quotes (Daily Quotes)
-	const quotesRoot = document.getElementById( 'wp-erp-quotes-root' );
-	if ( quotesRoot ) {
-		const root = createRoot( quotesRoot );
-		root.render( <QuotesApp /> );
-	}
-
-	// Updates (Daily Updates)
-	const updatesRoot = document.getElementById( 'wp-erp-updates-root' );
-	if ( updatesRoot ) {
-		const root = createRoot( updatesRoot );
-		root.render( <UpdatesApp /> );
-	}
-
-	// Satsang (Daily Satsang)
-	const satsangRoot = document.getElementById( 'wp-erp-satsang-root' );
-	if ( satsangRoot ) {
-		const root = createRoot( satsangRoot );
-		root.render( <SatsangApp /> );
-	}
-
-	// Programs (Daily Programs)
-	const programsRoot = document.getElementById( 'wp-erp-programs-root' );
-	if ( programsRoot ) {
-		const root = createRoot( programsRoot );
-		root.render( <ProgramsApp /> );
-	}
-
-	// Calendar
-	const calendarRoot = document.getElementById( 'wp-erp-calendar-root' );
-	if ( calendarRoot ) {
-		const root = createRoot( calendarRoot );
-		root.render( <CalendarApp /> );
+	const rootElement = document.getElementById( 'wp-erp-root' );
+	if ( rootElement ) {
+		const root = createRoot( rootElement );
+		root.render( <App /> );
 	}
 }
 
-// Wait for DOM to be ready
 if ( document.readyState === 'loading' ) {
 	document.addEventListener( 'DOMContentLoaded', initERP );
 } else {
-	// DOM is already ready
 	initERP();
 }

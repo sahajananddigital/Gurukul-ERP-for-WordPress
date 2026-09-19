@@ -16,7 +16,7 @@ class WP_ERP_Content {
 	 */
 	public function __construct() {
         add_action( 'init', array( $this, 'register_cpt' ) );
-        add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+        // add_action( 'admin_menu', array( , 'add_admin_menu' ) );
         add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 

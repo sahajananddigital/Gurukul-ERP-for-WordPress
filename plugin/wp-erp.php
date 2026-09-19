@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: Gurukul ERP
+ * Plugin Name: Sahajanand ERP
  * Plugin URI: https://github.com/sahajananddigital/Simple-ERP-for-WordPress
- * Description: A comprehensive Gurukul Management System (ERP) for WordPress. Includes Student CRM, Donations, Food Pass management, and API for Mobile App.
+ * Description: A comprehensive Management System (ERP) for WordPress. Includes CRM, Accounting, HR, Helpdesk, and API.
  * Version: 1.0.0
  * Author: Sahajanand Digital
  * Author URI: https://sahajananddigital.in
@@ -13,7 +13,6 @@
  * Requires at least: 5.8
  * Requires PHP: 7.4
  */
-
 
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
@@ -107,9 +106,10 @@ final class WP_ERP {
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-user-sync.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-api.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-admin.php';
+		require_once WP_ERP_PLUGIN_DIR . 'includes/class-wp-erp-spa.php';
 		require_once WP_ERP_PLUGIN_DIR . 'includes/functions.php';
 		
-		// Load modules
+		// Load core modules
 		require_once WP_ERP_PLUGIN_DIR . 'modules/crm/class-wp-erp-crm.php';
 		require_once WP_ERP_PLUGIN_DIR . 'modules/accounting/class-wp-erp-accounting.php';
 		require_once WP_ERP_PLUGIN_DIR . 'modules/hr/class-wp-erp-hr.php';
@@ -117,10 +117,6 @@ final class WP_ERP {
 		require_once WP_ERP_PLUGIN_DIR . 'modules/vouchers/class-wp-erp-vouchers.php';
 		require_once WP_ERP_PLUGIN_DIR . 'modules/invoices/class-wp-erp-invoices.php';
 		require_once WP_ERP_PLUGIN_DIR . 'modules/expenses/class-wp-erp-expenses.php';
-		require_once WP_ERP_PLUGIN_DIR . 'modules/food-pass/class-wp-erp-food-pass.php';
-		require_once WP_ERP_PLUGIN_DIR . 'modules/donations/class-wp-erp-donations.php';
-        // Content Module (Gurukul)
-        require_once WP_ERP_PLUGIN_DIR . 'modules/content/class-wp-erp-content.php';
 	}
 	
 	/**
@@ -159,29 +155,6 @@ final class WP_ERP {
 		$this->modules->register_module( 'vouchers', new WP_ERP_Vouchers() );
 		$this->modules->register_module( 'invoices', new WP_ERP_Invoices() );
 		$this->modules->register_module( 'expenses', new WP_ERP_Expenses() );
-		$this->modules->register_module( 'food-pass', new WP_ERP_Food_Pass() );
-		$this->modules->register_module( 'donations', new WP_ERP_Donations() );
-        $this->modules->register_module( 'content', new WP_ERP_Content() );
-        
-        // Load Quotes Module
-        require_once WP_ERP_PLUGIN_DIR . 'modules/quotes/class-wp-erp-quotes.php';
-        $this->modules->register_module( 'quotes', new WP_ERP_Quotes() );
-
-        // Load Updates Module
-        require_once WP_ERP_PLUGIN_DIR . 'modules/updates/class-wp-erp-updates.php';
-        $this->modules->register_module( 'updates', new WP_ERP_Updates() );
-        
-        // Load Satsang Module
-        require_once WP_ERP_PLUGIN_DIR . 'modules/satsang/class-wp-erp-satsang.php';
-        $this->modules->register_module( 'satsang', new WP_ERP_Satsang() );
-
-        // Load Programs Module
-        require_once WP_ERP_PLUGIN_DIR . 'modules/programs/class-wp-erp-programs.php';
-        $this->modules->register_module( 'programs', new WP_ERP_Programs() );
-
-        // Load Calendar Module
-        require_once WP_ERP_PLUGIN_DIR . 'modules/calendar/class-wp-erp-calendar.php';
-        $this->modules->register_module( 'calendar', new WP_ERP_Calendar() );
 		
 		// Load addons
 		$this->addons->load_addons();
@@ -236,6 +209,7 @@ final class WP_ERP {
 				'apiUrl' => rest_url( 'wp-erp/v1/' ),
 				'nonce' => wp_create_nonce( 'wp_rest' ),
 				'modules' => $modules_data,
+				'adminUrl' => admin_url(),
 			) );
 		} else {
 			// Add admin notice if build files don't exist

@@ -43,11 +43,12 @@ class WP_ERP_API_Donations extends WP_ERP_API_Controller {
         
 		$donations = $wpdb->get_results( "SELECT * FROM $table ORDER BY created_at DESC" );
         
+        $response = rest_ensure_response( $donations );
         if ( ! empty( $donations ) ) {
-             $this->set_cache_headers( $donations[0]->created_at );
+             $response = $this->set_cache_headers( $response, $donations[0]->created_at );
         }
-        
-		return rest_ensure_response( $donations );
+
+        return $response;
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /**
  * HR Module App
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Card,
@@ -12,13 +12,33 @@ import {
 	Flex,
 	TabPanel,
 } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
 
-const HRApp = ( { view = 'employees' } ) => {
+const HRApp = ( { view: initialTab = 'employees' } ) => {
 	const [ employees, setEmployees ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
-	const [ activeTab, setActiveTab ] = useState( view );
+	const [ activeTab, setActiveTab ] = useState( initialTab );
+
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'employee_id',
+			direction: 'asc',
+		},
+		search: '',
+		filters: [],
+		fields: [
+			'employee_id',
+			'name',
+			'designation',
+			'department',
+			'status',
+		],
+	} );
 
 	useEffect( () => {
 		if ( activeTab === 'employees' ) {
@@ -50,6 +70,68 @@ const HRApp = ( { view = 'employees' } ) => {
 		}
 	};
 
+	const fields = useMemo(
+		() => [
+			{
+				id: 'employee_id',
+				header: __( 'Employee ID', 'wp-erp' ),
+				getValue: ( { item } ) => item.employee_id,
+				enableSorting: true,
+			},
+			{
+				id: 'name',
+				header: __( 'Name', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.user_id ? `User #${ item.user_id }` : '-',
+				enableSorting: true,
+			},
+			{
+				id: 'designation',
+				header: __( 'Designation', 'wp-erp' ),
+				getValue: ( { item } ) => item.designation || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'department',
+				header: __( 'Department', 'wp-erp' ),
+				getValue: ( { item } ) => item.department || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'status',
+				header: __( 'Status', 'wp-erp' ),
+				getValue: ( { item } ) => item.status,
+				render: ( { item } ) => (
+					<span
+						style={ {
+							padding: '4px 8px',
+							borderRadius: '2px',
+							backgroundColor: getStatusColor( item.status ),
+							color: '#fff',
+							fontSize: '12px',
+							textTransform: 'capitalize',
+						} }
+					>
+						{ item.status }
+					</span>
+				),
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'employee_id',
+				},
+			},
+		} ),
+		[]
+	);
+
 	const renderEmployeesList = () => {
 		if ( loading ) {
 			return (
@@ -74,50 +156,27 @@ const HRApp = ( { view = 'employees' } ) => {
 		}
 
 		return (
-			<div style={ { overflowX: 'auto' } }>
-				<table className="wp-list-table widefat fixed striped">
-					<thead>
-						<tr>
-							<th>{ __( 'Employee ID', 'wp-erp' ) }</th>
-							<th>{ __( 'Name', 'wp-erp' ) }</th>
-							<th>{ __( 'Designation', 'wp-erp' ) }</th>
-							<th>{ __( 'Department', 'wp-erp' ) }</th>
-							<th>{ __( 'Status', 'wp-erp' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ employees.map( ( employee ) => (
-							<tr key={ employee.id }>
-								<td>
-									<strong>{ employee.employee_id }</strong>
-								</td>
-								<td>
-									{ employee.user_id
-										? `User #${ employee.user_id }`
-										: '-' }
-								</td>
-								<td>{ employee.designation || '-' }</td>
-								<td>{ employee.department || '-' }</td>
-								<td>
-									<span
-										style={ {
-											padding: '4px 8px',
-											borderRadius: '2px',
-											backgroundColor: getStatusColor(
-												employee.status
-											),
-											color: '#fff',
-											fontSize: '12px',
-											textTransform: 'capitalize',
-										} }
-									>
-										{ employee.status }
-									</span>
-								</td>
-							</tr>
-						) ) }
-					</tbody>
-				</table>
+			<div
+				style={ {
+					backgroundColor: '#fff',
+					border: '1px solid #e0e0e0',
+					borderRadius: '4px',
+				} }
+			>
+				<DataViews
+					data={ employees }
+					fields={ fields }
+					actions={ [] }
+					view={ view }
+					onChangeView={ setView }
+					defaultLayouts={ defaultLayouts }
+					paginationInfo={ {
+						totalItems: employees.length,
+						totalPages: Math.ceil(
+							employees.length / view.perPage
+						),
+					} }
+				/>
 			</div>
 		);
 	};

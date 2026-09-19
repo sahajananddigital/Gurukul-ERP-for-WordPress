@@ -1,11 +1,91 @@
 /**
  * Expenses List Component
  */
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Flex, Spinner } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import { getStatusColor } from '../utils';
 
 const ExpensesList = ( { expenses, loading } ) => {
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'date',
+			direction: 'desc',
+		},
+		search: '',
+		filters: [],
+		fields: [ 'date', 'category', 'amount', 'description', 'status' ],
+	} );
+
+	const fields = useMemo(
+		() => [
+			{
+				id: 'date',
+				header: __( 'Date', 'wp-erp' ),
+				getValue: ( { item } ) => item.date || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'category',
+				header: __( 'Category', 'wp-erp' ),
+				getValue: ( { item } ) => item.category || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'amount',
+				header: __( 'Amount', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.amount !== undefined && item.amount !== null
+						? item.amount
+						: '-',
+				enableSorting: true,
+			},
+			{
+				id: 'description',
+				header: __( 'Description', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.description || item.expense_no || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'status',
+				header: __( 'Status', 'wp-erp' ),
+				getValue: ( { item } ) => item.status,
+				render: ( { item } ) => (
+					<span
+						style={ {
+							padding: '4px 8px',
+							borderRadius: '2px',
+							backgroundColor: getStatusColor( item.status ),
+							color: '#fff',
+							fontSize: '12px',
+							textTransform: 'capitalize',
+						} }
+					>
+						{ item.status }
+					</span>
+				),
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'date',
+				},
+			},
+		} ),
+		[]
+	);
+
 	if ( loading ) {
 		return (
 			<Flex justify="center" style={ { padding: '32px' } }>
@@ -14,7 +94,7 @@ const ExpensesList = ( { expenses, loading } ) => {
 		);
 	}
 
-	if ( expenses.length === 0 ) {
+	if ( ! expenses || expenses.length === 0 ) {
 		return (
 			<p
 				style={ {
@@ -29,50 +109,25 @@ const ExpensesList = ( { expenses, loading } ) => {
 	}
 
 	return (
-		<div style={ { overflowX: 'auto' } }>
-			<table className="wp-list-table widefat fixed striped">
-				<thead>
-					<tr>
-						<th>{ __( 'Expense No', 'wp-erp' ) }</th>
-						<th>{ __( 'Type', 'wp-erp' ) }</th>
-						<th>{ __( 'Date', 'wp-erp' ) }</th>
-						<th>{ __( 'Amount', 'wp-erp' ) }</th>
-						<th>{ __( 'Category', 'wp-erp' ) }</th>
-						<th>{ __( 'Status', 'wp-erp' ) }</th>
-					</tr>
-				</thead>
-				<tbody>
-					{ expenses.map( ( expense ) => (
-						<tr key={ expense.id }>
-							<td>
-								<strong>{ expense.expense_no }</strong>
-							</td>
-							<td>{ expense.expense_type }</td>
-							<td>{ expense.date }</td>
-							<td>
-								<strong>{ expense.amount }</strong>
-							</td>
-							<td>{ expense.category || '-' }</td>
-							<td>
-								<span
-									style={ {
-										padding: '4px 8px',
-										borderRadius: '2px',
-										backgroundColor: getStatusColor(
-											expense.status
-										),
-										color: '#fff',
-										fontSize: '12px',
-										textTransform: 'capitalize',
-									} }
-								>
-									{ expense.status }
-								</span>
-							</td>
-						</tr>
-					) ) }
-				</tbody>
-			</table>
+		<div
+			style={ {
+				backgroundColor: '#fff',
+				border: '1px solid #e0e0e0',
+				borderRadius: '4px',
+			} }
+		>
+			<DataViews
+				data={ expenses }
+				fields={ fields }
+				actions={ [] }
+				view={ view }
+				onChangeView={ setView }
+				defaultLayouts={ defaultLayouts }
+				paginationInfo={ {
+					totalItems: expenses.length,
+					totalPages: Math.ceil( expenses.length / view.perPage ),
+				} }
+			/>
 		</div>
 	);
 };

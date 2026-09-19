@@ -39,7 +39,7 @@ class WP_ERP_Donations {
 		// Create tables on init (simplified for this proof of concept)
 		add_action( 'init', array( $this, 'create_tables' ) );
 		
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+		// add_action( 'admin_menu', array( , 'add_admin_menu' ) );
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 

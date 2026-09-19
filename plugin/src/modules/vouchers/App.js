@@ -1,7 +1,7 @@
 /**
  * Vouchers Module App
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Card,
@@ -17,9 +17,10 @@ import {
 	FlexBlock,
 	TabPanel,
 } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
 
-const VouchersApp = ( { view = 'list' } ) => {
+const VouchersApp = ( { view: initialTab = 'list' } ) => {
 	const [ vouchers, setVouchers ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
@@ -34,8 +35,28 @@ const VouchersApp = ( { view = 'list' } ) => {
 	} );
 
 	const [ activeTab, setActiveTab ] = useState(
-		view === 'create' ? 'create' : 'list'
+		initialTab === 'create' ? 'create' : 'list'
 	);
+
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'voucher_no',
+			direction: 'desc',
+		},
+		search: '',
+		filters: [],
+		fields: [
+			'voucher_no',
+			'voucher_type',
+			'date',
+			'party_name',
+			'amount',
+			'status',
+		],
+	} );
 
 	useEffect( () => {
 		if ( activeTab === 'list' ) {
@@ -102,6 +123,73 @@ const VouchersApp = ( { view = 'list' } ) => {
 		}
 	};
 
+	const fields = useMemo(
+		() => [
+			{
+				id: 'voucher_no',
+				header: __( 'Voucher No', 'wp-erp' ),
+				getValue: ( { item } ) => item.voucher_no,
+				enableSorting: true,
+			},
+			{
+				id: 'voucher_type',
+				header: __( 'Type', 'wp-erp' ),
+				getValue: ( { item } ) => item.voucher_type,
+				enableSorting: true,
+			},
+			{
+				id: 'date',
+				header: __( 'Date', 'wp-erp' ),
+				getValue: ( { item } ) => item.date,
+				enableSorting: true,
+			},
+			{
+				id: 'party_name',
+				header: __( 'Party Name', 'wp-erp' ),
+				getValue: ( { item } ) => item.party_name || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'amount',
+				header: __( 'Amount', 'wp-erp' ),
+				getValue: ( { item } ) => item.amount,
+				enableSorting: true,
+			},
+			{
+				id: 'status',
+				header: __( 'Status', 'wp-erp' ),
+				getValue: ( { item } ) => item.status,
+				render: ( { item } ) => (
+					<span
+						style={ {
+							padding: '4px 8px',
+							borderRadius: '2px',
+							backgroundColor: getStatusColor( item.status ),
+							color: '#fff',
+							fontSize: '12px',
+							textTransform: 'capitalize',
+						} }
+					>
+						{ item.status }
+					</span>
+				),
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'voucher_no',
+				},
+			},
+		} ),
+		[]
+	);
+
 	const renderVouchersList = () => {
 		if ( loading ) {
 			return (
@@ -126,50 +214,25 @@ const VouchersApp = ( { view = 'list' } ) => {
 		}
 
 		return (
-			<div style={ { overflowX: 'auto' } }>
-				<table className="wp-list-table widefat fixed striped">
-					<thead>
-						<tr>
-							<th>{ __( 'Voucher No', 'wp-erp' ) }</th>
-							<th>{ __( 'Type', 'wp-erp' ) }</th>
-							<th>{ __( 'Date', 'wp-erp' ) }</th>
-							<th>{ __( 'Party Name', 'wp-erp' ) }</th>
-							<th>{ __( 'Amount', 'wp-erp' ) }</th>
-							<th>{ __( 'Status', 'wp-erp' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ vouchers.map( ( voucher ) => (
-							<tr key={ voucher.id }>
-								<td>
-									<strong>{ voucher.voucher_no }</strong>
-								</td>
-								<td>{ voucher.voucher_type }</td>
-								<td>{ voucher.date }</td>
-								<td>{ voucher.party_name || '-' }</td>
-								<td>
-									<strong>{ voucher.amount }</strong>
-								</td>
-								<td>
-									<span
-										style={ {
-											padding: '4px 8px',
-											borderRadius: '2px',
-											backgroundColor: getStatusColor(
-												voucher.status
-											),
-											color: '#fff',
-											fontSize: '12px',
-											textTransform: 'capitalize',
-										} }
-									>
-										{ voucher.status }
-									</span>
-								</td>
-							</tr>
-						) ) }
-					</tbody>
-				</table>
+			<div
+				style={ {
+					backgroundColor: '#fff',
+					border: '1px solid #e0e0e0',
+					borderRadius: '4px',
+				} }
+			>
+				<DataViews
+					data={ vouchers }
+					fields={ fields }
+					actions={ [] }
+					view={ view }
+					onChangeView={ setView }
+					defaultLayouts={ defaultLayouts }
+					paginationInfo={ {
+						totalItems: vouchers.length,
+						totalPages: Math.ceil( vouchers.length / view.perPage ),
+					} }
+				/>
 			</div>
 		);
 	};

@@ -51,24 +51,28 @@ abstract class WP_ERP_API_Controller {
 	/**
 	 * Set caching headers
 	 *
+	 * @param WP_REST_Response $response The response object
 	 * @param string $last_modified Last modified timestamp (e.g. '2023-01-01 12:00:00')
+	 * @return WP_REST_Response
 	 */
-	protected function set_cache_headers( $last_modified ) {
+	protected function set_cache_headers( $response, $last_modified ) {
 		if ( empty( $last_modified ) ) {
-			return;
+			return $response;
 		}
 
 		$timestamp = strtotime( $last_modified );
 		
         if ( ! $timestamp ) {
-            return;
+            return $response;
         }
 
 		$etag = md5( $last_modified );
 		
-		header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', $timestamp ) . ' GMT' );
-		header( 'ETag: "' . $etag . '"' );
-        header( 'Cache-Control: public, max-age=3600' ); // Cache for 1 hour by default
+		$response->header( 'Last-Modified', gmdate( 'D, d M Y H:i:s', $timestamp ) . ' GMT' );
+		$response->header( 'ETag', '"' . $etag . '"' );
+        $response->header( 'Cache-Control', 'public, max-age=3600' ); // Cache for 1 hour by default
+        
+        return $response;
 	}
 
     /**

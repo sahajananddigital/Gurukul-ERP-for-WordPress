@@ -1,10 +1,69 @@
 /**
  * Accounts List Component
  */
+import { useState, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Flex, Spinner } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 
 const AccountsList = ( { accounts, loading } ) => {
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'code',
+			direction: 'asc',
+		},
+		search: '',
+		filters: [],
+		fields: [ 'code', 'name', 'type', 'balance' ],
+	} );
+
+	const fields = useMemo(
+		() => [
+			{
+				id: 'code',
+				header: __( 'Code', 'wp-erp' ),
+				getValue: ( { item } ) => item.code || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'name',
+				header: __( 'Name', 'wp-erp' ),
+				getValue: ( { item } ) => item.name || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'type',
+				header: __( 'Type', 'wp-erp' ),
+				getValue: ( { item } ) => item.type || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'balance',
+				header: __( 'Balance', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.balance !== undefined && item.balance !== null
+						? item.balance
+						: '-',
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'code',
+				},
+			},
+		} ),
+		[]
+	);
+
 	if ( loading ) {
 		return (
 			<Flex justify="center" style={ { padding: '32px' } }>
@@ -13,7 +72,7 @@ const AccountsList = ( { accounts, loading } ) => {
 		);
 	}
 
-	if ( accounts.length === 0 ) {
+	if ( ! accounts || accounts.length === 0 ) {
 		return (
 			<p
 				style={ {
@@ -28,31 +87,25 @@ const AccountsList = ( { accounts, loading } ) => {
 	}
 
 	return (
-		<div style={ { overflowX: 'auto' } }>
-			<table className="wp-list-table widefat fixed striped">
-				<thead>
-					<tr>
-						<th>{ __( 'Code', 'wp-erp' ) }</th>
-						<th>{ __( 'Name', 'wp-erp' ) }</th>
-						<th>{ __( 'Type', 'wp-erp' ) }</th>
-						<th>{ __( 'Balance', 'wp-erp' ) }</th>
-					</tr>
-				</thead>
-				<tbody>
-					{ accounts.map( ( account ) => (
-						<tr key={ account.id }>
-							<td>
-								<strong>{ account.code }</strong>
-							</td>
-							<td>{ account.name }</td>
-							<td>{ account.type }</td>
-							<td>
-								<strong>{ account.balance }</strong>
-							</td>
-						</tr>
-					) ) }
-				</tbody>
-			</table>
+		<div
+			style={ {
+				backgroundColor: '#fff',
+				border: '1px solid #e0e0e0',
+				borderRadius: '4px',
+			} }
+		>
+			<DataViews
+				data={ accounts }
+				fields={ fields }
+				actions={ [] }
+				view={ view }
+				onChangeView={ setView }
+				defaultLayouts={ defaultLayouts }
+				paginationInfo={ {
+					totalItems: accounts.length,
+					totalPages: Math.ceil( accounts.length / view.perPage ),
+				} }
+			/>
 		</div>
 	);
 };

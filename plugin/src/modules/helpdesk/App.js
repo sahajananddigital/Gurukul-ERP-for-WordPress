@@ -1,7 +1,7 @@
 /**
  * Helpdesk Module App
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Card,
@@ -17,6 +17,7 @@ import {
 	FlexBlock,
 	TabPanel,
 } from '@wordpress/components';
+import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
 
 const HelpdeskApp = () => {
@@ -31,6 +32,19 @@ const HelpdeskApp = () => {
 		status: 'open',
 	} );
 	const [ activeTab, setActiveTab ] = useState( 'tickets' );
+
+	const [ view, setView ] = useState( {
+		type: 'table',
+		perPage: 20,
+		page: 1,
+		sort: {
+			field: 'ticket_id',
+			direction: 'desc',
+		},
+		search: '',
+		filters: [],
+		fields: [ 'ticket_id', 'subject', 'priority', 'status', 'created_at' ],
+	} );
 
 	useEffect( () => {
 		fetchTickets();
@@ -105,6 +119,84 @@ const HelpdeskApp = () => {
 		}
 	};
 
+	const fields = useMemo(
+		() => [
+			{
+				id: 'ticket_id',
+				header: __( 'Ticket ID', 'wp-erp' ),
+				getValue: ( { item } ) =>
+					item.ticket_id ||
+					item.ticket_no ||
+					( item.id ? String( item.id ) : '-' ),
+				enableSorting: true,
+			},
+			{
+				id: 'subject',
+				header: __( 'Subject', 'wp-erp' ),
+				getValue: ( { item } ) => item.subject || '-',
+				enableSorting: true,
+			},
+			{
+				id: 'priority',
+				header: __( 'Priority', 'wp-erp' ),
+				getValue: ( { item } ) => item.priority,
+				render: ( { item } ) => (
+					<span
+						style={ {
+							padding: '4px 8px',
+							borderRadius: '2px',
+							backgroundColor: getPriorityColor( item.priority ),
+							color: '#fff',
+							fontSize: '12px',
+							textTransform: 'capitalize',
+						} }
+					>
+						{ item.priority }
+					</span>
+				),
+				enableSorting: true,
+			},
+			{
+				id: 'status',
+				header: __( 'Status', 'wp-erp' ),
+				getValue: ( { item } ) => item.status,
+				render: ( { item } ) => (
+					<span
+						style={ {
+							padding: '4px 8px',
+							borderRadius: '2px',
+							backgroundColor: getStatusColor( item.status ),
+							color: '#fff',
+							fontSize: '12px',
+							textTransform: 'capitalize',
+						} }
+					>
+						{ item.status }
+					</span>
+				),
+				enableSorting: true,
+			},
+			{
+				id: 'created_at',
+				header: __( 'Created', 'wp-erp' ),
+				getValue: ( { item } ) => item.created_at || '-',
+				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const defaultLayouts = useMemo(
+		() => ( {
+			table: {
+				layout: {
+					primaryField: 'ticket_id',
+				},
+			},
+		} ),
+		[]
+	);
+
 	const renderTicketsList = () => {
 		if ( loading ) {
 			return (
@@ -129,61 +221,25 @@ const HelpdeskApp = () => {
 		}
 
 		return (
-			<div style={ { overflowX: 'auto' } }>
-				<table className="wp-list-table widefat fixed striped">
-					<thead>
-						<tr>
-							<th>{ __( 'Ticket No', 'wp-erp' ) }</th>
-							<th>{ __( 'Subject', 'wp-erp' ) }</th>
-							<th>{ __( 'Priority', 'wp-erp' ) }</th>
-							<th>{ __( 'Status', 'wp-erp' ) }</th>
-							<th>{ __( 'Created', 'wp-erp' ) }</th>
-						</tr>
-					</thead>
-					<tbody>
-						{ tickets.map( ( ticket ) => (
-							<tr key={ ticket.id }>
-								<td>
-									<strong>{ ticket.ticket_no }</strong>
-								</td>
-								<td>{ ticket.subject }</td>
-								<td>
-									<span
-										style={ {
-											padding: '4px 8px',
-											borderRadius: '2px',
-											backgroundColor: getPriorityColor(
-												ticket.priority
-											),
-											color: '#fff',
-											fontSize: '12px',
-											textTransform: 'capitalize',
-										} }
-									>
-										{ ticket.priority }
-									</span>
-								</td>
-								<td>
-									<span
-										style={ {
-											padding: '4px 8px',
-											borderRadius: '2px',
-											backgroundColor: getStatusColor(
-												ticket.status
-											),
-											color: '#fff',
-											fontSize: '12px',
-											textTransform: 'capitalize',
-										} }
-									>
-										{ ticket.status }
-									</span>
-								</td>
-								<td>{ ticket.created_at }</td>
-							</tr>
-						) ) }
-					</tbody>
-				</table>
+			<div
+				style={ {
+					backgroundColor: '#fff',
+					border: '1px solid #e0e0e0',
+					borderRadius: '4px',
+				} }
+			>
+				<DataViews
+					data={ tickets }
+					fields={ fields }
+					actions={ [] }
+					view={ view }
+					onChangeView={ setView }
+					defaultLayouts={ defaultLayouts }
+					paginationInfo={ {
+						totalItems: tickets.length,
+						totalPages: Math.ceil( tickets.length / view.perPage ),
+					} }
+				/>
 			</div>
 		);
 	};
