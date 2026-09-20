@@ -13,9 +13,10 @@
 		"lint:css": "wp-scripts lint-style",
 		"lint:php": "wp-scripts lint-php",
 		"format:php": "wp-scripts format-php",
-		"playground": "npx @wp-playground/cli server --auto-mount",
+		"playground": "npx @wp-playground/cli@latest server --blueprint blueprint.json --mount '.:/wordpress/wp-content/plugins/plugin' --mount '../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon'",
+		"playground:debug": "npx @wp-playground/cli@latest server --blueprint blueprint.json --mount '.:/wordpress/wp-content/plugins/plugin' --mount '../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon'",
 		"open:playground": "open http://localhost:9400",
-		"plugin-zip": "wp-scripts plugin-zip",
+		"plugin-zip": "zip -r wp-erp.zip . -x \"node_modules/*\" \"src/*\" \".git/*\" \".gitignore\" \"package.json\" \"package-lock.json\" \"specs/*\" \"tests/*\" \"playwright.config.js\" \"blueprint.json\"",
 		"test:playwright": "wp-scripts test-playwright"
 	},
 	"keywords": [

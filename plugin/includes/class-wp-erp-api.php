@@ -10,6 +10,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require_once __DIR__ . '/api/class-wp-erp-api-crm.php';
+require_once __DIR__ . '/api/class-wp-erp-api-leads.php';
+require_once __DIR__ . '/api/class-wp-erp-api-deals.php';
+require_once __DIR__ . '/api/class-wp-erp-api-organizations.php';
+require_once __DIR__ . '/api/class-wp-erp-api-settings.php';
+require_once __DIR__ . '/api/class-wp-erp-api-user-access.php';
 require_once __DIR__ . '/api/class-wp-erp-api-general.php';
 require_once __DIR__ . '/api/class-wp-erp-api-auth.php';
 
@@ -84,6 +89,21 @@ class WP_ERP_API {
 
         $crm = new WP_ERP_API_CRM();
         $crm->register_routes();
+
+        $leads = new WP_ERP_API_Leads();
+        $leads->register_routes();
+
+        $deals = new WP_ERP_API_Deals();
+        $deals->register_routes();
+
+        $orgs = new WP_ERP_API_Organizations();
+        $orgs->register_routes();
+
+        $settings = new WP_ERP_API_Settings();
+        $settings->register_routes();
+
+        $user_access = new WP_ERP_API_User_Access();
+        $user_access->register_routes();
 
         $auth = new WP_ERP_API_Auth();
         $auth->register_routes();

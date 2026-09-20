@@ -13,9 +13,6 @@ const Sidebar = () => {
 		{ name: 'Accounting', path: '/accounting', icon: institution },
 		{ name: 'HR', path: '/hr', icon: update },
 		{ name: 'Helpdesk', path: '/helpdesk', icon: update },
-		{ name: 'Vouchers', path: '/vouchers', icon: currencyDollar },
-		{ name: 'Invoices', path: '/invoices', icon: chartBar },
-		{ name: 'Expenses', path: '/expenses', icon: currencyDollar },
 	];
 
 	// Allow Premium Addons to inject their own menu items into the sidebar
@@ -132,8 +129,7 @@ const Sidebar = () => {
 							</div>
 
 							{ renderButton( { name: 'General', path: '/settings/general', icon: cog } ) }
-							{ renderButton( { name: 'Payment Gateways', path: '/settings/payments', icon: currencyDollar } ) }
-							{ renderButton( { name: 'Email Templates', path: '/settings/emails', icon: update } ) }
+							{ renderButton( { name: 'User Access', path: '/settings/user-access', icon: update } ) }
 						</div>
 					</NavigatorScreen>
 

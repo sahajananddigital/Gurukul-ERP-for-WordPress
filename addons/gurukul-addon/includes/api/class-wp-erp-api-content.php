@@ -9,7 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require_once __DIR__ . '/class-wp-erp-api-controller.php';
+if ( ! class_exists( 'WP_ERP_API_Controller' ) && defined( 'WP_ERP_PLUGIN_DIR' ) ) {
+	require_once WP_ERP_PLUGIN_DIR . 'includes/api/class-wp-erp-api-controller.php';
+}
 
 class WP_ERP_API_Content extends WP_ERP_API_Controller {
 

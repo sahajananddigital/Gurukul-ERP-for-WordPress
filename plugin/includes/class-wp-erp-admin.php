@@ -15,7 +15,7 @@ class WP_ERP_Admin {
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'admin_menu', array( $this, 'add_settings_menu' ) );
+		// add_action( 'admin_menu', array( $this, 'add_settings_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 	}
 	

@@ -17,6 +17,9 @@ import {
 import AccountsList from './components/AccountsList';
 import TransactionsList from './components/TransactionsList';
 import CreateTransaction from './components/CreateTransaction';
+import InvoicesApp from '../invoices/App';
+import ExpensesApp from '../expenses/App';
+import VouchersApp from '../vouchers/App';
 
 const AccountingApp = ( { view = 'accounts' } ) => {
 	const [ accounts, setAccounts ] = useState( [] );
@@ -73,7 +76,7 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-accounting" style={ { padding: '16px' } }>
+		<div className="wp-erp-accounting">
 			{ error && (
 				<Notice
 					status="error"
@@ -84,14 +87,13 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Accounting', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
+				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
+					{ __( 'Accounting', 'wp-erp' ) }
+				</h1>
+			</div>
+			<div style={{ padding: '0 40px' }}>
+				<TabPanel
 						className="wp-erp-accounting-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
@@ -112,6 +114,21 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 								title: __( 'Create Transaction', 'wp-erp' ),
 								className: 'tab-create',
 							},
+							{
+								name: 'invoices',
+								title: __( 'Invoices', 'wp-erp' ),
+								className: 'tab-invoices',
+							},
+							{
+								name: 'expenses',
+								title: __( 'Expenses', 'wp-erp' ),
+								className: 'tab-expenses',
+							},
+							{
+								name: 'vouchers',
+								title: __( 'Vouchers', 'wp-erp' ),
+								className: 'tab-vouchers',
+							},
 						] }
 					>
 						{ ( tab ) => {
@@ -129,6 +146,12 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 										loading={ loading }
 									/>
 								);
+							} else if ( tab.name === 'invoices' ) {
+								return <InvoicesApp />;
+							} else if ( tab.name === 'expenses' ) {
+								return <ExpensesApp />;
+							} else if ( tab.name === 'vouchers' ) {
+								return <VouchersApp />;
 							}
 							return (
 								<CreateTransaction
@@ -139,8 +162,7 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 							);
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

@@ -147,20 +147,25 @@ export default function AdminCrud( {
 	};
 
 	return (
-		<div className="wrap">
-			<h1 className="wp-heading-inline">{ title }</h1>
-			{ view === 'list' && (
-				<Button
-					isPrimary
-					onClick={ () => {
-						resetForm();
-						setView( 'create' );
-					} }
-				>
-					Add New
-				</Button>
-			) }
-			<hr className="wp-header-end" />
+		<div className="wp-erp-crud">
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', gap: '16px' }}>
+				<h1 style={ { margin: 0, fontSize: '24px', fontWeight: 600 } }>
+					{ title }
+				</h1>
+				{ view === 'list' && (
+					<Button
+						variant="primary"
+						onClick={ () => {
+							resetForm();
+							setView( 'create' );
+						} }
+					>
+						Add New
+					</Button>
+				) }
+			</div>
+
+			<div style={{ padding: '24px 40px' }}>
 
 			{ notice && (
 				<div style={ { margin: '15px 0' } }>
@@ -304,6 +309,7 @@ export default function AdminCrud( {
 					</div>
 				</Modal>
 			) }
+			</div>
 		</div>
 	);
 }

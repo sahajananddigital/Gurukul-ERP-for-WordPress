@@ -9,9 +9,7 @@ import CRMApp from './modules/crm/App';
 import AccountingApp from './modules/accounting/App';
 import HRApp from './modules/hr/App';
 import HelpdeskApp from './modules/helpdesk/App';
-import VouchersApp from './modules/vouchers/App';
-import InvoicesApp from './modules/invoices/App';
-import ExpensesApp from './modules/expenses/App';
+import SettingsApp from './modules/settings/App';
 // Addons will inject their own apps here dynamically in the future.
 
 import { applyFilters } from '@wordpress/hooks';
@@ -25,15 +23,17 @@ const App = () => {
 		<Route key="accounting" path="/accounting" element={<AccountingApp />} />,
 		<Route key="hr" path="/hr" element={<HRApp />} />,
 		<Route key="helpdesk" path="/helpdesk" element={<HelpdeskApp />} />,
-		<Route key="vouchers" path="/vouchers" element={<VouchersApp />} />,
-		<Route key="invoices" path="/invoices" element={<InvoicesApp />} />,
-		<Route key="expenses" path="/expenses" element={<ExpensesApp />} />,
 		<Route key="addons" path="/addons" element={<div><h1>Premium Add-ons</h1><p>Manage your modules here.</p></div>} />,
-		<Route key="settings" path="/settings/*" element={<div><h1>Settings</h1><p>Global configurations.</p></div>} />,
+		<Route key="settings" path="/settings/*" element={<SettingsApp />} />,
 	];
 
-	// Premium Addons can inject their `<Route />` components here
-	const addonRoutes = applyFilters( 'wpErp.routes', [] );
+	// Premium Addons can inject their routes as configuration objects:
+	// { path: '/donations', element: <DonationsApp /> }
+	const addonRoutesConfig = applyFilters( 'wpErp.routes', [] );
+
+	const addonRoutes = addonRoutesConfig.map( ( routeConfig, index ) => (
+		<Route key={`addon-${index}`} path={routeConfig.path} element={routeConfig.element} />
+	) );
 
 	return (
 		<HashRouter>

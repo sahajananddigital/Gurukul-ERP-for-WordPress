@@ -4,7 +4,8 @@
   "description": "Gurukul Addon for Sahajanand ERP",
   "scripts": {
     "build": "wp-scripts build",
-    "start": "wp-scripts start"
+    "start": "wp-scripts start",
+    "zip": "zip -r gurukul-addon.zip . -x 'node_modules/*' -x 'src/*' -x '.*' -x 'package.json' -x 'package-lock.json'"
   },
   "devDependencies": {
     "@wordpress/scripts": "^27.9.0"

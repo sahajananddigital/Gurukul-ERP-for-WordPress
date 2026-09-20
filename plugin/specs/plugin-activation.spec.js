@@ -1,7 +1,7 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe('Plugin Activation', () => {
-	test('should activate the plugin and show the Gurukul ERP menu', async ({ admin, page }) => {
+	test('should activate the plugin and show the Sahajanand ERP menu', async ({ admin, page }) => {
 		// Login and visit plugins page
 		await admin.visitAdminPage('plugins.php');
 		
@@ -14,8 +14,8 @@ test.describe('Plugin Activation', () => {
 
 		// The menu should be visible in the admin sidebar.
 		// WordPress usually assigns an ID to top-level menu items based on the menu slug.
-		// For Gurukul ERP, the slug is 'wp-erp-crm', but let's just look for the text.
-		const erpMenu = page.locator('#adminmenu').getByText('Gurukul ERP');
+		// For Sahajanand ERP, the slug is 'wp-erp-crm', but let's just look for the text.
+		const erpMenu = page.locator('#adminmenu').getByText('Sahajanand ERP');
 		
 		// Wait for the menu item to be visible, ensuring it loaded successfully.
 		await expect(erpMenu).toBeVisible();

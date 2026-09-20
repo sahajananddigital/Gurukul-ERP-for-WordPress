@@ -10,13 +10,21 @@ import {
 	Notice,
 	TabPanel,
 } from '@wordpress/components';
-import { fetchContacts as fetchContactsApi } from './services/api';
+import { fetchContacts, fetchLeads, fetchDeals, fetchOrganizations } from './services/api';
 import ContactsList from './components/ContactsList';
 import ContactForm from './components/ContactForm';
+import LeadsList from './components/LeadsList';
+import DealsList from './components/DealsList';
+import OrganizationsList from './components/OrganizationsList';
 import Reports from './components/Reports';
 
 const CRMApp = () => {
-	const [ contacts, setContacts ] = useState( [] );
+	const [ data, setData ] = useState( {
+		contacts: [],
+		leads: [],
+		deals: [],
+		organizations: []
+	} );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 
@@ -28,8 +36,13 @@ const CRMApp = () => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await fetchContactsApi(); // Fetch all initially for Contacts List
-			setContacts( data );
+			const [ contacts, leads, deals, organizations ] = await Promise.all([
+				fetchContacts(),
+				fetchLeads(),
+				fetchDeals(),
+				fetchOrganizations()
+			]);
+			setData( { contacts, leads, deals, organizations } );
 		} catch ( err ) {
 			setError( err.message );
 		} finally {
@@ -37,12 +50,12 @@ const CRMApp = () => {
 		}
 	};
 
-	const handleContactCreated = () => {
+	const handleDataChanged = () => {
 		loadData();
 	};
 
 	return (
-		<div className="wp-erp-crm" style={ { padding: '16px' } }>
+		<div className="wp-erp-crm">
 			{ error && (
 				<Notice
 					status="error"
@@ -53,63 +66,74 @@ const CRMApp = () => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'CRM Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
+				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
+					{ __( 'CRM Management', 'wp-erp' ) }
+				</h1>
+			</div>
+			<div style={{ padding: '0 40px' }}>
+				<TabPanel
 						className="wp-erp-crm-tabs"
 						activeClass="is-active"
-						initialTabName="contacts"
+						initialTabName="leads"
 						tabs={ [
-							{
-								name: 'contacts',
-								title: __( 'Contacts', 'wp-erp' ),
-								className: 'tab-contacts',
-							},
-							{
-								name: 'reports',
-								title: __( 'Reports', 'wp-erp' ),
-								className: 'tab-reports',
-							},
+							{ name: 'leads', title: __( 'Leads', 'wp-erp' ), className: 'tab-leads' },
+							{ name: 'contacts', title: __( 'Contacts', 'wp-erp' ), className: 'tab-contacts' },
+							{ name: 'organizations', title: __( 'Organizations', 'wp-erp' ), className: 'tab-organizations' },
+							{ name: 'deals', title: __( 'Deals', 'wp-erp' ), className: 'tab-deals' },
+							{ name: 'reports', title: __( 'Reports', 'wp-erp' ), className: 'tab-reports' },
 						] }
 					>
 						{ ( tab ) => (
-							<>
+							<div style={{ marginTop: '20px' }}>
+								{ tab.name === 'leads' && (
+									<Card>
+										<CardHeader>
+											<h2 style={ { margin: 0 } }>{ __( 'Leads', 'wp-erp' ) }</h2>
+										</CardHeader>
+										<CardBody>
+											<LeadsList leads={ data.leads } loading={ loading } onLeadUpdated={ handleDataChanged } />
+										</CardBody>
+									</Card>
+								) }
 								{ tab.name === 'contacts' && (
 									<>
-										<ContactForm
-											onContactCreated={
-												handleContactCreated
-											}
-										/>
+										<ContactForm onContactCreated={ handleDataChanged } />
 										<Card>
 											<CardHeader>
-												<h2 style={ { margin: 0 } }>
-													{ __(
-														'Contacts',
-														'wp-erp'
-													) }
-												</h2>
+												<h2 style={ { margin: 0 } }>{ __( 'Contacts', 'wp-erp' ) }</h2>
 											</CardHeader>
 											<CardBody>
-												<ContactsList
-													contacts={ contacts }
-													loading={ loading }
-												/>
+												<ContactsList contacts={ data.contacts } loading={ loading } onContactUpdated={ handleDataChanged } />
 											</CardBody>
 										</Card>
 									</>
 								) }
+								{ tab.name === 'organizations' && (
+									<Card>
+										<CardHeader>
+											<h2 style={ { margin: 0 } }>{ __( 'Organizations', 'wp-erp' ) }</h2>
+										</CardHeader>
+										<CardBody>
+											<OrganizationsList organizations={ data.organizations } loading={ loading } onOrganizationUpdated={ handleDataChanged } />
+										</CardBody>
+									</Card>
+								) }
+								{ tab.name === 'deals' && (
+									<Card>
+										<CardHeader>
+											<h2 style={ { margin: 0 } }>{ __( 'Deals', 'wp-erp' ) }</h2>
+										</CardHeader>
+										<CardBody>
+											<DealsList deals={ data.deals } loading={ loading } onDealUpdated={ handleDataChanged } />
+										</CardBody>
+									</Card>
+								) }
 								{ tab.name === 'reports' && <Reports /> }
-							</>
+							</div>
 						) }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

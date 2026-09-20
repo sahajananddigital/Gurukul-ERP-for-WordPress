@@ -223,6 +223,55 @@ class WP_ERP_Database {
 		) $charset_collate;";
 		
 		dbDelta( $sql );
+
+		// Frappe CRM Features
+
+		// CRM Leads
+		$table_name = $wpdb->prefix . 'erp_crm_leads';
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			first_name varchar(50) NOT NULL,
+			last_name varchar(50) NOT NULL,
+			email varchar(100) NOT NULL,
+			phone varchar(50) DEFAULT NULL,
+			status varchar(20) DEFAULT 'New' NOT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY status (status)
+		) $charset_collate;";
+		dbDelta( $sql );
+
+		// CRM Deals
+		$table_name = $wpdb->prefix . 'erp_crm_deals';
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			title varchar(150) NOT NULL,
+			amount decimal(15,2) DEFAULT '0.00' NOT NULL,
+			stage varchar(30) DEFAULT 'Prospecting' NOT NULL,
+			contact_id bigint(20) unsigned DEFAULT NULL,
+			organization_id bigint(20) unsigned DEFAULT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id),
+			KEY stage (stage),
+			KEY contact_id (contact_id),
+			KEY organization_id (organization_id)
+		) $charset_collate;";
+		dbDelta( $sql );
+
+		// CRM Organizations
+		$table_name = $wpdb->prefix . 'erp_crm_organizations';
+		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			name varchar(100) NOT NULL,
+			industry varchar(50) DEFAULT '' NOT NULL,
+			website varchar(150) DEFAULT '' NOT NULL,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY (id)
+		) $charset_collate;";
+		dbDelta( $sql );
 	}
 	
 	/**

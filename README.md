@@ -216,6 +216,10 @@ Admin endpoints require WordPress authentication (cookie or Application Password
 
 ### WordPress Plugin
 ```bash
+# Run JavaScript unit tests (Jest)
+npm run test
+npm run test:watch
+
 # Check PHP syntax
 php -l includes/api/class-wp-erp-api-*.php
 

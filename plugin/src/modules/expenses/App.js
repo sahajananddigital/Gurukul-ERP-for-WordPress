@@ -50,7 +50,7 @@ const ExpensesApp = ( { view = 'list' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-expenses" style={ { padding: '16px' } }>
+		<div className="wp-erp-expenses">
 			{ error && (
 				<Notice
 					status="error"
@@ -61,14 +61,8 @@ const ExpensesApp = ( { view = 'list' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Expense Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div>
+				<TabPanel
 						className="wp-erp-expenses-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
@@ -102,8 +96,7 @@ const ExpensesApp = ( { view = 'list' } ) => {
 							);
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

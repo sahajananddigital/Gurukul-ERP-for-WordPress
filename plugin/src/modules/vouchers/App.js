@@ -357,7 +357,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-vouchers" style={ { padding: '16px' } }>
+		<div className="wp-erp-vouchers">
 			{ error && (
 				<Notice
 					status="error"
@@ -368,14 +368,8 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Voucher Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div>
+				<TabPanel
 						className="wp-erp-vouchers-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
@@ -400,8 +394,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							return renderCreateVoucher();
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

@@ -1,0 +1,10 @@
+.distignore
+.gitignore
+.git
+.github
+node_modules
+src
+package.json
+package-lock.json
+README.md
+webpack.config.js

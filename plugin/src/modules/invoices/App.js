@@ -370,7 +370,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-invoices" style={ { padding: '16px' } }>
+		<div className="wp-erp-invoices">
 			{ error && (
 				<Notice
 					status="error"
@@ -381,14 +381,8 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Invoice Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div>
+				<TabPanel
 						className="wp-erp-invoices-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
@@ -413,8 +407,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							return renderCreateInvoice();
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

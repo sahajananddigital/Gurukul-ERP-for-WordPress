@@ -33,8 +33,7 @@ class WP_ERP_User_Management {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ), 20 );
-		add_action( 'admin_init', array( $this, 'handle_form_submission' ) );
+		// Removed admin_menu hook since it's migrated to SPA
 	}
 
 	/**
@@ -55,21 +54,6 @@ class WP_ERP_User_Management {
 		add_role( 'erp_staff', __( 'ERP Staff', 'wp-erp' ), array(
 			'read' => true,
 		) );
-	}
-
-	/**
-	 * Add admin menu
-	 */
-	public function add_admin_menu() {
-		// Add submenu under ERP Settings
-		add_submenu_page(
-			'wp-erp-settings',
-			__( 'User Access', 'wp-erp' ),
-			__( 'User Access', 'wp-erp' ),
-			'manage_options',
-			'wp-erp-user-access',
-			array( $this, 'render_page' )
-		);
 	}
 
 	/**

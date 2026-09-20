@@ -65,13 +65,15 @@ const DonationsApp = () => {
 	};
 
 	return (
-		<div className="wp-erp-donations" style={ { padding: '20px' } }>
+		<div className="wp-erp-donations">
 			{ error && (
 				<Notice status="error" onRemove={ () => setError( null ) }>
 					{ error }
 				</Notice>
 			) }
 
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}> <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}> { __('Donations', 'wp-erp') } </h1> </div>
+			<div style={{ padding: '0 40px' }}>
 			<TabPanel
 				className="wp-erp-donations-tabs"
 				activeClass="is-active"
@@ -122,6 +124,7 @@ const DonationsApp = () => {
 					}
 				} }
 			</TabPanel>
+			</div>
 		</div>
 	);
 };

@@ -173,6 +173,9 @@ final class WP_ERP {
 		
 		// Enqueue Gutenberg styles
 		wp_enqueue_style( 'wp-components' );
+
+		// Enqueue media scripts for wp.media
+		wp_enqueue_media();
 		
 		// Check if build files exist
 		$build_js = WP_ERP_PLUGIN_DIR . 'build/index.js';

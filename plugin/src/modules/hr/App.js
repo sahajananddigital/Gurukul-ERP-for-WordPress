@@ -207,7 +207,7 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-hr" style={ { padding: '16px' } }>
+		<div className="wp-erp-hr">
 			{ error && (
 				<Notice
 					status="error"
@@ -218,14 +218,13 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'HR Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<TabPanel
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
+				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
+					{ __( 'HR Management', 'wp-erp' ) }
+				</h1>
+			</div>
+			<div style={{ padding: '0 40px' }}>
+				<TabPanel
 						className="wp-erp-hr-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
@@ -250,8 +249,7 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 							return renderLeaveRequests();
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

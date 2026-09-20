@@ -55,7 +55,7 @@ const FoodPassApp = ( { view = 'create' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-food-pass" style={ { padding: '16px' } }>
+		<div className="wp-erp-food-pass">
 			{ error && (
 				<Notice
 					status="error"
@@ -66,13 +66,8 @@ const FoodPassApp = ( { view = 'create' } ) => {
 				</Notice>
 			) }
 
-			<Card>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Food Pass Management', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}> <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}> { __('Food Pass Management', 'wp-erp') } </h1> </div>
+			<div style={{ padding: '0 40px' }}>
 					<TabPanel
 						className="wp-erp-food-pass-tabs"
 						activeClass="is-active"
@@ -118,8 +113,7 @@ const FoodPassApp = ( { view = 'create' } ) => {
 							);
 						} }
 					</TabPanel>
-				</CardBody>
-			</Card>
+			</div>
 		</div>
 	);
 };

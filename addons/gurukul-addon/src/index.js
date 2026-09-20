@@ -1,5 +1,4 @@
 import { addFilter } from '@wordpress/hooks';
-import { Route } from 'react-router-dom';
 import { currencyDollar, calendar, update } from '@wordpress/icons';
 
 // Import our isolated modules
@@ -25,8 +24,8 @@ addFilter( 'wpErp.sidebarMenuItems', 'gurukul-addon/sidebar', ( items ) => {
 addFilter( 'wpErp.routes', 'gurukul-addon/routes', ( routes ) => {
 	return [
 		...routes,
-		<Route key="donations" path="/donations" element={<DonationsApp />} />,
-		<Route key="food-pass" path="/food-pass" element={<FoodPassApp />} />,
-		<Route key="content" path="/content" element={<ContentApp />} />,
+		{ path: "/donations", element: <DonationsApp /> },
+		{ path: "/food-pass", element: <FoodPassApp /> },
+		{ path: "/content", element: <ContentApp /> },
 	];
 } );
