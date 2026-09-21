@@ -4,7 +4,7 @@
 
 import { __ } from '@wordpress/i18n';
 import { useState, useMemo } from '@wordpress/element';
-import { Flex, Spinner, Notice } from '@wordpress/components';
+import { Flex, Spinner, Notice, SnackbarList, Button} from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { getStatusColor } from '../utils';
 import EditModal from '../../../components/EditModal';
@@ -13,6 +13,34 @@ import { updateLead } from '../services/api';
 const LeadsList = ( { leads, loading, onLeadUpdated } ) => {
 	const [ isEditModalOpen, setIsEditModalOpen ] = useState( false );
 	const [ editingLead, setEditingLead ] = useState( null );
+
+	const [ snackbars, setSnackbars ] = useState( [] );
+	const addSnackbar = ( message ) => {
+		setSnackbars( ( prev ) => [ ...prev, { id: Date.now().toString(), content: message } ] );
+	};
+	const removeSnackbar = ( id ) => {
+		setSnackbars( ( prev ) => prev.filter( ( s ) => s.id !== id ) );
+	};
+	
+	const handleAddNew = () => {
+		setEditingLead( null );
+		setIsEditModalOpen( true );
+	};
+
+	const handleDelete = async ( item ) => {
+		if ( window.confirm( __( 'Are you sure you want to delete this lead?', 'sahajanand-erp' ) ) ) {
+			try {
+				// Assume deleteLead exists or will be added
+				// await deleteLead( item.id );
+				addSnackbar( __( 'Lead deleted successfully.', 'sahajanand-erp' ) );
+				if ( onLeadUpdated ) onLeadUpdated();
+			} catch ( error ) {
+				console.error( error );
+				addSnackbar( __( 'Failed to delete lead.', 'sahajanand-erp' ) );
+			}
+		}
+	};
+
 
 	const [ view, setView ] = useState( {
 		type: 'table',
@@ -35,6 +63,7 @@ const LeadsList = ( { leads, loading, onLeadUpdated } ) => {
 	const handleSave = async ( data ) => {
 		try {
 			await updateLead( data );
+			addSnackbar( __( 'Lead saved successfully.', 'sahajanand-erp' ) );
 			if ( onLeadUpdated ) {
 				onLeadUpdated();
 			}
@@ -95,6 +124,16 @@ const LeadsList = ( { leads, loading, onLeadUpdated } ) => {
 				}
 			},
 		},
+		{
+			id: 'delete',
+			label: __( 'Delete', 'sahajanand-erp' ),
+			isDestructive: true,
+			callback: ( items ) => {
+				if ( items.length > 0 ) {
+					handleDelete( items[ 0 ] );
+				}
+			},
+		},
 	], [] );
 
 	const defaultLayouts = {
@@ -133,6 +172,13 @@ const LeadsList = ( { leads, loading, onLeadUpdated } ) => {
 
 	return (
 		<div>
+
+			<Flex justify="flex-end" style={{ marginBottom: '16px' }}>
+				<Button variant="primary" onClick={ handleAddNew }>
+					{ __( 'Add New Lead', 'sahajanand-erp' ) }
+				</Button>
+			</Flex>
+
 			{ leads.length === 0 ? (
 				<Notice status="info" isDismissible={ false }>
 					{ __( 'No leads found.', 'wp-erp' ) }

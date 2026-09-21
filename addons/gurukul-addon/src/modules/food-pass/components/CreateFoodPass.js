@@ -112,7 +112,7 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 			<Card style={ { marginBottom: '24px', maxWidth: '400px' } }>
 				<CardHeader>
 					<h2 style={ { margin: 0 } }>
-						{ __( 'Food Pass', 'wp-erp' ) }
+						{ __( 'Food Pass', 'sahajanand-erp' ) }
 					</h2>
 				</CardHeader>
 				<CardBody>
@@ -120,7 +120,7 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 						<Flex direction="column" gap={ 4 }>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Quantity:', 'wp-erp' ) }
+									label={ __( 'Quantity:', 'sahajanand-erp' ) }
 									type="number"
 									min="1"
 									value={ quantity }
@@ -134,13 +134,13 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 								<TextControl
 									label={ __(
 										'Total Amount to Pay:',
-										'wp-erp'
+										'sahajanand-erp'
 									) }
 									value={ `₹${ total }` }
 									readOnly
 									help={ __(
 										'Rate: ₹90 per meal',
-										'wp-erp'
+										'sahajanand-erp'
 									) }
 								/>
 							</FlexBlock>
@@ -150,7 +150,7 @@ const CreateFoodPass = ( { onFoodPassCreated } ) => {
 									type="submit"
 									isBusy={ isCreating }
 								>
-									{ __( 'Print Food Pass', 'wp-erp' ) }
+									{ __( 'Print Food Pass', 'sahajanand-erp' ) }
 								</Button>
 							</Flex>
 							<p

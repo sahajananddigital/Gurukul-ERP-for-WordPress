@@ -70,11 +70,11 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( { path: '/wp-erp/v1/invoices' } );
+			const data = await apiFetch( { path: '/sahajanand-erp/v1/invoices' } );
 			setInvoices( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch invoices', 'wp-erp' )
+				err.message || __( 'Failed to fetch invoices', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
@@ -88,7 +88,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 
 		try {
 			await apiFetch( {
-				path: '/wp-erp/v1/invoices',
+				path: '/sahajanand-erp/v1/invoices',
 				method: 'POST',
 				data: formData,
 			} );
@@ -99,7 +99,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 			}
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to create invoice', 'wp-erp' )
+				err.message || __( 'Failed to create invoice', 'sahajanand-erp' )
 			);
 		} finally {
 			setIsCreating( false );
@@ -121,13 +121,13 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 		() => [
 			{
 				id: 'invoice_no',
-				header: __( 'Invoice No', 'wp-erp' ),
+				header: __( 'Invoice No', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.invoice_no,
 				enableSorting: true,
 			},
 			{
 				id: 'client_name',
-				header: __( 'Client Name', 'wp-erp' ),
+				header: __( 'Client Name', 'sahajanand-erp' ),
 				getValue: ( { item } ) => {
 					if ( item.client_name ) {
 						return item.client_name;
@@ -143,19 +143,19 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 			},
 			{
 				id: 'date',
-				header: __( 'Date', 'wp-erp' ),
+				header: __( 'Date', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.date || item.invoice_date || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'due_date',
-				header: __( 'Due Date', 'wp-erp' ),
+				header: __( 'Due Date', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.due_date || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'total',
-				header: __( 'Total', 'wp-erp' ),
+				header: __( 'Total', 'sahajanand-erp' ),
 				getValue: ( { item } ) => {
 					if ( item.total !== undefined ) {
 						return item.total;
@@ -168,7 +168,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 			},
 			{
 				id: 'status',
-				header: __( 'Status', 'wp-erp' ),
+				header: __( 'Status', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.status,
 				render: ( { item } ) => (
 					<span
@@ -219,7 +219,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 						color: '#757575',
 					} }
 				>
-					{ __( 'No invoices found.', 'wp-erp' ) }
+					{ __( 'No invoices found.', 'sahajanand-erp' ) }
 				</p>
 			);
 		}
@@ -253,7 +253,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 			<Card style={ { marginBottom: '24px' } }>
 				<CardHeader>
 					<h2 style={ { margin: 0 } }>
-						{ __( 'Create Invoice', 'wp-erp' ) }
+						{ __( 'Create Invoice', 'sahajanand-erp' ) }
 					</h2>
 				</CardHeader>
 				<CardBody>
@@ -262,7 +262,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Invoice Date', 'wp-erp' ) }
+										label={ __( 'Invoice Date', 'sahajanand-erp' ) }
 										type="date"
 										value={ formData.invoice_date }
 										onChange={ ( value ) =>
@@ -276,7 +276,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Due Date', 'wp-erp' ) }
+										label={ __( 'Due Date', 'sahajanand-erp' ) }
 										type="date"
 										value={ formData.due_date }
 										onChange={ ( value ) =>
@@ -290,7 +290,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</Flex>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Subtotal', 'wp-erp' ) }
+									label={ __( 'Subtotal', 'sahajanand-erp' ) }
 									type="number"
 									step="0.01"
 									value={ formData.subtotal }
@@ -312,7 +312,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Tax Amount', 'wp-erp' ) }
+									label={ __( 'Tax Amount', 'sahajanand-erp' ) }
 									type="number"
 									step="0.01"
 									value={ formData.tax_amount }
@@ -333,7 +333,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Total Amount', 'wp-erp' ) }
+									label={ __( 'Total Amount', 'sahajanand-erp' ) }
 									type="number"
 									step="0.01"
 									value={ formData.total_amount }
@@ -342,7 +342,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextareaControl
-									label={ __( 'Notes', 'wp-erp' ) }
+									label={ __( 'Notes', 'sahajanand-erp' ) }
 									value={ formData.notes }
 									onChange={ ( value ) =>
 										setFormData( {
@@ -359,7 +359,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 									type="submit"
 									isBusy={ isCreating }
 								>
-									{ __( 'Create Invoice', 'wp-erp' ) }
+									{ __( 'Create Invoice', 'sahajanand-erp' ) }
 								</Button>
 							</Flex>
 						</Flex>
@@ -370,7 +370,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-invoices">
+		<div className="sahajanand-erp-invoices">
 			{ error && (
 				<Notice
 					status="error"
@@ -383,19 +383,19 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 
 			<div>
 				<TabPanel
-						className="wp-erp-invoices-tabs"
+						className="sahajanand-erp-invoices-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => setActiveTab( tabName ) }
 						tabs={ [
 							{
 								name: 'list',
-								title: __( 'All Invoices', 'wp-erp' ),
+								title: __( 'All Invoices', 'sahajanand-erp' ),
 								className: 'tab-list',
 							},
 							{
 								name: 'create',
-								title: __( 'Create Invoice', 'wp-erp' ),
+								title: __( 'Create Invoice', 'sahajanand-erp' ),
 								className: 'tab-create',
 							},
 						] }

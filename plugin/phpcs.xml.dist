@@ -37,7 +37,7 @@
 		 Multiple text-domains can be provided as a comma-separated list. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="wp-erp"/>
+			<property name="text_domain" type="array" value="sahajanand-erp"/>
 		</properties>
 	</rule>
 

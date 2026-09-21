@@ -14,7 +14,7 @@ test.describe('Plugin Activation', () => {
 
 		// The menu should be visible in the admin sidebar.
 		// WordPress usually assigns an ID to top-level menu items based on the menu slug.
-		// For Sahajanand ERP, the slug is 'wp-erp-crm', but let's just look for the text.
+		// For Sahajanand ERP, the slug is 'sahajanand-erp-crm', but let's just look for the text.
 		const erpMenu = page.locator('#adminmenu').getByText('Sahajanand ERP');
 		
 		// Wait for the menu item to be visible, ensuring it loaded successfully.

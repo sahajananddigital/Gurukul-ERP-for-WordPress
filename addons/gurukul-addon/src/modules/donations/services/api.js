@@ -6,10 +6,10 @@ import { __ } from '@wordpress/i18n';
 
 export const fetchDonations = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/donations' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/donations' } );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to fetch donations', 'wp-erp' )
+			err.message || __( 'Failed to fetch donations', 'sahajanand-erp' )
 		);
 	}
 };
@@ -17,20 +17,20 @@ export const fetchDonations = async () => {
 export const createDonation = async ( payload ) => {
 	try {
 		return await apiFetch( {
-			path: '/wp-erp/v1/donations',
+			path: '/sahajanand-erp/v1/donations',
 			method: 'POST',
 			data: payload,
 		} );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to save donation', 'wp-erp' )
+			err.message || __( 'Failed to save donation', 'sahajanand-erp' )
 		);
 	}
 };
 
 export const fetchLedgers = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/donations/ledgers' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/donations/ledgers' } );
 	} catch ( err ) {
 		console.error( err );
 		return [];
@@ -40,7 +40,7 @@ export const fetchLedgers = async () => {
 export const createLedger = async ( ledgers ) => {
 	try {
 		return await apiFetch( {
-			path: '/wp-erp/v1/donations/ledgers',
+			path: '/sahajanand-erp/v1/donations/ledgers',
 			method: 'POST',
 			data: { ledgers },
 		} );
@@ -52,7 +52,7 @@ export const createLedger = async ( ledgers ) => {
 export const fetchDonorByPhone = async ( phone ) => {
 	try {
 		return await apiFetch( {
-			path: `/wp-erp/v1/donations/donor?phone=${ phone }`,
+			path: `/sahajanand-erp/v1/donations/donor?phone=${ phone }`,
 		} );
 	} catch ( err ) {
 		console.log( 'Donor lookup failed', err );
@@ -64,7 +64,7 @@ export const updateDonation = async ( payload ) => {
 	try {
 		const id = payload.id;
 		return await apiFetch( {
-			path: `/wp-erp/v1/donations/${ id }`,
+			path: `/sahajanand-erp/v1/donations/${ id }`,
 			method: 'POST',
 			data: payload,
 		} );

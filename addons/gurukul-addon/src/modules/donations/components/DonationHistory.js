@@ -45,21 +45,21 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 	const donationFields = [
 		{
 			key: 'donor_name',
-			label: __( 'Donor Name', 'wp-erp' ),
+			label: __( 'Donor Name', 'sahajanand-erp' ),
 			type: 'text',
 		},
-		{ key: 'phone', label: __( 'Phone', 'wp-erp' ), type: 'text' },
-		{ key: 'ledger', label: __( 'Ledger', 'wp-erp' ), type: 'text' }, // Ideally a select but keeping simple text for now
+		{ key: 'phone', label: __( 'Phone', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'ledger', label: __( 'Ledger', 'sahajanand-erp' ), type: 'text' }, // Ideally a select but keeping simple text for now
 		{
 			key: 'amount',
-			label: __( 'Amount', 'wp-erp' ),
+			label: __( 'Amount', 'sahajanand-erp' ),
 			type: 'text',
 			inputType: 'number',
 		},
-		{ key: 'notes', label: __( 'Notes', 'wp-erp' ), type: 'textarea' },
+		{ key: 'notes', label: __( 'Notes', 'sahajanand-erp' ), type: 'textarea' },
 		{
 			key: 'issue_date',
-			label: __( 'Date', 'wp-erp' ),
+			label: __( 'Date', 'sahajanand-erp' ),
 			type: 'text',
 			inputType: 'date',
 		},
@@ -68,7 +68,7 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 	return (
 		<Card>
 			<CardHeader>
-				<h3>{ __( 'Donation History', 'wp-erp' ) }</h3>
+				<h3>{ __( 'Donation History', 'sahajanand-erp' ) }</h3>
 			</CardHeader>
 			<CardBody>
 				{ donations.length === 0 ? (
@@ -78,19 +78,19 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 							color: '#757575',
 						} }
 					>
-						{ __( 'No donations found.', 'wp-erp' ) }
+						{ __( 'No donations found.', 'sahajanand-erp' ) }
 					</p>
 				) : (
 					<table className="wp-list-table widefat fixed striped">
 						<thead>
 							<tr>
-								<th>{ __( 'ID', 'wp-erp' ) }</th>
-								<th>{ __( 'Date', 'wp-erp' ) }</th>
-								<th>{ __( 'Donor', 'wp-erp' ) }</th>
-								<th>{ __( 'Phone', 'wp-erp' ) }</th>
-								<th>{ __( 'Ledger', 'wp-erp' ) }</th>
-								<th>{ __( 'Amount', 'wp-erp' ) }</th>
-								<th>{ __( 'Actions', 'wp-erp' ) }</th>
+								<th>{ __( 'ID', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Date', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Donor', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Phone', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Ledger', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Amount', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Actions', 'sahajanand-erp' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -108,7 +108,7 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 											variant="secondary"
 											onClick={ () => handleEdit( d ) }
 										>
-											{ __( 'Edit', 'wp-erp' ) }
+											{ __( 'Edit', 'sahajanand-erp' ) }
 										</Button>
 									</td>
 								</tr>
@@ -118,7 +118,7 @@ const DonationHistory = ( { donations, loading, onDonationUpdated } ) => {
 				) }
 
 				<EditModal
-					title={ __( 'Edit Donation', 'wp-erp' ) }
+					title={ __( 'Edit Donation', 'sahajanand-erp' ) }
 					isOpen={ isEditModalOpen }
 					onClose={ () => setIsEditModalOpen( false ) }
 					onSave={ handleSave }

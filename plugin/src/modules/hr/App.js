@@ -11,15 +11,23 @@ import {
 	Notice,
 	Flex,
 	TabPanel,
+	Button,
+	SnackbarList,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
+import EditModal from '../../components/EditModal';
 
 const HRApp = ( { view: initialTab = 'employees' } ) => {
 	const [ employees, setEmployees ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ activeTab, setActiveTab ] = useState( initialTab );
+
+	// Edit Modal & Snackbar State
+	const [ isEditModalOpen, setIsEditModalOpen ] = useState( false );
+	const [ editingEmployee, setEditingEmployee ] = useState( null );
+	const [ snackbars, setSnackbars ] = useState( [] );
 
 	const [ view, setView ] = useState( {
 		type: 'table',
@@ -46,18 +54,85 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 		}
 	}, [ activeTab ] );
 
+	const addSnackbar = ( message ) => {
+		setSnackbars( ( prev ) => [
+			...prev,
+			{ id: Date.now().toString(), content: message },
+		] );
+	};
+
+	const removeSnackbar = ( id ) => {
+		setSnackbars( ( prev ) => prev.filter( ( s ) => s.id !== id ) );
+	};
+
 	const fetchEmployees = async () => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( { path: '/wp-erp/v1/hr/employees' } );
+			const data = await apiFetch( { path: '/sahajanand-erp/v1/hr/employees' } );
 			setEmployees( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch employees', 'wp-erp' )
+				err.message || __( 'Failed to fetch employees', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
+		}
+	};
+
+	const handleAddNew = () => {
+		setEditingEmployee( null );
+		setIsEditModalOpen( true );
+	};
+
+	const handleEdit = ( item ) => {
+		setEditingEmployee( item );
+		setIsEditModalOpen( true );
+	};
+
+	const handleDelete = async ( item ) => {
+		if (
+			window.confirm(
+				__( 'Are you sure you want to delete this employee?', 'sahajanand-erp' )
+			)
+		) {
+			try {
+				await apiFetch( {
+					path: `/sahajanand-erp/v1/hr/employees/${ item.id }`,
+					method: 'DELETE',
+				} );
+				addSnackbar( __( 'Employee deleted successfully.', 'sahajanand-erp' ) );
+				fetchEmployees();
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( err );
+				addSnackbar( __( 'Failed to delete employee.', 'sahajanand-erp' ) );
+			}
+		}
+	};
+
+	const handleSave = async ( data ) => {
+		try {
+			if ( editingEmployee ) {
+				await apiFetch( {
+					path: `/sahajanand-erp/v1/hr/employees/${ editingEmployee.id }`,
+					method: 'POST',
+					data,
+				} );
+				addSnackbar( __( 'Employee updated successfully.', 'sahajanand-erp' ) );
+			} else {
+				await apiFetch( {
+					path: '/sahajanand-erp/v1/hr/employees',
+					method: 'POST',
+					data,
+				} );
+				addSnackbar( __( 'Employee created successfully.', 'sahajanand-erp' ) );
+			}
+			fetchEmployees();
+		} catch ( err ) {
+			// eslint-disable-next-line no-console
+			console.error( err );
+			addSnackbar( __( 'Failed to save employee.', 'sahajanand-erp' ) );
 		}
 	};
 
@@ -74,32 +149,32 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 		() => [
 			{
 				id: 'employee_id',
-				header: __( 'Employee ID', 'wp-erp' ),
-				getValue: ( { item } ) => item.employee_id,
+				header: __( 'Employee ID', 'sahajanand-erp' ),
+				getValue: ( { item } ) => item.employee_id || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'name',
-				header: __( 'Name', 'wp-erp' ),
+				header: __( 'Name', 'sahajanand-erp' ),
 				getValue: ( { item } ) =>
-					item.user_id ? `User #${ item.user_id }` : '-',
+					item.first_name ? `${ item.first_name } ${ item.last_name || '' }` : (item.user_id ? `User #${ item.user_id }` : '-'),
 				enableSorting: true,
 			},
 			{
 				id: 'designation',
-				header: __( 'Designation', 'wp-erp' ),
+				header: __( 'Designation', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.designation || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'department',
-				header: __( 'Department', 'wp-erp' ),
+				header: __( 'Department', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.department || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'status',
-				header: __( 'Status', 'wp-erp' ),
+				header: __( 'Status', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.status,
 				render: ( { item } ) => (
 					<span
@@ -112,10 +187,36 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 							textTransform: 'capitalize',
 						} }
 					>
-						{ item.status }
+						{ item.status || 'inactive' }
 					</span>
 				),
 				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'edit',
+				label: __( 'Edit', 'sahajanand-erp' ),
+				isPrimary: true,
+				callback: ( items ) => {
+					if ( items.length > 0 ) {
+						handleEdit( items[ 0 ] );
+					}
+				},
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete', 'sahajanand-erp' ),
+				isDestructive: true,
+				callback: ( items ) => {
+					if ( items.length > 0 ) {
+						handleDelete( items[ 0 ] );
+					}
+				},
 			},
 		],
 		[]
@@ -141,53 +242,53 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 			);
 		}
 
-		if ( employees.length === 0 ) {
-			return (
-				<p
-					style={ {
-						padding: '16px',
-						textAlign: 'center',
-						color: '#757575',
-					} }
-				>
-					{ __( 'No employees found.', 'wp-erp' ) }
-				</p>
-			);
-		}
-
 		return (
-			<div
-				style={ {
-					backgroundColor: '#fff',
-					border: '1px solid #e0e0e0',
-					borderRadius: '4px',
-				} }
-			>
-				<DataViews
-					data={ employees }
-					fields={ fields }
-					actions={ [] }
-					view={ view }
-					onChangeView={ setView }
-					defaultLayouts={ defaultLayouts }
-					paginationInfo={ {
-						totalItems: employees.length,
-						totalPages: Math.ceil(
-							employees.length / view.perPage
-						),
-					} }
-				/>
+			<div>
+				<Flex justify="flex-end" style={ { marginBottom: '16px' } }>
+					<Button variant="primary" onClick={ handleAddNew }>
+						{ __( 'Add New Employee', 'sahajanand-erp' ) }
+					</Button>
+				</Flex>
+
+				{ employees.length === 0 ? (
+					<Notice status="info" isDismissible={ false }>
+						{ __( 'No employees found.', 'sahajanand-erp' ) }
+					</Notice>
+				) : (
+					<div
+						style={ {
+							backgroundColor: '#fff',
+							border: '1px solid #e0e0e0',
+							borderRadius: '4px',
+						} }
+					>
+						<DataViews
+							data={ employees }
+							fields={ fields }
+							actions={ actions }
+							view={ view }
+							onChangeView={ setView }
+							defaultLayouts={ defaultLayouts }
+							paginationInfo={ {
+								totalItems: employees.length,
+								totalPages: Math.ceil(
+									employees.length / view.perPage
+								),
+							} }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
 
 	const renderLeaveRequests = () => {
 		return (
-			<div className="wp-erp-hr">
+			<div className="sahajanand-erp-hr">
 				<Card>
 					<CardHeader>
 						<h2 style={ { margin: 0 } }>
-							{ __( 'Leave Requests', 'wp-erp' ) }
+							{ __( 'Leave Requests', 'sahajanand-erp' ) }
 						</h2>
 					</CardHeader>
 					<CardBody>
@@ -198,7 +299,7 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 								color: '#757575',
 							} }
 						>
-							{ __( 'Leave management coming soon…', 'wp-erp' ) }
+							{ __( 'Leave management coming soon…', 'sahajanand-erp' ) }
 						</p>
 					</CardBody>
 				</Card>
@@ -206,8 +307,26 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 		);
 	};
 
+	const employeeFields = [
+		{ key: 'employee_id', label: __( 'Employee ID', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'first_name', label: __( 'First Name', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'last_name', label: __( 'Last Name', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'designation', label: __( 'Designation', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'department', label: __( 'Department', 'sahajanand-erp' ), type: 'text' },
+		{
+			key: 'status',
+			label: __( 'Status', 'sahajanand-erp' ),
+			type: 'select',
+			options: [
+				{ label: 'Active', value: 'active' },
+				{ label: 'Inactive', value: 'inactive' },
+				{ label: 'On Leave', value: 'leave' },
+			],
+		},
+	];
+
 	return (
-		<div className="wp-erp-hr">
+		<div className="sahajanand-erp-hr">
 			{ error && (
 				<Notice
 					status="error"
@@ -220,36 +339,51 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 
 			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
 				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
-					{ __( 'HR Management', 'wp-erp' ) }
+					{ __( 'HR Management', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 			<div style={{ padding: '0 40px' }}>
 				<TabPanel
-						className="wp-erp-hr-tabs"
-						activeClass="is-active"
-						initialTabName={ activeTab }
-						onSelect={ ( tabName ) => setActiveTab( tabName ) }
-						tabs={ [
-							{
-								name: 'employees',
-								title: __( 'Employees', 'wp-erp' ),
-								className: 'tab-employees',
-							},
-							{
-								name: 'leaves',
-								title: __( 'Leave Requests', 'wp-erp' ),
-								className: 'tab-leaves',
-							},
-						] }
-					>
-						{ ( tab ) => {
-							if ( tab.name === 'employees' ) {
-								return renderEmployeesList();
-							}
-							return renderLeaveRequests();
-						} }
-					</TabPanel>
+					className="sahajanand-erp-hr-tabs"
+					activeClass="is-active"
+					initialTabName={ activeTab }
+					onSelect={ ( tabName ) => setActiveTab( tabName ) }
+					tabs={ [
+						{
+							name: 'employees',
+							title: __( 'Employees', 'sahajanand-erp' ),
+							className: 'tab-employees',
+						},
+						{
+							name: 'leaves',
+							title: __( 'Leave Requests', 'sahajanand-erp' ),
+							className: 'tab-leaves',
+						},
+					] }
+				>
+					{ ( tab ) => {
+						if ( tab.name === 'employees' ) {
+							return renderEmployeesList();
+						}
+						return renderLeaveRequests();
+					} }
+				</TabPanel>
 			</div>
+
+			<EditModal
+				title={ editingEmployee ? __( 'Edit Employee', 'sahajanand-erp' ) : __( 'Add New Employee', 'sahajanand-erp' ) }
+				isOpen={ isEditModalOpen }
+				onClose={ () => setIsEditModalOpen( false ) }
+				onSave={ handleSave }
+				data={ editingEmployee }
+				fields={ employeeFields }
+			/>
+
+			<SnackbarList
+				notices={ snackbars }
+				onRemove={ removeSnackbar }
+				style={{ position: 'fixed', bottom: '20px', left: '20px', zIndex: 100000 }}
+			/>
 		</div>
 	);
 };

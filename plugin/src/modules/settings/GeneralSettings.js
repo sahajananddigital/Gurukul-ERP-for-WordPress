@@ -10,14 +10,14 @@ const SettingsApp = () => {
 	const [ notice, setNotice ] = useState( null );
 
 	useEffect( () => {
-		apiFetch( { path: '/wp-erp/v1/settings' } )
+		apiFetch( { path: '/sahajanand-erp/v1/settings' } )
 			.then( ( data ) => {
 				setSettings( data );
 				setLoading( false );
 			} )
 			.catch( ( err ) => {
 				console.error( err );
-				setNotice( { type: 'error', message: __( 'Failed to load settings.', 'wp-erp' ) } );
+				setNotice( { type: 'error', message: __( 'Failed to load settings.', 'sahajanand-erp' ) } );
 				setLoading( false );
 			} );
 	}, [] );
@@ -26,18 +26,18 @@ const SettingsApp = () => {
 		setSaving( true );
 		setNotice( null );
 		apiFetch( {
-			path: '/wp-erp/v1/settings',
+			path: '/sahajanand-erp/v1/settings',
 			method: 'POST',
 			data: settings,
 		} )
 			.then( ( res ) => {
 				setSettings( res.settings );
-				setNotice( { type: 'success', message: __( 'Settings saved successfully!', 'wp-erp' ) } );
+				setNotice( { type: 'success', message: __( 'Settings saved successfully!', 'sahajanand-erp' ) } );
 				setSaving( false );
 			} )
 			.catch( ( err ) => {
 				console.error( err );
-				setNotice( { type: 'error', message: __( 'Failed to save settings.', 'wp-erp' ) } );
+				setNotice( { type: 'error', message: __( 'Failed to save settings.', 'sahajanand-erp' ) } );
 				setSaving( false );
 			} );
 	};
@@ -47,10 +47,10 @@ const SettingsApp = () => {
 	}
 
 	return (
-		<div className="wp-erp-settings" style={ { padding: '40px', maxWidth: '800px', margin: '0 auto' } }>
+		<div className="sahajanand-erp-settings" style={ { padding: '40px', maxWidth: '800px', margin: '0 auto' } }>
 			<div style={ { marginBottom: '32px' } }>
 				<h1 style={ { margin: 0, fontSize: '24px', fontWeight: 600 } }>
-					{ __( 'General Settings', 'wp-erp' ) }
+					{ __( 'General Settings', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 
@@ -66,15 +66,15 @@ const SettingsApp = () => {
 
 			<Card>
 				<CardHeader>
-					<h2 style={ { margin: 0 } }>{ __( 'Company Information', 'wp-erp' ) }</h2>
+					<h2 style={ { margin: 0 } }>{ __( 'Company Information', 'sahajanand-erp' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					<div style={ { marginBottom: '20px' } }>
 						<TextControl
-							label={ __( 'Company Name', 'wp-erp' ) }
+							label={ __( 'Company Name', 'sahajanand-erp' ) }
 							value={ settings.company_name }
 							onChange={ ( val ) => setSettings( { ...settings, company_name: val } ) }
-							help={ __( 'This name will appear on your invoices and reports.', 'wp-erp' ) }
+							help={ __( 'This name will appear on your invoices and reports.', 'sahajanand-erp' ) }
 						/>
 					</div>
 					
@@ -84,7 +84,7 @@ const SettingsApp = () => {
 						disabled={ saving }
 						onClick={ handleSave }
 					>
-						{ saving ? __( 'Saving...', 'wp-erp' ) : __( 'Save Settings', 'wp-erp' ) }
+						{ saving ? __( 'Saving...', 'sahajanand-erp' ) : __( 'Save Settings', 'sahajanand-erp' ) }
 					</Button>
 				</CardBody>
 			</Card>

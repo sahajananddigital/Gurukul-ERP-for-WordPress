@@ -4,23 +4,17 @@
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	Card,
-	CardBody,
-	CardHeader,
 	Notice,
 	TabPanel,
 } from '@wordpress/components';
 import { fetchExpenses as fetchExpensesApi } from './services/api';
 import ExpensesList from './components/ExpensesList';
-import CreateExpense from './components/CreateExpense';
 
 const ExpensesApp = ( { view = 'list' } ) => {
 	const [ expenses, setExpenses ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
-	const [ activeTab, setActiveTab ] = useState(
-		view === 'create' ? 'create' : 'list'
-	);
+	const [ activeTab, setActiveTab ] = useState( 'list' );
 
 	useEffect( () => {
 		if ( activeTab === 'list' ) {
@@ -41,16 +35,8 @@ const ExpensesApp = ( { view = 'list' } ) => {
 		}
 	};
 
-	const handleExpenseCreated = () => {
-		if ( activeTab !== 'list' ) {
-			setActiveTab( 'list' );
-		} else {
-			loadData();
-		}
-	};
-
 	return (
-		<div className="wp-erp-expenses">
+		<div className="sahajanand-erp-expenses">
 			{ error && (
 				<Notice
 					status="error"
@@ -63,21 +49,16 @@ const ExpensesApp = ( { view = 'list' } ) => {
 
 			<div>
 				<TabPanel
-						className="wp-erp-expenses-tabs"
+						className="sahajanand-erp-expenses-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => setActiveTab( tabName ) }
 						tabs={ [
 							{
 								name: 'list',
-								title: __( 'All Expenses', 'wp-erp' ),
+								title: __( 'All Expenses', 'sahajanand-erp' ),
 								className: 'tab-list',
-							},
-							{
-								name: 'create',
-								title: __( 'Add Expense', 'wp-erp' ),
-								className: 'tab-create',
-							},
+							}
 						] }
 					>
 						{ ( tab ) => {
@@ -86,14 +67,11 @@ const ExpensesApp = ( { view = 'list' } ) => {
 									<ExpensesList
 										expenses={ expenses }
 										loading={ loading }
+										onExpenseUpdated={ loadData }
 									/>
 								);
 							}
-							return (
-								<CreateExpense
-									onExpenseCreated={ handleExpenseCreated }
-								/>
-							);
+							return null;
 						} }
 					</TabPanel>
 			</div>

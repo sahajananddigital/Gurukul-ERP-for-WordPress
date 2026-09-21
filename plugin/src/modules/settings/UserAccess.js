@@ -15,15 +15,15 @@ const UserAccess = () => {
 
 	useEffect( () => {
 		Promise.all( [
-			apiFetch( { path: '/wp-erp/v1/user-access/users' } ),
-			apiFetch( { path: '/wp-erp/v1/user-access/capabilities' } )
+			apiFetch( { path: '/sahajanand-erp/v1/user-access/users' } ),
+			apiFetch( { path: '/sahajanand-erp/v1/user-access/capabilities' } )
 		] ).then( ( [ usersData, capsData ] ) => {
 			setUsers( usersData );
 			setCapabilities( capsData );
 			setLoading( false );
 		} ).catch( ( err ) => {
 			console.error( err );
-			setNotice( { type: 'error', message: __( 'Failed to load user data.', 'wp-erp' ) } );
+			setNotice( { type: 'error', message: __( 'Failed to load user data.', 'sahajanand-erp' ) } );
 			setLoading( false );
 		} );
 	}, [] );
@@ -36,14 +36,14 @@ const UserAccess = () => {
 
 		setLoadingAccess( true );
 		setNotice( null );
-		apiFetch( { path: `/wp-erp/v1/user-access/${ selectedUserId }` } )
+		apiFetch( { path: `/sahajanand-erp/v1/user-access/${ selectedUserId }` } )
 			.then( ( data ) => {
 				setUserAccess( data );
 				setLoadingAccess( false );
 			} )
 			.catch( ( err ) => {
 				console.error( err );
-				setNotice( { type: 'error', message: __( 'Failed to load user access.', 'wp-erp' ) } );
+				setNotice( { type: 'error', message: __( 'Failed to load user access.', 'sahajanand-erp' ) } );
 				setLoadingAccess( false );
 			} );
 	}, [ selectedUserId ] );
@@ -52,17 +52,17 @@ const UserAccess = () => {
 		setSaving( true );
 		setNotice( null );
 		apiFetch( {
-			path: `/wp-erp/v1/user-access/${ selectedUserId }`,
+			path: `/sahajanand-erp/v1/user-access/${ selectedUserId }`,
 			method: 'POST',
 			data: { access: userAccess.access },
 		} )
 			.then( () => {
-				setNotice( { type: 'success', message: __( 'Permissions saved successfully!', 'wp-erp' ) } );
+				setNotice( { type: 'success', message: __( 'Permissions saved successfully!', 'sahajanand-erp' ) } );
 				setSaving( false );
 			} )
 			.catch( ( err ) => {
 				console.error( err );
-				setNotice( { type: 'error', message: __( 'Failed to save permissions.', 'wp-erp' ) } );
+				setNotice( { type: 'error', message: __( 'Failed to save permissions.', 'sahajanand-erp' ) } );
 				setSaving( false );
 			} );
 	};
@@ -82,15 +82,15 @@ const UserAccess = () => {
 	}
 
 	const userOptions = [
-		{ label: __( '-- Select a user --', 'wp-erp' ), value: '' },
+		{ label: __( '-- Select a user --', 'sahajanand-erp' ), value: '' },
 		...users.map( u => ( { label: `${ u.display_name } (${ u.email })`, value: u.id } ) )
 	];
 
 	return (
-		<div className="wp-erp-user-access" style={ { padding: '40px', maxWidth: '800px', margin: '0 auto' } }>
+		<div className="sahajanand-erp-user-access" style={ { padding: '40px', maxWidth: '800px', margin: '0 auto' } }>
 			<div style={ { marginBottom: '32px' } }>
 				<h1 style={ { margin: 0, fontSize: '24px', fontWeight: 600 } }>
-					{ __( 'User Access Management', 'wp-erp' ) }
+					{ __( 'User Access Management', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 
@@ -106,11 +106,11 @@ const UserAccess = () => {
 
 			<Card>
 				<CardHeader>
-					<h2 style={ { margin: 0 } }>{ __( 'Select User', 'wp-erp' ) }</h2>
+					<h2 style={ { margin: 0 } }>{ __( 'Select User', 'sahajanand-erp' ) }</h2>
 				</CardHeader>
 				<CardBody>
 					<SelectControl
-						label={ __( 'User', 'wp-erp' ) }
+						label={ __( 'User', 'sahajanand-erp' ) }
 						value={ selectedUserId }
 						options={ userOptions }
 						onChange={ setSelectedUserId }
@@ -123,17 +123,17 @@ const UserAccess = () => {
 			{ ! loadingAccess && userAccess && (
 				<Card style={ { marginTop: '20px' } }>
 					<CardHeader>
-						<h2 style={ { margin: 0 } }>{ __( 'Access Permissions', 'wp-erp' ) }</h2>
+						<h2 style={ { margin: 0 } }>{ __( 'Access Permissions', 'sahajanand-erp' ) }</h2>
 					</CardHeader>
 					<CardBody>
 						{ userAccess.is_admin ? (
 							<Notice status="warning" isDismissible={ false }>
-								{ __( 'This user is an Administrator and has access to all modules by default.', 'wp-erp' ) }
+								{ __( 'This user is an Administrator and has access to all modules by default.', 'sahajanand-erp' ) }
 							</Notice>
 						) : (
 							<>
 								<div style={ { marginBottom: '20px' } }>
-									<p style={ { fontWeight: 500, marginBottom: '12px' } }>{ __( 'Allowed Modules', 'wp-erp' ) }</p>
+									<p style={ { fontWeight: 500, marginBottom: '12px' } }>{ __( 'Allowed Modules', 'sahajanand-erp' ) }</p>
 									{ Object.keys( capabilities ).map( ( cap ) => (
 										<CheckboxControl
 											key={ cap }
@@ -143,7 +143,7 @@ const UserAccess = () => {
 										/>
 									) ) }
 									<p style={ { color: '#757575', fontSize: '13px', marginTop: '12px' } }>
-										{ __( 'Check the modules this user should have access to.', 'wp-erp' ) }
+										{ __( 'Check the modules this user should have access to.', 'sahajanand-erp' ) }
 									</p>
 								</div>
 								
@@ -153,7 +153,7 @@ const UserAccess = () => {
 									disabled={ saving }
 									onClick={ handleSave }
 								>
-									{ saving ? __( 'Saving...', 'wp-erp' ) : __( 'Save Permissions', 'wp-erp' ) }
+									{ saving ? __( 'Saving...', 'sahajanand-erp' ) : __( 'Save Permissions', 'sahajanand-erp' ) }
 								</Button>
 							</>
 						) }

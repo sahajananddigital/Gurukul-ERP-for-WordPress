@@ -6,10 +6,10 @@ import { __ } from '@wordpress/i18n';
 
 export const fetchExpenses = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/expenses' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/expenses' } );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to fetch expenses', 'wp-erp' )
+			err.message || __( 'Failed to fetch expenses', 'sahajanand-erp' )
 		);
 	}
 };
@@ -17,13 +17,13 @@ export const fetchExpenses = async () => {
 export const createExpense = async ( payload ) => {
 	try {
 		return await apiFetch( {
-			path: '/wp-erp/v1/expenses',
+			path: '/sahajanand-erp/v1/expenses',
 			method: 'POST',
 			data: payload,
 		} );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to create expense', 'wp-erp' )
+			err.message || __( 'Failed to create expense', 'sahajanand-erp' )
 		);
 	}
 };

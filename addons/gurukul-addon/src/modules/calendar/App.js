@@ -91,7 +91,7 @@ export default function CalendarApp() {
 	return (
 		<AdminCrud
 			title="Calendar Events"
-			apiPath="/wp-erp/v1/content/calendar-events"
+			apiPath="/sahajanand-erp/v1/content/calendar-events"
 			entityName="Event"
 			columns={ columns }
 			defaultFormState={ defaultState }

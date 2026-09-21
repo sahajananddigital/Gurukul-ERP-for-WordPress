@@ -84,14 +84,14 @@ const EditModal = ( { title, isOpen, onClose, onSave, data, fields } ) => {
 						disabled={ isSaving }
 						style={ { marginRight: '8px' } }
 					>
-						{ __( 'Cancel', 'wp-erp' ) }
+						{ __( 'Cancel', 'sahajanand-erp' ) }
 					</Button>
 					<Button
 						variant="primary"
 						onClick={ handleSave }
 						isBusy={ isSaving }
 					>
-						{ __( 'Save Changes', 'wp-erp' ) }
+						{ __( 'Save Changes', 'sahajanand-erp' ) }
 					</Button>
 				</Flex>
 			</div>

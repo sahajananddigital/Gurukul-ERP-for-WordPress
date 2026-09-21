@@ -27,7 +27,7 @@ describe( 'DonationsApp', () => {
 
 		await waitFor( () => {
 			expect( apiFetch ).toHaveBeenCalledWith( {
-				path: '/wp-erp/v1/donations/ledgers',
+				path: '/sahajanand-erp/v1/donations/ledgers',
 			} );
 		} );
 	} );

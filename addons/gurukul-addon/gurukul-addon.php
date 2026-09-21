@@ -31,7 +31,7 @@ class Gurukul_Addon {
 	
 	private function __construct() {
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
-		add_action( 'wp_erp_init', array( $this, 'init' ) );
+		add_action( 'sahajanand_erp_init', array( $this, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 	
@@ -99,42 +99,42 @@ class Gurukul_Addon {
 	
 	public function init() {
 		// Verify core is available
-		if ( ! function_exists( 'WP_ERP' ) ) {
+		if ( ! function_exists( 'Sahajanand_ERP' ) ) {
 			return;
 		}
 
 		// Load Controllers
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-wp-erp-api-donations.php';
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-wp-erp-api-food-pass.php';
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-wp-erp-api-content.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-sahajanand-erp-api-donations.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-sahajanand-erp-api-food-pass.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'includes/api/class-sahajanand-erp-api-content.php';
 		
 		// Load Modules
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/donations/class-wp-erp-donations.php';
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/food-pass/class-wp-erp-food-pass.php';
-		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/content/class-wp-erp-content.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/donations/class-sahajanand-erp-donations.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/food-pass/class-sahajanand-erp-food-pass.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/content/class-sahajanand-erp-content.php';
 
-		$erp = WP_ERP();
+		$erp = Sahajanand_ERP();
 		
 		// Register Modules to core
-		$erp->modules->register_module( 'donations', new WP_ERP_Donations() );
-		$erp->modules->register_module( 'food-pass', new WP_ERP_Food_Pass() );
-		$erp->modules->register_module( 'content', new WP_ERP_Content() );
+		$erp->modules->register_module( 'donations', new SAHAJANAND_ERP_Donations() );
+		$erp->modules->register_module( 'food-pass', new SAHAJANAND_ERP_Food_Pass() );
+		$erp->modules->register_module( 'content', new SAHAJANAND_ERP_Content() );
 		
 		// Register APIs
 		add_action( 'rest_api_init', function() {
-			$donations_api = new WP_ERP_API_Donations();
+			$donations_api = new SAHAJANAND_ERP_API_Donations();
 			$donations_api->register_routes();
 			
-			$food_pass_api = new WP_ERP_API_Food_Pass();
+			$food_pass_api = new SAHAJANAND_ERP_API_Food_Pass();
 			$food_pass_api->register_routes();
 			
-			$content_api = new WP_ERP_API_Content();
+			$content_api = new SAHAJANAND_ERP_API_Content();
 			$content_api->register_routes();
 		});
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( $hook !== 'toplevel_page_wp-erp-app' ) {
+		if ( $hook !== 'toplevel_page_sahajanand-erp-app' ) {
 			return;
 		}
 

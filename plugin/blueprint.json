@@ -1,5 +1,5 @@
 {
-  "landingPage": "/wp-admin/admin.php?page=wp-erp-app",
+  "landingPage": "/wp-admin/admin.php?page=sahajanand-erp-app",
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"

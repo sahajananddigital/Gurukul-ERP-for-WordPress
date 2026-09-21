@@ -14,13 +14,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Example Addon Class
  */
-class WP_ERP_Addon_Example_Addon {
+class SAHAJANAND_ERP_Addon_Example_Addon {
 	
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
-		add_action( 'wp_erp_init', array( $this, 'init' ) );
+		add_action( 'sahajanand_erp_init', array( $this, 'init' ) );
 		add_action( 'admin_menu', array( $this, 'add_menu' ) );
 	}
 	
@@ -30,7 +30,7 @@ class WP_ERP_Addon_Example_Addon {
 	public function init() {
 		// Add custom functionality here
 		// You can hook into WP ERP actions and filters
-		do_action( 'wp_erp_example_addon_init' );
+		do_action( 'sahajanand_erp_example_addon_init' );
 	}
 	
 	/**
@@ -38,11 +38,11 @@ class WP_ERP_Addon_Example_Addon {
 	 */
 	public function add_menu() {
 		add_submenu_page(
-			'wp-erp-crm',
-			__( 'Example Addon', 'wp-erp' ),
-			__( 'Example Addon', 'wp-erp' ),
+			'sahajanand-erp-crm',
+			__( 'Example Addon', 'sahajanand-erp' ),
+			__( 'Example Addon', 'sahajanand-erp' ),
 			'manage_options',
-			'wp-erp-example-addon',
+			'sahajanand-erp-example-addon',
 			array( $this, 'render_page' )
 		);
 	}
@@ -53,13 +53,13 @@ class WP_ERP_Addon_Example_Addon {
 	public function render_page() {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Example Addon', 'wp-erp' ); ?></h1>
-			<p><?php esc_html_e( 'This is an example addon for WP ERP.', 'wp-erp' ); ?></p>
+			<h1><?php esc_html_e( 'Example Addon', 'sahajanand-erp' ); ?></h1>
+			<p><?php esc_html_e( 'This is an example addon for WP ERP.', 'sahajanand-erp' ); ?></p>
 		</div>
 		<?php
 	}
 }
 
 // Initialize addon
-new WP_ERP_Addon_Example_Addon();
+new SAHAJANAND_ERP_Addon_Example_Addon();
 

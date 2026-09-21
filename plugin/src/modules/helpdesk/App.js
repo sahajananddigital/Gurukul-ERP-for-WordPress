@@ -4,34 +4,27 @@
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	Card,
-	CardBody,
-	CardHeader,
-	Button,
-	TextControl,
-	TextareaControl,
-	SelectControl,
 	Spinner,
 	Notice,
 	Flex,
-	FlexBlock,
 	TabPanel,
+	Button,
+	SnackbarList,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import apiFetch from '@wordpress/api-fetch';
+import EditModal from '../../components/EditModal';
 
 const HelpdeskApp = () => {
 	const [ tickets, setTickets ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
-	const [ isCreating, setIsCreating ] = useState( false );
-	const [ formData, setFormData ] = useState( {
-		subject: '',
-		description: '',
-		priority: 'medium',
-		status: 'open',
-	} );
 	const [ activeTab, setActiveTab ] = useState( 'tickets' );
+
+	// Edit Modal & Snackbar State
+	const [ isEditModalOpen, setIsEditModalOpen ] = useState( false );
+	const [ editingTicket, setEditingTicket ] = useState( null );
+	const [ snackbars, setSnackbars ] = useState( [] );
 
 	const [ view, setView ] = useState( {
 		type: 'table',
@@ -47,51 +40,92 @@ const HelpdeskApp = () => {
 	} );
 
 	useEffect( () => {
-		fetchTickets();
-	}, [] );
+		if ( activeTab === 'tickets' ) {
+			fetchTickets();
+		}
+	}, [ activeTab ] );
+
+	const addSnackbar = ( message ) => {
+		setSnackbars( ( prev ) => [
+			...prev,
+			{ id: Date.now().toString(), content: message },
+		] );
+	};
+
+	const removeSnackbar = ( id ) => {
+		setSnackbars( ( prev ) => prev.filter( ( s ) => s.id !== id ) );
+	};
 
 	const fetchTickets = async () => {
 		setLoading( true );
 		setError( null );
 		try {
 			const data = await apiFetch( {
-				path: '/wp-erp/v1/helpdesk/tickets',
+				path: '/sahajanand-erp/v1/helpdesk/tickets',
 			} );
 			setTickets( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch tickets', 'wp-erp' )
+				err.message || __( 'Failed to fetch tickets', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
 		}
 	};
 
-	const handleSubmit = async ( e ) => {
-		e.preventDefault();
-		setIsCreating( true );
-		setError( null );
+	const handleAddNew = () => {
+		setEditingTicket( { priority: 'medium', status: 'open' } ); // defaults
+		setIsEditModalOpen( true );
+	};
 
+	const handleEdit = ( item ) => {
+		setEditingTicket( item );
+		setIsEditModalOpen( true );
+	};
+
+	const handleDelete = async ( item ) => {
+		if (
+			window.confirm(
+				__( 'Are you sure you want to delete this ticket?', 'sahajanand-erp' )
+			)
+		) {
+			try {
+				await apiFetch( {
+					path: `/sahajanand-erp/v1/helpdesk/tickets/${ item.id }`,
+					method: 'DELETE',
+				} );
+				addSnackbar( __( 'Ticket deleted successfully.', 'sahajanand-erp' ) );
+				fetchTickets();
+			} catch ( err ) {
+				// eslint-disable-next-line no-console
+				console.error( err );
+				addSnackbar( __( 'Failed to delete ticket.', 'sahajanand-erp' ) );
+			}
+		}
+	};
+
+	const handleSave = async ( data ) => {
 		try {
-			await apiFetch( {
-				path: '/wp-erp/v1/helpdesk/tickets',
-				method: 'POST',
-				data: formData,
-			} );
-			setFormData( {
-				subject: '',
-				description: '',
-				priority: 'medium',
-				status: 'open',
-			} );
+			if ( editingTicket && editingTicket.id ) {
+				await apiFetch( {
+					path: `/sahajanand-erp/v1/helpdesk/tickets/${ editingTicket.id }`,
+					method: 'POST',
+					data,
+				} );
+				addSnackbar( __( 'Ticket updated successfully.', 'sahajanand-erp' ) );
+			} else {
+				await apiFetch( {
+					path: '/sahajanand-erp/v1/helpdesk/tickets',
+					method: 'POST',
+					data,
+				} );
+				addSnackbar( __( 'Ticket created successfully.', 'sahajanand-erp' ) );
+			}
 			fetchTickets();
-			setActiveTab( 'tickets' );
 		} catch ( err ) {
-			setError(
-				err.message || __( 'Failed to create ticket', 'wp-erp' )
-			);
-		} finally {
-			setIsCreating( false );
+			// eslint-disable-next-line no-console
+			console.error( err );
+			addSnackbar( __( 'Failed to save ticket.', 'sahajanand-erp' ) );
 		}
 	};
 
@@ -123,7 +157,7 @@ const HelpdeskApp = () => {
 		() => [
 			{
 				id: 'ticket_id',
-				header: __( 'Ticket ID', 'wp-erp' ),
+				header: __( 'Ticket ID', 'sahajanand-erp' ),
 				getValue: ( { item } ) =>
 					item.ticket_id ||
 					item.ticket_no ||
@@ -132,13 +166,13 @@ const HelpdeskApp = () => {
 			},
 			{
 				id: 'subject',
-				header: __( 'Subject', 'wp-erp' ),
+				header: __( 'Subject', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.subject || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'priority',
-				header: __( 'Priority', 'wp-erp' ),
+				header: __( 'Priority', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.priority,
 				render: ( { item } ) => (
 					<span
@@ -158,7 +192,7 @@ const HelpdeskApp = () => {
 			},
 			{
 				id: 'status',
-				header: __( 'Status', 'wp-erp' ),
+				header: __( 'Status', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.status,
 				render: ( { item } ) => (
 					<span
@@ -178,9 +212,35 @@ const HelpdeskApp = () => {
 			},
 			{
 				id: 'created_at',
-				header: __( 'Created', 'wp-erp' ),
+				header: __( 'Created', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.created_at || '-',
 				enableSorting: true,
+			},
+		],
+		[]
+	);
+
+	const actions = useMemo(
+		() => [
+			{
+				id: 'edit',
+				label: __( 'Edit', 'sahajanand-erp' ),
+				isPrimary: true,
+				callback: ( items ) => {
+					if ( items.length > 0 ) {
+						handleEdit( items[ 0 ] );
+					}
+				},
+			},
+			{
+				id: 'delete',
+				label: __( 'Delete', 'sahajanand-erp' ),
+				isDestructive: true,
+				callback: ( items ) => {
+					if ( items.length > 0 ) {
+						handleDelete( items[ 0 ] );
+					}
+				},
 			},
 		],
 		[]
@@ -206,130 +266,71 @@ const HelpdeskApp = () => {
 			);
 		}
 
-		if ( tickets.length === 0 ) {
-			return (
-				<p
-					style={ {
-						padding: '16px',
-						textAlign: 'center',
-						color: '#757575',
-					} }
-				>
-					{ __( 'No tickets found.', 'wp-erp' ) }
-				</p>
-			);
-		}
-
 		return (
-			<div
-				style={ {
-					backgroundColor: '#fff',
-					border: '1px solid #e0e0e0',
-					borderRadius: '4px',
-				} }
-			>
-				<DataViews
-					data={ tickets }
-					fields={ fields }
-					actions={ [] }
-					view={ view }
-					onChangeView={ setView }
-					defaultLayouts={ defaultLayouts }
-					paginationInfo={ {
-						totalItems: tickets.length,
-						totalPages: Math.ceil( tickets.length / view.perPage ),
-					} }
-				/>
+			<div>
+				<Flex justify="flex-end" style={ { marginBottom: '16px' } }>
+					<Button variant="primary" onClick={ handleAddNew }>
+						{ __( 'Add New Ticket', 'sahajanand-erp' ) }
+					</Button>
+				</Flex>
+
+				{ tickets.length === 0 ? (
+					<Notice status="info" isDismissible={ false }>
+						{ __( 'No tickets found.', 'sahajanand-erp' ) }
+					</Notice>
+				) : (
+					<div
+						style={ {
+							backgroundColor: '#fff',
+							border: '1px solid #e0e0e0',
+							borderRadius: '4px',
+						} }
+					>
+						<DataViews
+							data={ tickets }
+							fields={ fields }
+							actions={ actions }
+							view={ view }
+							onChangeView={ setView }
+							defaultLayouts={ defaultLayouts }
+							paginationInfo={ {
+								totalItems: tickets.length,
+								totalPages: Math.ceil( tickets.length / view.perPage ),
+							} }
+						/>
+					</div>
+				) }
 			</div>
 		);
 	};
 
-	const renderCreateTicket = () => {
-		return (
-			<Card style={ { marginBottom: '24px' } }>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Create New Ticket', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
-					<form onSubmit={ handleSubmit }>
-						<Flex direction="column" gap={ 4 }>
-							<FlexBlock>
-								<TextControl
-									label={ __( 'Subject', 'wp-erp' ) }
-									value={ formData.subject }
-									onChange={ ( value ) =>
-										setFormData( {
-											...formData,
-											subject: value,
-										} )
-									}
-									required
-								/>
-							</FlexBlock>
-							<FlexBlock>
-								<TextareaControl
-									label={ __( 'Description', 'wp-erp' ) }
-									value={ formData.description }
-									onChange={ ( value ) =>
-										setFormData( {
-											...formData,
-											description: value,
-										} )
-									}
-									required
-									rows={ 6 }
-								/>
-							</FlexBlock>
-							<FlexBlock>
-								<SelectControl
-									label={ __( 'Priority', 'wp-erp' ) }
-									value={ formData.priority }
-									options={ [
-										{
-											label: __( 'Low', 'wp-erp' ),
-											value: 'low',
-										},
-										{
-											label: __( 'Medium', 'wp-erp' ),
-											value: 'medium',
-										},
-										{
-											label: __( 'High', 'wp-erp' ),
-											value: 'high',
-										},
-										{
-											label: __( 'Urgent', 'wp-erp' ),
-											value: 'urgent',
-										},
-									] }
-									onChange={ ( value ) =>
-										setFormData( {
-											...formData,
-											priority: value,
-										} )
-									}
-								/>
-							</FlexBlock>
-							<Flex justify="flex-start">
-								<Button
-									variant="primary"
-									type="submit"
-									isBusy={ isCreating }
-								>
-									{ __( 'Create Ticket', 'wp-erp' ) }
-								</Button>
-							</Flex>
-						</Flex>
-					</form>
-				</CardBody>
-			</Card>
-		);
-	};
+	const ticketFields = [
+		{ key: 'subject', label: __( 'Subject', 'sahajanand-erp' ), type: 'text' },
+		{ key: 'description', label: __( 'Description', 'sahajanand-erp' ), type: 'textarea' },
+		{
+			key: 'priority',
+			label: __( 'Priority', 'sahajanand-erp' ),
+			type: 'select',
+			options: [
+				{ label: 'Low', value: 'low' },
+				{ label: 'Medium', value: 'medium' },
+				{ label: 'High', value: 'high' },
+				{ label: 'Urgent', value: 'urgent' },
+			],
+		},
+		{
+			key: 'status',
+			label: __( 'Status', 'sahajanand-erp' ),
+			type: 'select',
+			options: [
+				{ label: 'Open', value: 'open' },
+				{ label: 'Closed', value: 'closed' },
+			],
+		},
+	];
 
 	return (
-		<div className="wp-erp-helpdesk">
+		<div className="sahajanand-erp-helpdesk">
 			{ error && (
 				<Notice
 					status="error"
@@ -342,36 +343,46 @@ const HelpdeskApp = () => {
 
 			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
 				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
-					{ __( 'Helpdesk Management', 'wp-erp' ) }
+					{ __( 'Helpdesk Management', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 			<div style={{ padding: '0 40px' }}>
 				<TabPanel
-						className="wp-erp-helpdesk-tabs"
-						activeClass="is-active"
-						initialTabName={ activeTab }
-						onSelect={ ( tabName ) => setActiveTab( tabName ) }
-						tabs={ [
-							{
-								name: 'tickets',
-								title: __( 'Tickets', 'wp-erp' ),
-								className: 'tab-tickets',
-							},
-							{
-								name: 'create',
-								title: __( 'Create Ticket', 'wp-erp' ),
-								className: 'tab-create',
-							},
-						] }
-					>
-						{ ( tab ) => {
-							if ( tab.name === 'tickets' ) {
-								return renderTicketsList();
-							}
-							return renderCreateTicket();
-						} }
-					</TabPanel>
+					className="sahajanand-erp-helpdesk-tabs"
+					activeClass="is-active"
+					initialTabName={ activeTab }
+					onSelect={ ( tabName ) => setActiveTab( tabName ) }
+					tabs={ [
+						{
+							name: 'tickets',
+							title: __( 'Tickets', 'sahajanand-erp' ),
+							className: 'tab-tickets',
+						}
+					] }
+				>
+					{ ( tab ) => {
+						if ( tab.name === 'tickets' ) {
+							return renderTicketsList();
+						}
+						return null;
+					} }
+				</TabPanel>
 			</div>
+
+			<EditModal
+				title={ editingTicket && editingTicket.id ? __( 'Edit Ticket', 'sahajanand-erp' ) : __( 'Create New Ticket', 'sahajanand-erp' ) }
+				isOpen={ isEditModalOpen }
+				onClose={ () => setIsEditModalOpen( false ) }
+				onSave={ handleSave }
+				data={ editingTicket }
+				fields={ ticketFields }
+			/>
+
+			<SnackbarList
+				notices={ snackbars }
+				onRemove={ removeSnackbar }
+				style={{ position: 'fixed', bottom: '20px', left: '20px', zIndex: 100000 }}
+			/>
 		</div>
 	);
 };

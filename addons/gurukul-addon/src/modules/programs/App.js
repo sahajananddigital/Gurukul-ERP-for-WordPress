@@ -113,7 +113,7 @@ export default function ProgramsApp() {
 	return (
 		<AdminCrud
 			title="Daily Programs"
-			apiPath="/wp-erp/v1/content/daily-programs"
+			apiPath="/sahajanand-erp/v1/content/daily-programs"
 			entityName="Program"
 			columns={ columns }
 			defaultFormState={ defaultState }

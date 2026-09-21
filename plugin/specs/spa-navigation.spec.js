@@ -3,7 +3,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 test.describe( 'FSE SPA Navigation and Layout', () => {
 	test( 'should load the FSE UI and hide default WP menus', async ( { admin, page } ) => {
 		// 1. Visit the custom plugin admin page
-		await admin.visitAdminPage( 'admin.php?page=wp-erp-app' );
+		await admin.visitAdminPage( 'admin.php?page=sahajanand-erp-app' );
 		
 		// 2. Verify default menus are hidden (we check if it's hidden by CSS)
 		const adminMenuWrap = page.locator( '#adminmenuwrap' );
@@ -13,7 +13,7 @@ test.describe( 'FSE SPA Navigation and Layout', () => {
 		await expect( wpAdminBar ).toBeHidden();
 
 		// 3. Verify our React SPA is mounted
-		const appRoot = page.locator( '#wp-erp-root' );
+		const appRoot = page.locator( '#sahajanand-erp-root' );
 		await expect( appRoot ).toBeVisible();
 		
 		// 4. Verify sidebar navigation works and content renders

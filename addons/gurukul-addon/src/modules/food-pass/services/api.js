@@ -6,10 +6,10 @@ import { __ } from '@wordpress/i18n';
 
 export const fetchFoodPasses = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/food-pass' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/food-pass' } );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to fetch food passes', 'wp-erp' )
+			err.message || __( 'Failed to fetch food passes', 'sahajanand-erp' )
 		);
 	}
 };
@@ -17,7 +17,7 @@ export const fetchFoodPasses = async () => {
 export const createFoodPass = async ( payload ) => {
 	try {
 		return await apiFetch( {
-			path: '/wp-erp/v1/food-pass',
+			path: '/sahajanand-erp/v1/food-pass',
 			method: 'POST',
 			data: payload,
 		} );
@@ -26,7 +26,7 @@ export const createFoodPass = async ( payload ) => {
 		const message =
 			err.message && err.data?.status
 				? `${ err.message } (${ err.data.status })`
-				: err.message || __( 'Failed to save food pass', 'wp-erp' );
+				: err.message || __( 'Failed to save food pass', 'sahajanand-erp' );
 		throw new Error( message );
 	}
 };

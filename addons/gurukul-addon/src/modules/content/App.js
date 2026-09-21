@@ -145,7 +145,7 @@ export default function ContentApp() {
 	return (
 		<AdminCrud
 			title="Daily Darshan"
-			apiPath="/wp-erp/v1/content/daily-darshan"
+			apiPath="/sahajanand-erp/v1/content/daily-darshan"
 			entityName="Darshan"
 			columns={ columns }
 			defaultFormState={ defaultState }

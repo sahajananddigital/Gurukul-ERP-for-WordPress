@@ -1,5 +1,5 @@
 {
-	"name": "wp-erp/wp-erp",
+	"name": "sahajanand-erp/sahajanand-erp",
 	"description": "WordPress ERP Plugin",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
@@ -13,7 +13,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"WP_ERP\\": "includes/"
+			"Sahajanand_ERP\\": "includes/"
 		}
 	},
 	"scripts": {

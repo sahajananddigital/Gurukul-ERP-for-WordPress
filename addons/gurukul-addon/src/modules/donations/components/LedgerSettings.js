@@ -42,7 +42,7 @@ const LedgerSettings = ( { ledgers, onLedgersUpdated } ) => {
 	return (
 		<Card>
 			<CardHeader>
-				<h3>{ __( 'Manage Ledgers', 'wp-erp' ) }</h3>
+				<h3>{ __( 'Manage Ledgers', 'sahajanand-erp' ) }</h3>
 			</CardHeader>
 			<CardBody>
 				{ error && (
@@ -59,14 +59,14 @@ const LedgerSettings = ( { ledgers, onLedgersUpdated } ) => {
 					<TextControl
 						value={ newLedger }
 						onChange={ setNewLedger }
-						placeholder={ __( 'New Ledger Name', 'wp-erp' ) }
+						placeholder={ __( 'New Ledger Name', 'sahajanand-erp' ) }
 					/>
 					<Button
 						variant="secondary"
 						onClick={ addLedger }
 						isBusy={ isSaving }
 					>
-						{ __( 'Add', 'wp-erp' ) }
+						{ __( 'Add', 'sahajanand-erp' ) }
 					</Button>
 				</Flex>
 			</CardBody>

@@ -2,7 +2,7 @@
 /**
  * PHPUnit Bootstrap
  *
- * @package WP_ERP
+ * @package Sahajanand_ERP
  */
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -19,7 +19,7 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 require_once $_tests_dir . '/includes/functions.php';
 
 function _manually_load_plugin() {
-	require dirname( dirname( __FILE__ ) ) . '/wp-erp.php';
+	require dirname( dirname( __FILE__ ) ) . '/sahajanand-erp.php';
 }
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 

@@ -68,11 +68,11 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( { path: '/wp-erp/v1/vouchers' } );
+			const data = await apiFetch( { path: '/sahajanand-erp/v1/vouchers' } );
 			setVouchers( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch vouchers', 'wp-erp' )
+				err.message || __( 'Failed to fetch vouchers', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
@@ -86,7 +86,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 
 		try {
 			await apiFetch( {
-				path: '/wp-erp/v1/vouchers',
+				path: '/sahajanand-erp/v1/vouchers',
 				method: 'POST',
 				data: formData,
 			} );
@@ -105,7 +105,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 			}
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to create voucher', 'wp-erp' )
+				err.message || __( 'Failed to create voucher', 'sahajanand-erp' )
 			);
 		} finally {
 			setIsCreating( false );
@@ -127,37 +127,37 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 		() => [
 			{
 				id: 'voucher_no',
-				header: __( 'Voucher No', 'wp-erp' ),
+				header: __( 'Voucher No', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.voucher_no,
 				enableSorting: true,
 			},
 			{
 				id: 'voucher_type',
-				header: __( 'Type', 'wp-erp' ),
+				header: __( 'Type', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.voucher_type,
 				enableSorting: true,
 			},
 			{
 				id: 'date',
-				header: __( 'Date', 'wp-erp' ),
+				header: __( 'Date', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.date,
 				enableSorting: true,
 			},
 			{
 				id: 'party_name',
-				header: __( 'Party Name', 'wp-erp' ),
+				header: __( 'Party Name', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.party_name || '-',
 				enableSorting: true,
 			},
 			{
 				id: 'amount',
-				header: __( 'Amount', 'wp-erp' ),
+				header: __( 'Amount', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.amount,
 				enableSorting: true,
 			},
 			{
 				id: 'status',
-				header: __( 'Status', 'wp-erp' ),
+				header: __( 'Status', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.status,
 				render: ( { item } ) => (
 					<span
@@ -208,7 +208,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 						color: '#757575',
 					} }
 				>
-					{ __( 'No vouchers found.', 'wp-erp' ) }
+					{ __( 'No vouchers found.', 'sahajanand-erp' ) }
 				</p>
 			);
 		}
@@ -242,7 +242,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 			<Card style={ { marginBottom: '24px' } }>
 				<CardHeader>
 					<h2 style={ { margin: 0 } }>
-						{ __( 'Create New Voucher', 'wp-erp' ) }
+						{ __( 'Create New Voucher', 'sahajanand-erp' ) }
 					</h2>
 				</CardHeader>
 				<CardBody>
@@ -251,27 +251,27 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							<Flex>
 								<FlexBlock>
 									<SelectControl
-										label={ __( 'Voucher Type', 'wp-erp' ) }
+										label={ __( 'Voucher Type', 'sahajanand-erp' ) }
 										value={ formData.voucher_type }
 										options={ [
 											{
 												label: __(
 													'Payment',
-													'wp-erp'
+													'sahajanand-erp'
 												),
 												value: 'payment',
 											},
 											{
 												label: __(
 													'Receipt',
-													'wp-erp'
+													'sahajanand-erp'
 												),
 												value: 'receipt',
 											},
 											{
 												label: __(
 													'Journal',
-													'wp-erp'
+													'sahajanand-erp'
 												),
 												value: 'journal',
 											},
@@ -287,7 +287,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Date', 'wp-erp' ) }
+										label={ __( 'Date', 'sahajanand-erp' ) }
 										type="date"
 										value={ formData.date }
 										onChange={ ( value ) =>
@@ -302,7 +302,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							</Flex>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Party Name', 'wp-erp' ) }
+									label={ __( 'Party Name', 'sahajanand-erp' ) }
 									value={ formData.party_name }
 									onChange={ ( value ) =>
 										setFormData( {
@@ -314,7 +314,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Amount', 'wp-erp' ) }
+									label={ __( 'Amount', 'sahajanand-erp' ) }
 									type="number"
 									step="0.01"
 									value={ formData.amount }
@@ -329,7 +329,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextareaControl
-									label={ __( 'Description', 'wp-erp' ) }
+									label={ __( 'Description', 'sahajanand-erp' ) }
 									value={ formData.description }
 									onChange={ ( value ) =>
 										setFormData( {
@@ -346,7 +346,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 									type="submit"
 									isBusy={ isCreating }
 								>
-									{ __( 'Create Voucher', 'wp-erp' ) }
+									{ __( 'Create Voucher', 'sahajanand-erp' ) }
 								</Button>
 							</Flex>
 						</Flex>
@@ -357,7 +357,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-vouchers">
+		<div className="sahajanand-erp-vouchers">
 			{ error && (
 				<Notice
 					status="error"
@@ -370,19 +370,19 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 
 			<div>
 				<TabPanel
-						className="wp-erp-vouchers-tabs"
+						className="sahajanand-erp-vouchers-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => setActiveTab( tabName ) }
 						tabs={ [
 							{
 								name: 'list',
-								title: __( 'All Vouchers', 'wp-erp' ),
+								title: __( 'All Vouchers', 'sahajanand-erp' ),
 								className: 'tab-list',
 							},
 							{
 								name: 'create',
-								title: __( 'Create Voucher', 'wp-erp' ),
+								title: __( 'Create Voucher', 'sahajanand-erp' ),
 								className: 'tab-create',
 							},
 						] }

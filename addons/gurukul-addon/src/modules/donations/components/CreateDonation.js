@@ -107,31 +107,31 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 
 			<Card>
 				<CardHeader>
-					<h3>{ __( 'New Donation', 'wp-erp' ) }</h3>
+					<h3>{ __( 'New Donation', 'sahajanand-erp' ) }</h3>
 				</CardHeader>
 				<CardBody>
 					<form onSubmit={ handleSave }>
 						<Flex direction="column" gap={ 4 }>
 							<TextControl
-								label={ __( 'Date', 'wp-erp' ) }
+								label={ __( 'Date', 'sahajanand-erp' ) }
 								value={ new Date().toLocaleDateString() }
 								readOnly
 							/>
 							<TextControl
-								label={ __( 'Phone Number', 'wp-erp' ) }
+								label={ __( 'Phone Number', 'sahajanand-erp' ) }
 								value={ phone }
 								onChange={ setPhone }
 								onBlur={ handlePhoneBlur }
 								required
 							/>
 							<TextControl
-								label={ __( 'Donor Name', 'wp-erp' ) }
+								label={ __( 'Donor Name', 'sahajanand-erp' ) }
 								value={ donorName }
 								onChange={ setDonorName }
 								required
 							/>
 							<SelectControl
-								label={ __( 'Ledger', 'wp-erp' ) }
+								label={ __( 'Ledger', 'sahajanand-erp' ) }
 								value={ ledger }
 								options={ ledgers.map( ( l ) => ( {
 									label: l,
@@ -140,14 +140,14 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 								onChange={ setLedger }
 							/>
 							<TextControl
-								label={ __( 'Note (Optional)', 'wp-erp' ) }
+								label={ __( 'Note (Optional)', 'sahajanand-erp' ) }
 								value={ note }
 								onChange={ setNote }
 							/>
 
 							<div>
 								<label className="components-base-control__label">
-									{ __( 'Amount', 'wp-erp' ) }
+									{ __( 'Amount', 'sahajanand-erp' ) }
 								</label>
 								<Flex
 									gap={ 2 }
@@ -175,7 +175,7 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 								<TextControl
 									placeholder={ __(
 										'Custom Amount',
-										'wp-erp'
+										'sahajanand-erp'
 									) }
 									type="number"
 									value={ amount }
@@ -198,7 +198,7 @@ const CreateDonation = ( { ledgers, onDonationCreated } ) => {
 								variant="primary"
 								isBusy={ isCreating }
 							>
-								{ __( 'Print & Save', 'wp-erp' ) }
+								{ __( 'Print & Save', 'sahajanand-erp' ) }
 							</Button>
 						</Flex>
 					</form>

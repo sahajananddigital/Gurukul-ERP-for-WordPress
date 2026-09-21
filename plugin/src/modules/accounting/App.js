@@ -4,9 +4,6 @@
 import { useState, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	Card,
-	CardBody,
-	CardHeader,
 	Notice,
 	TabPanel,
 } from '@wordpress/components';
@@ -16,7 +13,6 @@ import {
 } from './services/api';
 import AccountsList from './components/AccountsList';
 import TransactionsList from './components/TransactionsList';
-import CreateTransaction from './components/CreateTransaction';
 import InvoicesApp from '../invoices/App';
 import ExpensesApp from '../expenses/App';
 import VouchersApp from '../vouchers/App';
@@ -64,19 +60,8 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 		}
 	};
 
-	const handleTransactionCreated = () => {
-		// Switch to transactions tab or just reload data?
-		// Original app switched: setActiveTab( 'transactions' );
-		// Let's do that.
-		if ( activeTab !== 'transactions' ) {
-			setActiveTab( 'transactions' );
-		} else {
-			loadTransactions();
-		}
-	};
-
 	return (
-		<div className="wp-erp-accounting">
+		<div className="sahajanand-erp-accounting">
 			{ error && (
 				<Notice
 					status="error"
@@ -89,44 +74,39 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 
 			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
 				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
-					{ __( 'Accounting', 'wp-erp' ) }
+					{ __( 'Accounting', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 			<div style={{ padding: '0 40px' }}>
 				<TabPanel
-						className="wp-erp-accounting-tabs"
+						className="sahajanand-erp-accounting-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => setActiveTab( tabName ) }
 						tabs={ [
 							{
 								name: 'accounts',
-								title: __( 'Chart of Accounts', 'wp-erp' ),
+								title: __( 'Chart of Accounts', 'sahajanand-erp' ),
 								className: 'tab-accounts',
 							},
 							{
 								name: 'transactions',
-								title: __( 'Transactions', 'wp-erp' ),
+								title: __( 'Transactions', 'sahajanand-erp' ),
 								className: 'tab-transactions',
 							},
 							{
-								name: 'create',
-								title: __( 'Create Transaction', 'wp-erp' ),
-								className: 'tab-create',
-							},
-							{
 								name: 'invoices',
-								title: __( 'Invoices', 'wp-erp' ),
+								title: __( 'Invoices', 'sahajanand-erp' ),
 								className: 'tab-invoices',
 							},
 							{
 								name: 'expenses',
-								title: __( 'Expenses', 'wp-erp' ),
+								title: __( 'Expenses', 'sahajanand-erp' ),
 								className: 'tab-expenses',
 							},
 							{
 								name: 'vouchers',
-								title: __( 'Vouchers', 'wp-erp' ),
+								title: __( 'Vouchers', 'sahajanand-erp' ),
 								className: 'tab-vouchers',
 							},
 						] }
@@ -137,6 +117,7 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 									<AccountsList
 										accounts={ accounts }
 										loading={ loading }
+										onAccountUpdated={ loadAccounts }
 									/>
 								);
 							} else if ( tab.name === 'transactions' ) {
@@ -144,6 +125,7 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 									<TransactionsList
 										transactions={ transactions }
 										loading={ loading }
+										onTransactionUpdated={ loadTransactions }
 									/>
 								);
 							} else if ( tab.name === 'invoices' ) {
@@ -153,13 +135,7 @@ const AccountingApp = ( { view = 'accounts' } ) => {
 							} else if ( tab.name === 'vouchers' ) {
 								return <VouchersApp />;
 							}
-							return (
-								<CreateTransaction
-									onTransactionCreated={
-										handleTransactionCreated
-									}
-								/>
-							);
+							return null;
 						} }
 					</TabPanel>
 			</div>

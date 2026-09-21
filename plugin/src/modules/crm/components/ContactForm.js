@@ -4,19 +4,18 @@
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
-	Card,
-	CardBody,
-	CardHeader,
 	Button,
 	TextControl,
 	SelectControl,
 	Flex,
 	FlexBlock,
 	Notice,
+	Modal,
 } from '@wordpress/components';
 import { createContact } from '../services/api';
 
 const ContactForm = ( { onContactCreated } ) => {
+	const [ isOpen, setIsOpen ] = useState( false );
 	const [ isCreating, setIsCreating ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ formData, setFormData ] = useState( {
@@ -36,6 +35,12 @@ const ContactForm = ( { onContactCreated } ) => {
 		birthday: '',
 		anniversary: '',
 	} );
+
+	const openModal = () => setIsOpen( true );
+	const closeModal = () => {
+		setIsOpen( false );
+		setError( null );
+	};
 
 	const handleSubmit = async ( e ) => {
 		e.preventDefault();
@@ -64,6 +69,8 @@ const ContactForm = ( { onContactCreated } ) => {
 				anniversary: '',
 			} );
 
+			closeModal();
+
 			if ( onContactCreated ) {
 				onContactCreated();
 			}
@@ -75,29 +82,33 @@ const ContactForm = ( { onContactCreated } ) => {
 	};
 
 	return (
-		<>
-			{ error && (
-				<Notice
-					status="error"
-					isDismissible={ false }
-					onRemove={ () => setError( null ) }
+		<div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+			<Button variant="primary" onClick={ openModal }>
+				{ __( 'Add New Contact', 'sahajanand-erp' ) }
+			</Button>
+
+			{ isOpen && (
+				<Modal
+					title={ __( 'Add New Contact', 'sahajanand-erp' ) }
+					onRequestClose={ closeModal }
+					style={{ width: '600px' }}
 				>
-					{ error }
-				</Notice>
-			) }
-			<Card style={ { marginBottom: '24px' } }>
-				<CardHeader>
-					<h2 style={ { margin: 0 } }>
-						{ __( 'Add New Contact', 'wp-erp' ) }
-					</h2>
-				</CardHeader>
-				<CardBody>
+					{ error && (
+						<Notice
+							status="error"
+							isDismissible={ false }
+							onRemove={ () => setError( null ) }
+						>
+							{ error }
+						</Notice>
+					) }
+					
 					<form onSubmit={ handleSubmit }>
 						<Flex direction="column" gap={ 4 }>
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'First Name', 'wp-erp' ) }
+										label={ __( 'First Name', 'sahajanand-erp' ) }
 										value={ formData.first_name }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -110,7 +121,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Last Name', 'wp-erp' ) }
+										label={ __( 'Last Name', 'sahajanand-erp' ) }
 										value={ formData.last_name }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -125,7 +136,7 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Email', 'wp-erp' ) }
+										label={ __( 'Email', 'sahajanand-erp' ) }
 										type="email"
 										value={ formData.email }
 										onChange={ ( value ) =>
@@ -138,7 +149,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Phone', 'wp-erp' ) }
+										label={ __( 'Phone', 'sahajanand-erp' ) }
 										value={ formData.phone }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -152,7 +163,7 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Company', 'wp-erp' ) }
+										label={ __( 'Company', 'sahajanand-erp' ) }
 										value={ formData.company }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -164,25 +175,19 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<SelectControl
-										label={ __( 'Status', 'wp-erp' ) }
+										label={ __( 'Status', 'sahajanand-erp' ) }
 										value={ formData.status }
 										options={ [
 											{
-												label: __( 'Lead', 'wp-erp' ),
+												label: __( 'Lead', 'sahajanand-erp' ),
 												value: 'lead',
 											},
 											{
-												label: __(
-													'Customer',
-													'wp-erp'
-												),
+												label: __( 'Customer', 'sahajanand-erp' ),
 												value: 'customer',
 											},
 											{
-												label: __(
-													'Opportunity',
-													'wp-erp'
-												),
+												label: __( 'Opportunity', 'sahajanand-erp' ),
 												value: 'opportunity',
 											},
 										] }
@@ -195,15 +200,12 @@ const ContactForm = ( { onContactCreated } ) => {
 									/>
 								</FlexBlock>
 							</Flex>
-							<hr />
-							<h3>{ __( 'Contact Details', 'wp-erp' ) }</h3>
+							<hr style={{ margin: '10px 0' }} />
+							<h3 style={{ margin: 0 }}>{ __( 'Contact Details', 'sahajanand-erp' ) }</h3>
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __(
-											'Address Line 1',
-											'wp-erp'
-										) }
+										label={ __( 'Address Line 1', 'sahajanand-erp' ) }
 										value={ formData.address_line_1 }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -215,10 +217,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __(
-											'Address Line 2',
-											'wp-erp'
-										) }
+										label={ __( 'Address Line 2', 'sahajanand-erp' ) }
 										value={ formData.address_line_2 }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -232,7 +231,7 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'City', 'wp-erp' ) }
+										label={ __( 'City', 'sahajanand-erp' ) }
 										value={ formData.city }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -244,10 +243,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __(
-											'State/Province',
-											'wp-erp'
-										) }
+										label={ __( 'State/Province', 'sahajanand-erp' ) }
 										value={ formData.state }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -259,7 +255,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Postal Code', 'wp-erp' ) }
+										label={ __( 'Postal Code', 'sahajanand-erp' ) }
 										value={ formData.postal_code }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -273,7 +269,7 @@ const ContactForm = ( { onContactCreated } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Country', 'wp-erp' ) }
+										label={ __( 'Country', 'sahajanand-erp' ) }
 										value={ formData.country }
 										onChange={ ( value ) =>
 											setFormData( {
@@ -284,12 +280,12 @@ const ContactForm = ( { onContactCreated } ) => {
 									/>
 								</FlexBlock>
 							</Flex>
-							<hr />
-							<h3>{ __( 'Important Dates', 'wp-erp' ) }</h3>
+							<hr style={{ margin: '10px 0' }} />
+							<h3 style={{ margin: 0 }}>{ __( 'Important Dates', 'sahajanand-erp' ) }</h3>
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Birthday', 'wp-erp' ) }
+										label={ __( 'Birthday', 'sahajanand-erp' ) }
 										type="date"
 										value={ formData.birthday }
 										onChange={ ( value ) =>
@@ -302,7 +298,7 @@ const ContactForm = ( { onContactCreated } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Anniversary', 'wp-erp' ) }
+										label={ __( 'Anniversary', 'sahajanand-erp' ) }
 										type="date"
 										value={ formData.anniversary }
 										onChange={ ( value ) =>
@@ -314,20 +310,23 @@ const ContactForm = ( { onContactCreated } ) => {
 									/>
 								</FlexBlock>
 							</Flex>
-							<Flex justify="flex-start">
+							<Flex justify="flex-end" style={{ marginTop: '10px' }}>
+								<Button variant="secondary" onClick={ closeModal } style={{ marginRight: '10px' }}>
+									{ __( 'Cancel', 'sahajanand-erp' ) }
+								</Button>
 								<Button
 									variant="primary"
 									type="submit"
 									isBusy={ isCreating }
 								>
-									{ __( 'Add Contact', 'wp-erp' ) }
+									{ __( 'Save Contact', 'sahajanand-erp' ) }
 								</Button>
 							</Flex>
 						</Flex>
 					</form>
-				</CardBody>
-			</Card>
-		</>
+				</Modal>
+			) }
+		</div>
 	);
 };
 

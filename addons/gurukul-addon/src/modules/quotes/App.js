@@ -142,7 +142,7 @@ export default function QuotesApp() {
 	return (
 		<AdminCrud
 			title="Daily Quotes"
-			apiPath="/wp-erp/v1/content/daily-quotes"
+			apiPath="/sahajanand-erp/v1/content/daily-quotes"
 			entityName="Quote"
 			columns={ columns }
 			defaultFormState={ defaultState }

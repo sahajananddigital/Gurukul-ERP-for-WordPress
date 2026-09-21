@@ -16,7 +16,7 @@
 		"playground": "npx @wp-playground/cli@latest server --blueprint blueprint.json --mount '.:/wordpress/wp-content/plugins/plugin' --mount '../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon'",
 		"playground:debug": "npx @wp-playground/cli@latest server --blueprint blueprint.json --mount '.:/wordpress/wp-content/plugins/plugin' --mount '../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon'",
 		"open:playground": "open http://localhost:9400",
-		"plugin-zip": "zip -r wp-erp.zip . -x \"node_modules/*\" \"src/*\" \".git/*\" \".gitignore\" \"package.json\" \"package-lock.json\" \"specs/*\" \"tests/*\" \"playwright.config.js\" \"blueprint.json\"",
+		"plugin-zip": "rm -rf release && mkdir -p release/sahajanand-erp && rsync -a --exclude='node_modules' --exclude='src' --exclude='.git' --exclude='.*' --exclude='package*.json' --exclude='specs' --exclude='tests' --exclude='*.config.js' --exclude='*.xml*' --exclude='composer.*' --exclude='blueprint.json' --exclude='*.log' --exclude='release' --exclude='sahajanand-erp.zip' . release/sahajanand-erp/ && cd release && zip -r ../sahajanand-erp.zip sahajanand-erp && cd .. && rm -rf release",
 		"test:playwright": "wp-scripts test-playwright"
 	},
 	"keywords": [

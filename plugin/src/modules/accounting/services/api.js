@@ -6,20 +6,20 @@ import { __ } from '@wordpress/i18n';
 
 export const fetchAccounts = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/accounting/accounts' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/accounting/accounts' } );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to fetch accounts', 'wp-erp' )
+			err.message || __( 'Failed to fetch accounts', 'sahajanand-erp' )
 		);
 	}
 };
 
 export const fetchTransactions = async () => {
 	try {
-		return await apiFetch( { path: '/wp-erp/v1/accounting/transactions' } );
+		return await apiFetch( { path: '/sahajanand-erp/v1/accounting/transactions' } );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to fetch transactions', 'wp-erp' )
+			err.message || __( 'Failed to fetch transactions', 'sahajanand-erp' )
 		);
 	}
 };
@@ -27,13 +27,13 @@ export const fetchTransactions = async () => {
 export const createTransaction = async ( payload ) => {
 	try {
 		return await apiFetch( {
-			path: '/wp-erp/v1/accounting/transactions',
+			path: '/sahajanand-erp/v1/accounting/transactions',
 			method: 'POST',
 			data: payload,
 		} );
 	} catch ( err ) {
 		throw new Error(
-			err.message || __( 'Failed to create transaction', 'wp-erp' )
+			err.message || __( 'Failed to create transaction', 'sahajanand-erp' )
 		);
 	}
 };

@@ -70,7 +70,7 @@ export default function SatsangApp() {
 	return (
 		<AdminCrud
 			title="Daily Satsang"
-			apiPath="/wp-erp/v1/content/daily-satsang"
+			apiPath="/sahajanand-erp/v1/content/daily-satsang"
 			entityName="Satsang"
 			columns={ columns }
 			defaultFormState={ defaultState }

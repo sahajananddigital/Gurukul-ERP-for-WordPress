@@ -7,7 +7,7 @@ import { Button, Notice, Modal, Spinner } from '@wordpress/components';
  *
  * @param {Object}   props
  * @param {string}   props.title             - Page Title
- * @param {string}   props.apiPath           - Base API path (e.g., '/wp-erp/v1/content/daily')
+ * @param {string}   props.apiPath           - Base API path (e.g., '/sahajanand-erp/v1/content/daily')
  * @param {string}   props.entityName        - Name of the entity for messages (e.g., 'Quote', 'Darshan')
  * @param {Array}    props.columns           - Table columns config: [{ label: 'Date', render: (item) => ... }]
  * @param {Object}   props.defaultFormState  - Initial state for the form

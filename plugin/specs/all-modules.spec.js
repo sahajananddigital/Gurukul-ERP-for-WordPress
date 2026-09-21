@@ -7,10 +7,10 @@ test.describe( 'Check all ERP Modules Render Successfully', () => {
 
     test( 'should navigate to every module without errors', async ( { admin, page } ) => {
         // Start at the SPA root
-        await admin.visitAdminPage( 'admin.php?page=wp-erp-app' );
+        await admin.visitAdminPage( 'admin.php?page=sahajanand-erp-app' );
         
         // Wait for the app root to be visible
-        await expect( page.locator( '#wp-erp-root' ) ).toBeVisible();
+        await expect( page.locator( '#sahajanand-erp-root' ) ).toBeVisible();
 
         const modules = [
             { btn: 'Dashboard', expectedH1: 'Dashboard' },

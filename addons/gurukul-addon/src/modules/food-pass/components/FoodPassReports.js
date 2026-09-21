@@ -78,7 +78,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 				<Flex gap={ 4 } align="end" wrap={ true }>
 					<FlexBlock>
 						<TextControl
-							label={ __( 'Start Date', 'wp-erp' ) }
+							label={ __( 'Start Date', 'sahajanand-erp' ) }
 							type="date"
 							value={ reportStartDate }
 							onChange={ ( val ) => setReportStartDate( val ) }
@@ -86,7 +86,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 					</FlexBlock>
 					<FlexBlock>
 						<TextControl
-							label={ __( 'End Date', 'wp-erp' ) }
+							label={ __( 'End Date', 'sahajanand-erp' ) }
 							type="date"
 							value={ reportEndDate }
 							onChange={ ( val ) => setReportEndDate( val ) }
@@ -101,7 +101,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 									display: 'block',
 								} }
 							>
-								{ __( 'Meal Type', 'wp-erp' ) }
+								{ __( 'Meal Type', 'sahajanand-erp' ) }
 							</label>
 							<select
 								value={ reportFilterType }
@@ -224,11 +224,11 @@ const FoodPassReports = ( { foodPasses } ) => {
 					<table className="wp-list-table widefat fixed striped">
 						<thead>
 							<tr>
-								<th>{ __( 'Pass ID', 'wp-erp' ) }</th>
-								<th>{ __( 'Date', 'wp-erp' ) }</th>
-								<th>{ __( 'Meal Type', 'wp-erp' ) }</th>
-								<th>{ __( 'Quantity', 'wp-erp' ) }</th>
-								<th>{ __( 'Amount', 'wp-erp' ) }</th>
+								<th>{ __( 'Pass ID', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Date', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Meal Type', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Quantity', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Amount', 'sahajanand-erp' ) }</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -295,7 +295,7 @@ const FoodPassReports = ( { foodPasses } ) => {
 				>
 					{ __(
 						'No records found for the selected range.',
-						'wp-erp'
+						'sahajanand-erp'
 					) }
 				</div>
 			) }

@@ -143,7 +143,7 @@ export default function UpdatesApp() {
 	return (
 		<AdminCrud
 			title="Daily Updates"
-			apiPath="/wp-erp/v1/content/daily-updates"
+			apiPath="/sahajanand-erp/v1/content/daily-updates"
 			entityName="Update"
 			columns={ columns }
 			defaultFormState={ defaultState }

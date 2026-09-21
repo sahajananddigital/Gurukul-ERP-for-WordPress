@@ -35,7 +35,7 @@ npm run playground
 ```
 
 **Plugin Installation:**
-1. Copy the `plugin` folder to `wp-content/plugins/wp-erp`
+1. Copy the `plugin` folder to `wp-content/plugins/sahajanand-erp`
 2. Activate "Gurukul ERP" in WordPress Admin → Plugins
 3. Access modules under "Gurukul ERP" in the admin menu
 
@@ -58,7 +58,7 @@ npm run ios
 **Configuration:**
 Edit `app/services/api.ts` and update `BASE_URL` with your WordPress API endpoint:
 ```typescript
-const BASE_URL = 'http://YOUR_IP:PORT/wp-json/wp-erp/v1';
+const BASE_URL = 'http://YOUR_IP:PORT/wp-json/sahajanand-erp/v1';
 ```
 
 ---
@@ -118,7 +118,7 @@ const BASE_URL = 'http://YOUR_IP:PORT/wp-json/wp-erp/v1';
 plugin/
 ├── includes/           # Core PHP classes
 │   ├── api/           # REST API controllers
-│   └── class-wp-erp-database.php
+│   └── class-sahajanand-erp-database.php
 ├── modules/           # Feature modules
 │   ├── content/       # Content management
 │   ├── crm/          # Contact management
@@ -173,15 +173,15 @@ No environment variables required. Configuration is stored in WordPress options.
 Edit `app/services/api.ts`:
 ```typescript
 // For physical device testing
-const BASE_URL = 'http://192.168.1.X:9400/wp-json/wp-erp/v1';
+const BASE_URL = 'http://192.168.1.X:9400/wp-json/sahajanand-erp/v1';
 
 // For Android emulator
-const BASE_URL = 'http://127.0.0.1:9400/wp-json/wp-erp/v1';
+const BASE_URL = 'http://127.0.0.1:9400/wp-json/sahajanand-erp/v1';
 ```
 
 ### Image URL Configuration
 
-Update LAN IP in all API controllers (e.g., `plugin/includes/api/class-wp-erp-api-content.php`):
+Update LAN IP in all API controllers (e.g., `plugin/includes/api/class-sahajanand-erp-api-content.php`):
 ```php
 $url = str_replace('http://localhost', 'http://YOUR_IP', $url);
 ```
@@ -192,7 +192,7 @@ $url = str_replace('http://localhost', 'http://YOUR_IP', $url);
 
 ### Base URL
 ```
-{WORDPRESS_URL}/wp-json/wp-erp/v1
+{WORDPRESS_URL}/wp-json/sahajanand-erp/v1
 ```
 
 ### Endpoints
@@ -221,10 +221,10 @@ npm run test
 npm run test:watch
 
 # Check PHP syntax
-php -l includes/api/class-wp-erp-api-*.php
+php -l includes/api/class-sahajanand-erp-api-*.php
 
 # Test API endpoints
-curl http://localhost:9400/wp-json/wp-erp/v1/content/dashboard
+curl http://localhost:9400/wp-json/sahajanand-erp/v1/content/dashboard
 ```
 
 ### Mobile App

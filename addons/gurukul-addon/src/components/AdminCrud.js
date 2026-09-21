@@ -7,7 +7,7 @@ import { Button, Notice, Modal, Spinner } from '@wordpress/components';
  *
  * @param {Object}   props
  * @param {string}   props.title             - Page Title
- * @param {string}   props.apiPath           - Base API path (e.g., '/wp-erp/v1/content/daily')
+ * @param {string}   props.apiPath           - Base API path (e.g., '/sahajanand-erp/v1/content/daily')
  * @param {string}   props.entityName        - Name of the entity for messages (e.g., 'Quote', 'Darshan')
  * @param {Array}    props.columns           - Table columns config: [{ label: 'Date', render: (item) => ... }]
  * @param {Object}   props.defaultFormState  - Initial state for the form
@@ -147,7 +147,7 @@ export default function AdminCrud( {
 	};
 
 	return (
-		<div className="wp-erp-crud">
+		<div className="sahajanand-erp-crud">
 			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0', display: 'flex', alignItems: 'center', gap: '16px' }}>
 				<h1 style={ { margin: 0, fontSize: '24px', fontWeight: 600 } }>
 					{ title }

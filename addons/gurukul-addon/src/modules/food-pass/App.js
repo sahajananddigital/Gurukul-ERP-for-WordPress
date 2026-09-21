@@ -55,7 +55,7 @@ const FoodPassApp = ( { view = 'create' } ) => {
 	};
 
 	return (
-		<div className="wp-erp-food-pass">
+		<div className="sahajanand-erp-food-pass">
 			{ error && (
 				<Notice
 					status="error"
@@ -66,27 +66,27 @@ const FoodPassApp = ( { view = 'create' } ) => {
 				</Notice>
 			) }
 
-			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}> <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}> { __('Food Pass Management', 'wp-erp') } </h1> </div>
+			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}> <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}> { __('Food Pass Management', 'sahajanand-erp') } </h1> </div>
 			<div style={{ padding: '0 40px' }}>
 					<TabPanel
-						className="wp-erp-food-pass-tabs"
+						className="sahajanand-erp-food-pass-tabs"
 						activeClass="is-active"
 						initialTabName={ activeTab }
 						onSelect={ ( tabName ) => setActiveTab( tabName ) }
 						tabs={ [
 							{
 								name: 'create',
-								title: __( 'Create Food Pass', 'wp-erp' ),
+								title: __( 'Create Food Pass', 'sahajanand-erp' ),
 								className: 'tab-create',
 							},
 							{
 								name: 'list',
-								title: __( 'All Food Passes', 'wp-erp' ),
+								title: __( 'All Food Passes', 'sahajanand-erp' ),
 								className: 'tab-list',
 							},
 							{
 								name: 'reports',
-								title: __( 'Reports', 'wp-erp' ),
+								title: __( 'Reports', 'sahajanand-erp' ),
 								className: 'tab-reports',
 							},
 						] }

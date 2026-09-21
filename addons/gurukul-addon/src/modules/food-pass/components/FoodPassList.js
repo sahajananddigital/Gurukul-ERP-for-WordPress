@@ -147,18 +147,18 @@ const FoodPassList = ( { foodPasses, loading } ) => {
 						color: '#757575',
 					} }
 				>
-					{ __( 'No food passes found.', 'wp-erp' ) }
+					{ __( 'No food passes found.', 'sahajanand-erp' ) }
 				</p>
 			) : (
 				<div style={ { overflowX: 'auto' } }>
 					<table className="wp-list-table widefat fixed striped">
 						<thead>
 							<tr>
-								<th>{ __( 'Pass ID', 'wp-erp' ) }</th>
-								<th>{ __( 'Date', 'wp-erp' ) }</th>
-								<th>{ __( 'Meal Type', 'wp-erp' ) }</th>
-								<th>{ __( 'Quantity', 'wp-erp' ) }</th>
-								<th>{ __( 'Amount', 'wp-erp' ) }</th>
+								<th>{ __( 'Pass ID', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Date', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Meal Type', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Quantity', 'sahajanand-erp' ) }</th>
+								<th>{ __( 'Amount', 'sahajanand-erp' ) }</th>
 							</tr>
 						</thead>
 						<tbody>

@@ -26,7 +26,7 @@ const Reports = () => {
 	const [ type, setType ] = useState( 'all' );
 	const [ birthdayMonth, setBirthdayMonth ] = useState( '' );
 	const [ monthList ] = useState( [
-		{ label: __( 'All Months', 'wp-erp' ), value: '' },
+		{ label: __( 'All Months', 'sahajanand-erp' ), value: '' },
 		{ label: 'January', value: '1' },
 		{ label: 'February', value: '2' },
 		{ label: 'March', value: '3' },
@@ -72,7 +72,7 @@ const Reports = () => {
 	return (
 		<Card>
 			<CardHeader>
-				<h3>{ __( 'Contact Reports', 'wp-erp' ) }</h3>
+				<h3>{ __( 'Contact Reports', 'sahajanand-erp' ) }</h3>
 			</CardHeader>
 			<CardBody>
 				{ /* Filters */ }
@@ -87,7 +87,7 @@ const Reports = () => {
 					<Flex gap={ 4 } wrap={ true } align="end">
 						<FlexItem>
 							<TextControl
-								label={ __( 'Search', 'wp-erp' ) }
+								label={ __( 'Search', 'sahajanand-erp' ) }
 								value={ search }
 								onChange={ setSearch }
 								placeholder="Name, Email, Phone..."
@@ -95,7 +95,7 @@ const Reports = () => {
 						</FlexItem>
 						<FlexItem>
 							<SelectControl
-								label={ __( 'Status', 'wp-erp' ) }
+								label={ __( 'Status', 'sahajanand-erp' ) }
 								value={ status }
 								options={ [
 									{ label: 'All', value: 'all' },
@@ -115,7 +115,7 @@ const Reports = () => {
 						</FlexItem>
 						<FlexItem>
 							<SelectControl
-								label={ __( 'Type', 'wp-erp' ) }
+								label={ __( 'Type', 'sahajanand-erp' ) }
 								value={ type }
 								options={ [
 									{ label: 'All', value: 'all' },
@@ -127,7 +127,7 @@ const Reports = () => {
 						</FlexItem>
 						<FlexItem>
 							<SelectControl
-								label={ __( 'Birthday Month', 'wp-erp' ) }
+								label={ __( 'Birthday Month', 'sahajanand-erp' ) }
 								value={ birthdayMonth }
 								options={ monthList }
 								onChange={ setBirthdayMonth }
@@ -139,7 +139,7 @@ const Reports = () => {
 								onClick={ fetchReport }
 								isBusy={ loading }
 							>
-								{ __( 'Filter', 'wp-erp' ) }
+								{ __( 'Filter', 'sahajanand-erp' ) }
 							</Button>
 						</FlexItem>
 					</Flex>

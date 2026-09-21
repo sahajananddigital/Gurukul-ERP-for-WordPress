@@ -9,7 +9,7 @@ import ContentApp from './modules/content/App';
 /**
  * 1. Inject Menu Items into the Core Sidebar
  */
-addFilter( 'wpErp.sidebarMenuItems', 'gurukul-addon/sidebar', ( items ) => {
+addFilter( 'sahajanandErp.sidebarMenuItems', 'gurukul-addon/sidebar', ( items ) => {
 	return [
 		...items,
 		{ name: 'Donations', path: '/donations', icon: currencyDollar },
@@ -21,7 +21,7 @@ addFilter( 'wpErp.sidebarMenuItems', 'gurukul-addon/sidebar', ( items ) => {
 /**
  * 2. Inject React Router Routes into the Core App
  */
-addFilter( 'wpErp.routes', 'gurukul-addon/routes', ( routes ) => {
+addFilter( 'sahajanandErp.routes', 'gurukul-addon/routes', ( routes ) => {
 	return [
 		...routes,
 		{ path: "/donations", element: <DonationsApp /> },

@@ -55,7 +55,7 @@ const CRMApp = () => {
 	};
 
 	return (
-		<div className="wp-erp-crm">
+		<div className="sahajanand-erp-crm">
 			{ error && (
 				<Notice
 					status="error"
@@ -68,20 +68,20 @@ const CRMApp = () => {
 
 			<div style={{ padding: '32px 40px', borderBottom: '1px solid #e0e0e0' }}>
 				<h1 style={{ margin: 0, fontSize: '24px', fontWeight: 600 }}>
-					{ __( 'CRM Management', 'wp-erp' ) }
+					{ __( 'CRM Management', 'sahajanand-erp' ) }
 				</h1>
 			</div>
 			<div style={{ padding: '0 40px' }}>
 				<TabPanel
-						className="wp-erp-crm-tabs"
+						className="sahajanand-erp-crm-tabs"
 						activeClass="is-active"
 						initialTabName="leads"
 						tabs={ [
-							{ name: 'leads', title: __( 'Leads', 'wp-erp' ), className: 'tab-leads' },
-							{ name: 'contacts', title: __( 'Contacts', 'wp-erp' ), className: 'tab-contacts' },
-							{ name: 'organizations', title: __( 'Organizations', 'wp-erp' ), className: 'tab-organizations' },
-							{ name: 'deals', title: __( 'Deals', 'wp-erp' ), className: 'tab-deals' },
-							{ name: 'reports', title: __( 'Reports', 'wp-erp' ), className: 'tab-reports' },
+							{ name: 'leads', title: __( 'Leads', 'sahajanand-erp' ), className: 'tab-leads' },
+							{ name: 'contacts', title: __( 'Contacts', 'sahajanand-erp' ), className: 'tab-contacts' },
+							{ name: 'organizations', title: __( 'Organizations', 'sahajanand-erp' ), className: 'tab-organizations' },
+							{ name: 'deals', title: __( 'Deals', 'sahajanand-erp' ), className: 'tab-deals' },
+							{ name: 'reports', title: __( 'Reports', 'sahajanand-erp' ), className: 'tab-reports' },
 						] }
 					>
 						{ ( tab ) => (
@@ -89,7 +89,7 @@ const CRMApp = () => {
 								{ tab.name === 'leads' && (
 									<Card>
 										<CardHeader>
-											<h2 style={ { margin: 0 } }>{ __( 'Leads', 'wp-erp' ) }</h2>
+											<h2 style={ { margin: 0 } }>{ __( 'Leads', 'sahajanand-erp' ) }</h2>
 										</CardHeader>
 										<CardBody>
 											<LeadsList leads={ data.leads } loading={ loading } onLeadUpdated={ handleDataChanged } />
@@ -101,7 +101,7 @@ const CRMApp = () => {
 										<ContactForm onContactCreated={ handleDataChanged } />
 										<Card>
 											<CardHeader>
-												<h2 style={ { margin: 0 } }>{ __( 'Contacts', 'wp-erp' ) }</h2>
+												<h2 style={ { margin: 0 } }>{ __( 'Contacts', 'sahajanand-erp' ) }</h2>
 											</CardHeader>
 											<CardBody>
 												<ContactsList contacts={ data.contacts } loading={ loading } onContactUpdated={ handleDataChanged } />
@@ -112,7 +112,7 @@ const CRMApp = () => {
 								{ tab.name === 'organizations' && (
 									<Card>
 										<CardHeader>
-											<h2 style={ { margin: 0 } }>{ __( 'Organizations', 'wp-erp' ) }</h2>
+											<h2 style={ { margin: 0 } }>{ __( 'Organizations', 'sahajanand-erp' ) }</h2>
 										</CardHeader>
 										<CardBody>
 											<OrganizationsList organizations={ data.organizations } loading={ loading } onOrganizationUpdated={ handleDataChanged } />
@@ -122,7 +122,7 @@ const CRMApp = () => {
 								{ tab.name === 'deals' && (
 									<Card>
 										<CardHeader>
-											<h2 style={ { margin: 0 } }>{ __( 'Deals', 'wp-erp' ) }</h2>
+											<h2 style={ { margin: 0 } }>{ __( 'Deals', 'sahajanand-erp' ) }</h2>
 										</CardHeader>
 										<CardBody>
 											<DealsList deals={ data.deals } loading={ loading } onDealUpdated={ handleDataChanged } />

@@ -14,7 +14,7 @@ module.exports = {
 		},
 	},
 	globals: {
-		wpErp: 'readonly',
+		sahajanandErp: 'readonly',
 	},
 	rules: {
 		'@wordpress/no-unsafe-wp-apis': 'warn',

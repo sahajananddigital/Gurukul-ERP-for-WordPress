@@ -16,7 +16,7 @@ const Sidebar = () => {
 	];
 
 	// Allow Premium Addons to inject their own menu items into the sidebar
-	const menuItems = applyFilters( 'wpErp.sidebarMenuItems', coreMenuItems );
+	const menuItems = applyFilters( 'sahajanandErp.sidebarMenuItems', coreMenuItems );
 
 	const renderButton = ( item ) => {
 		const isActive = location.pathname.startsWith( item.path );
@@ -53,7 +53,7 @@ const Sidebar = () => {
 			{ /* Header - Back to WP Admin (FIXED) */ }
 			<div style={ { padding: '24px 16px', borderBottom: '1px solid #2c3338', flexShrink: 0 } }>
 				<a 
-					href={ window.wpErp?.adminUrl || '/wp-admin/' } 
+					href={ window.sahajanandErp?.adminUrl || '/wp-admin/' } 
 					style={ { 
 						color: '#fff', 
 						textDecoration: 'none', 
