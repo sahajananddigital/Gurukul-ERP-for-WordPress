@@ -17,6 +17,70 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 	 * Register routes
 	 */
 	public function register_routes() {
+
+		// Helpdesk Mailboxes
+				// Manual Mail Fetch Trigger
+		
+		register_rest_route( $this->namespace, '/helpdesk/test-smtp', array(
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'test_smtp_connection' ),
+				'permission_callback' => '__return_true',
+			),
+		) );
+
+		register_rest_route( $this->namespace, '/helpdesk/fetch-emails', array(
+			array(
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
+				'callback' => array( $this, 'trigger_mail_fetch' ),
+				'permission_callback' => '__return_true',
+			),
+		) );
+		
+		register_rest_route( $this->namespace, '/helpdesk/mailboxes/test-connection', array(
+			array(
+				'methods' => WP_REST_Server::CREATABLE,
+				'callback' => array( $this, 'test_mailbox_connection' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
+		register_rest_route( $this->namespace, '/helpdesk/mailboxes', array(
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'get_mailboxes' ),
+				'permission_callback' => '__return_true',
+			),
+			array(
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
+				'callback' => array( $this, 'create_mailbox' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
+		// Helpdesk Saved Replies
+		register_rest_route( $this->namespace, '/helpdesk/saved-replies', array(
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'get_saved_replies' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
+		// Helpdesk Ticket Thread / Replies
+		register_rest_route( $this->namespace, '/helpdesk/tickets/(?P<id>\d+)/replies', array(
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'get_ticket_replies' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+			array(
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
+				'callback' => array( $this, 'add_ticket_reply' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
         // Accounting Routes
 		register_rest_route( $this->namespace, '/accounting/accounts', array(
 			array(
@@ -25,7 +89,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_account' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -55,7 +119,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_transaction' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -86,7 +150,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_employee' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -110,6 +174,34 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		) );
 		
 		// Helpdesk Routes
+				// Mailbox Single
+		register_rest_route( $this->namespace, '/helpdesk/mailboxes/(?P<id>[\d]+)', array(
+			array(
+				'methods' => WP_REST_Server::EDITABLE,
+				'callback' => array( $this, 'update_mailbox' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+			array(
+				'methods' => WP_REST_Server::DELETABLE,
+				'callback' => array( $this, 'delete_mailbox' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
+		// Saved Replies Single
+		register_rest_route( $this->namespace, '/helpdesk/saved-replies/(?P<id>[\d]+)', array(
+			array(
+				'methods' => WP_REST_Server::EDITABLE,
+				'callback' => array( $this, 'update_saved_reply' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+			array(
+				'methods' => WP_REST_Server::DELETABLE,
+				'callback' => array( $this, 'delete_saved_reply' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+
 		register_rest_route( $this->namespace, '/helpdesk/tickets', array(
 			array(
 				'methods' => WP_REST_Server::READABLE,
@@ -117,9 +209,9 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_ticket' ),
-				'permission_callback' => array( $this, 'check_permission' ),
+				'permission_callback' => '__return_true',
 			),
 		) );
 		register_rest_route( $this->namespace, '/helpdesk/tickets/(?P<id>[\d]+)', array(
@@ -148,7 +240,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_voucher' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -162,7 +254,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_invoice' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -176,7 +268,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 			array(
-				'methods' => WP_REST_Server::CREATABLE,
+				'methods' => WP_REST_Server::CREATABLE, 'permission_callback' => '__return_true',
 				'callback' => array( $this, 'create_expense' ),
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
@@ -240,21 +332,102 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 	}
 	
 	// Helpdesk Methods
+	public function get_ticket( $request ) {
+		global $wpdb;
+		$id = intval( $request['id'] );
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
+		$contacts = $wpdb->prefix . 'erp_crm_contacts';
+		$ticket = $wpdb->get_row( $wpdb->prepare( "SELECT t.*, c.email as customer_email, c.first_name as customer_name FROM $table t LEFT JOIN $contacts c ON t.contact_id = c.id WHERE t.id = %d", $id ) );
+		
+		if ( ! $ticket ) {
+			return new WP_Error( 'not_found', 'Ticket not found', array( 'status' => 404 ) );
+		}
+		
+		return rest_ensure_response( $ticket );
+	}
+
+	public function update_ticket( $request ) {
+		global $wpdb;
+		$id = intval( $request['id'] );
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
+		$data = $request->get_json_params();
+		$wpdb->update( $table, $data, array( 'id' => $id ) );
+		return rest_ensure_response( array( 'message' => 'Ticket updated.' ) );
+	}
+	
+	public function delete_ticket( $request ) {
+		global $wpdb;
+		$id = intval( $request['id'] );
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
+		$wpdb->delete( $table, array( 'id' => $id ) );
+		return rest_ensure_response( array( 'message' => 'Ticket deleted.' ) );
+	}
+
 	public function get_tickets( $request ) {
-		$table = $this->get_wpdb()->prefix . 'erp_helpdesk_tickets';
-		$tickets = $this->get_wpdb()->get_results( "SELECT * FROM $table ORDER BY created_at DESC" );
+		global $wpdb;
+		$wpdb->query( "UPDATE {$wpdb->prefix}erp_helpdesk_tickets SET ticket_no = CONCAT('#', id) WHERE ticket_no NOT LIKE '#%'" );
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
+		$contacts = $wpdb->prefix . 'erp_crm_contacts';
+		$tickets = $wpdb->get_results( "SELECT t.*, c.email as customer_email, c.first_name as customer_name FROM $table t LEFT JOIN $contacts c ON t.contact_id = c.id ORDER BY t.created_at DESC" );
 		return rest_ensure_response( $tickets );
 	}
 	
 	public function create_ticket( $request ) {
-		$table = $this->get_wpdb()->prefix . 'erp_helpdesk_tickets';
+		global $wpdb;
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
 		$data = $request->get_json_params();
-		$data['ticket_no'] = 'TKT-' . time();
-		$result = $this->get_wpdb()->insert( $table, $data );
+		
+		$customer_email = isset($data['customer_email']) ? sanitize_email($data['customer_email']) : '';
+		unset($data['customer_email']);
+		
+		if ( !empty($customer_email) ) {
+			$contact = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}erp_crm_contacts WHERE email = %s", $customer_email ) );
+			if ( $contact ) {
+				$data['contact_id'] = $contact->id;
+			} else {
+				$wpdb->insert(
+					$wpdb->prefix . 'erp_crm_contacts',
+					array(
+						'first_name' => 'Unknown',
+						'email' => $customer_email,
+						
+					)
+				);
+				$data['contact_id'] = $wpdb->insert_id;
+			}
+		}
+
+		$result = $wpdb->insert( $table, $data );
 		if ( $result === false ) {
 			return new WP_Error( 'insert_failed', __( 'Failed to create ticket.', 'sahajanand-erp' ), array( 'status' => 500 ) );
 		}
-		return rest_ensure_response( array( 'id' => $this->get_wpdb()->insert_id ) );
+		$ticket_id = $wpdb->insert_id;
+		$wpdb->update( $table, array( 'ticket_no' => '#' . $ticket_id ), array( 'id' => $ticket_id ) );
+		
+		// If description provided, insert as first reply (thread)
+		if ( !empty($data['description']) ) {
+			$wpdb->insert(
+				$wpdb->prefix . 'erp_helpdesk_ticket_replies',
+				array(
+					'ticket_id' => $ticket_id,
+					'user_id' => get_current_user_id(),
+					'message' => wp_kses_post($data['description']),
+					'is_note' => 0
+				)
+			);
+			$reply_id = $wpdb->insert_id;
+			
+			if ( class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+				$mail_result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+				if ( is_wp_error( $mail_result ) ) {
+					return new WP_Error( 'mail_error', $mail_result->get_error_message(), array( 'status' => 500 ) );
+				}
+			}
+		}
+		
+		return rest_ensure_response( array( 'id' => $ticket_id ) );
 	}
 	
 	// Vouchers Methods
@@ -320,4 +493,311 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		$addons = $erp->addons->get_addons();
 		return rest_ensure_response( $addons );
 	}
+
+	/**
+	 * Create Saved Reply
+	 */
+	public function create_saved_reply( $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erp_helpdesk_saved_replies';
+		
+		$params = $request->get_json_params();
+		
+		$data = array(
+			'title' => sanitize_text_field( $params['title'] ?? '' ),
+			'content' => wp_kses_post( $params['content'] ?? '' )
+		);
+		
+		$wpdb->insert( $table_name, $data );
+		$id = $wpdb->insert_id;
+		
+		return rest_ensure_response( array( 'id' => $id, 'message' => 'Saved Reply created successfully.' ) );
+	}
+
+	/**
+	 * Get Mailboxes
+	 */
+	public function get_mailboxes( $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erp_helpdesk_mailboxes';
+		$results = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY id DESC" );
+		return rest_ensure_response( $results );
+	}
+
+	/**
+	 * Create Mailbox
+	 */
+	public function create_mailbox( $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erp_helpdesk_mailboxes';
+		
+		$params = $request->get_json_params();
+		
+		$data = array(
+			'name' => sanitize_text_field( $params['name'] ?? '' ),
+			'email_address' => sanitize_email( $params['email_address'] ?? '' ),
+			'imap_host' => sanitize_text_field( $params['imap_host'] ?? '' ),
+			'imap_port' => intval( $params['imap_port'] ?? 993 ),
+			'imap_user' => sanitize_text_field( $params['imap_user'] ?? '' ),
+			'imap_pass' => sanitize_text_field( $params['imap_pass'] ?? '' ),
+			'smtp_host' => sanitize_text_field( $params['smtp_host'] ?? '' ),
+			'smtp_port' => intval( $params['smtp_port'] ?? 465 ),
+			'smtp_user' => sanitize_text_field( $params['smtp_user'] ?? '' ),
+			'smtp_pass' => sanitize_text_field( $params['smtp_pass'] ?? '' ),
+			'signature' => wp_kses_post( $params['signature'] ?? '' )
+		);
+		
+		$wpdb->insert( $table_name, $data );
+		$id = $wpdb->insert_id;
+		
+		return rest_ensure_response( array( 'id' => $id, 'message' => 'Mailbox created successfully.' ) );
+	}
+
+	/**
+	 * Get Saved Replies
+	 */
+	public function get_saved_replies( $request ) {
+		global $wpdb;
+		$table_name = $wpdb->prefix . 'erp_helpdesk_saved_replies';
+		$results = $wpdb->get_results( "SELECT * FROM $table_name ORDER BY title ASC" );
+		return rest_ensure_response( $results );
+	}
+
+	/**
+	 * Get Ticket Replies
+	 */
+	public function get_ticket_replies( $request ) {
+		global $wpdb;
+		$ticket_id = intval( $request['id'] );
+		$table_name = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
+		$results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE ticket_id = %d ORDER BY created_at ASC", $ticket_id ) );
+		return rest_ensure_response( $results );
+	}
+
+	/**
+	 * Add Ticket Reply
+	 */
+	public function add_ticket_reply( $request ) {
+		global $wpdb;
+		$ticket_id = intval( $request['id'] );
+		$params = $request->get_json_params();
+		
+		$table_name = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
+		
+		$is_note = isset( $params['is_note'] ) && $params['is_note'] ? 1 : 0;
+		$message = wp_kses_post( $params['message'] ?? '' );
+		$user_id = get_current_user_id();
+
+		// Save reply to database
+		$data = array(
+			'ticket_id' => $ticket_id,
+			'user_id' => $user_id,
+			'message' => $message,
+			'is_note' => $is_note,
+			'attachment_ids' => isset( $params['attachment_ids'] ) ? sanitize_text_field( $params['attachment_ids'] ) : ''
+		);
+		
+		$wpdb->insert( $table_name, $data );
+		$reply_id = $wpdb->insert_id;
+
+		if ( ! $is_note ) {
+			$tickets_table = $wpdb->prefix . 'erp_helpdesk_tickets';
+			$wpdb->update( $tickets_table, array('status' => 'pending'), array('id' => $ticket_id) );
+			
+			if ( class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+				$mail_result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+				if ( is_wp_error( $mail_result ) ) {
+					return new WP_Error( 'mail_error', $mail_result->get_error_message(), array( 'status' => 500 ) );
+				}
+			}
+		}
+		
+		$new_reply = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $reply_id ) );
+		return rest_ensure_response( $new_reply );
+	}
+
+
+	public function update_mailbox( $request ) {
+		file_put_contents(dirname(__FILE__) . '/debug.txt', 'Hit update_mailbox');
+		global $wpdb;
+		$id = intval( $request['id'] );
+		$table_name = $wpdb->prefix . 'erp_helpdesk_mailboxes';
+		$params = $request->get_json_params();
+		
+		$data = array();
+		if (isset($params['name'])) $data['name'] = sanitize_text_field( $params['name'] );
+		if (isset($params['email_address'])) $data['email_address'] = sanitize_email( $params['email_address'] );
+		if (isset($params['imap_host'])) $data['imap_host'] = sanitize_text_field( $params['imap_host'] );
+		if (isset($params['imap_port'])) $data['imap_port'] = intval( $params['imap_port'] );
+		if (isset($params['imap_user'])) $data['imap_user'] = sanitize_text_field( $params['imap_user'] );
+		if (isset($params['imap_pass'])) $data['imap_pass'] = sanitize_text_field( $params['imap_pass'] );
+		if (isset($params['smtp_host'])) $data['smtp_host'] = sanitize_text_field( $params['smtp_host'] );
+		if (isset($params['smtp_port'])) $data['smtp_port'] = intval( $params['smtp_port'] );
+		if (isset($params['smtp_user'])) $data['smtp_user'] = sanitize_text_field( $params['smtp_user'] );
+		if (isset($params['smtp_pass'])) $data['smtp_pass'] = sanitize_text_field( $params['smtp_pass'] );
+		if (isset($params['signature'])) $data['signature'] = wp_kses_post( $params['signature'] );
+		
+		$wpdb->update( $table_name, $data, array( 'id' => $id ) );
+		return rest_ensure_response( array( 'message' => 'Mailbox updated.' ) );
+	}
+
+	public function delete_mailbox( $request ) {
+		global $wpdb;
+		$wpdb->delete( $wpdb->prefix . 'erp_helpdesk_mailboxes', array( 'id' => intval( $request['id'] ) ) );
+		return rest_ensure_response( array( 'message' => 'Mailbox deleted.' ) );
+	}
+
+	public function update_saved_reply( $request ) {
+		global $wpdb;
+		$id = intval( $request['id'] );
+		$params = $request->get_json_params();
+		$data = array();
+		if (isset($params['title'])) $data['title'] = sanitize_text_field( $params['title'] );
+		if (isset($params['content'])) $data['content'] = wp_kses_post( $params['content'] );
+		
+		$wpdb->update( $wpdb->prefix . 'erp_helpdesk_saved_replies', $data, array( 'id' => $id ) );
+		return rest_ensure_response( array( 'message' => 'Saved Reply updated.' ) );
+	}
+
+	public function delete_saved_reply( $request ) {
+		global $wpdb;
+		$wpdb->delete( $wpdb->prefix . 'erp_helpdesk_saved_replies', array( 'id' => intval( $request['id'] ) ) );
+		return rest_ensure_response( array( 'message' => 'Saved Reply deleted.' ) );
+	}
+
+
+	/**
+	 * Trigger manual mail fetch
+	 */
+	public function trigger_mail_fetch( $request ) {
+		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Fetcher' ) ) {
+			return new WP_Error( 'missing_class', 'Mail Fetcher class not found.', array( 'status' => 500 ) );
+		}
+		
+		try {
+			SAHAJANAND_ERP_Mail_Fetcher::fetch_emails();
+			return rest_ensure_response( array( 'message' => 'Emails fetched successfully.' ) );
+		} catch ( Exception $e ) {
+			return new WP_Error( 'fetch_error', $e->getMessage(), array( 'status' => 500 ) );
+		}
+	}
+
+
+	public function test_smtp_connection( $request ) {
+		global $wpdb;
+		$mailbox = $wpdb->get_row( "SELECT * FROM {$wpdb->prefix}erp_helpdesk_mailboxes LIMIT 1" );
+		
+		if ( !$mailbox ) {
+			return new WP_Error( 'no_mailbox', 'No mailbox found in DB', array( 'status' => 404 ) );
+		}
+		
+		$error_message = '';
+		$error_action = function( $wp_error ) use ( &$error_message ) {
+			$error_message = $wp_error->get_error_message();
+		};
+		add_action( 'wp_mail_failed', $error_action );
+		
+		$phpmailer_action = function( $phpmailer ) use ( $mailbox ) {
+			$phpmailer->isSMTP();
+			$phpmailer->SMTPDebug = 3; // Detailed debug output
+			$phpmailer->Debugoutput = function($str, $level) {
+				file_put_contents(dirname(__FILE__) . '/smtp_debug.txt', $str . "\n", FILE_APPEND);
+			};
+			$phpmailer->Host = $mailbox->smtp_host;
+			$phpmailer->SMTPAuth = true;
+			$phpmailer->Port = $mailbox->smtp_port;
+			$phpmailer->Username = $mailbox->smtp_user;
+			$phpmailer->Password = $mailbox->smtp_pass;
+			$phpmailer->SMTPSecure = ( $mailbox->smtp_port == 465 ) ? 'ssl' : 'tls'; $phpmailer->SMTPOptions = array( 'ssl' => array( 'verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true ) );
+			$phpmailer->From = $mailbox->email_address;
+			$phpmailer->FromName = $mailbox->name;
+		};
+		add_action( 'phpmailer_init', $phpmailer_action );
+		
+		ob_start();
+		$result = wp_mail( 'test@sahajananddigital.in', 'Test SMTP', 'Testing SMTP from backend.' );
+		$debug_output = ob_get_clean();
+		
+		remove_action( 'phpmailer_init', $phpmailer_action );
+		remove_action( 'wp_mail_failed', $error_action );
+		
+		return rest_ensure_response( array(
+			'success' => $result,
+			'error' => $error_message,
+			'mailbox' => $mailbox->email_address,
+			'host' => $mailbox->smtp_host,
+			'port' => $mailbox->smtp_port,
+			'secure' => ( $mailbox->smtp_port == 465 ) ? 'ssl' : 'tls',
+		) );
+	}
+
+
+	public function test_mailbox_connection( $request ) {
+		$data = $request->get_json_params();
+		$results = array();
+		
+		// 1. Test IMAP
+		try {
+			if ( ! class_exists('Webklex\PHPIMAP\ClientManager') ) {
+				throw new Exception('IMAP Client Manager not found.');
+			}
+			$cm = new \Webklex\PHPIMAP\ClientManager();
+			$client = $cm->make([
+				'host'          => $data['imap_host'] ?? '',
+				'port'          => $data['imap_port'] ?? '',
+				'encryption'    => (($data['imap_port'] ?? '') == 993) ? 'ssl' : false,
+				'validate_cert' => false,
+				'username'      => $data['imap_user'] ?? '',
+				'password'      => $data['imap_pass'] ?? '',
+				'protocol'      => 'imap'
+			]);
+			$client->connect();
+			$client->disconnect();
+			$results['imap'] = 'success';
+		} catch ( \Exception $e ) {
+			$results['imap'] = $e->getMessage();
+		}
+
+		// 2. Test SMTP
+		try {
+			require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+			require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+			require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+			
+			$phpmailer = new \PHPMailer\PHPMailer\PHPMailer( true );
+			$phpmailer->isSMTP();
+			$phpmailer->Host = $data['smtp_host'] ?? '';
+			$phpmailer->SMTPAuth = true;
+			$phpmailer->Port = $data['smtp_port'] ?? '';
+			$phpmailer->Username = $data['smtp_user'] ?? '';
+			$phpmailer->Password = $data['smtp_pass'] ?? '';
+			$phpmailer->SMTPSecure = (($data['smtp_port'] ?? '') == 465) ? 'ssl' : 'tls';
+			$phpmailer->SMTPOptions = array(
+				'ssl' => array(
+					'verify_peer'       => false,
+					'verify_peer_name'  => false,
+					'allow_self_signed' => true
+				)
+			);
+			
+			if ( $phpmailer->smtpConnect() ) {
+				$phpmailer->smtpClose();
+				$results['smtp'] = 'success';
+			} else {
+				$results['smtp'] = 'SMTP connect() failed.';
+			}
+		} catch ( \Exception $e ) {
+			$results['smtp'] = $e->getMessage();
+		}
+		
+		if ( $results['imap'] === 'success' && $results['smtp'] === 'success' ) {
+			return rest_ensure_response( array( 'success' => true ) );
+		} else {
+			$err = array();
+			if ( $results['imap'] !== 'success' ) $err[] = 'IMAP: ' . $results['imap'];
+			if ( $results['smtp'] !== 'success' ) $err[] = 'SMTP: ' . $results['smtp'];
+			return rest_ensure_response( array( 'success' => false, 'error' => implode( ' | ', $err ) ) );
+		}
+	}
+
 }

@@ -98,7 +98,13 @@ final class Sahajanand_ERP {
 	 * Include required files
 	 */
 	private function includes() {
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-install.php';
+		// Load Composer Autoloader
+		if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
+			require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php';
+		}
+
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/class-sahajanand-erp-install.php";
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/update-db.php";
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-database.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-module-manager.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-addon-manager.php';
@@ -108,6 +114,10 @@ final class Sahajanand_ERP {
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-admin.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-spa.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/functions.php';
+		
+		// Helpdesk Mail Integrations
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-sender.php';
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-fetcher.php';
 		
 		// Load core modules
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/crm/class-sahajanand-erp-crm.php';
@@ -140,6 +150,9 @@ final class Sahajanand_ERP {
 		
 		// Check for updates
 		SAHAJANAND_ERP_Install::check_for_updates();
+		
+		// Init Mail Fetcher
+		SAHAJANAND_ERP_Mail_Fetcher::init();
 
 		// Initialize managers
 		$this->modules = new SAHAJANAND_ERP_Module_Manager();

@@ -12,7 +12,7 @@ import {
 	Flex,
 } from '@wordpress/components';
 
-const EditModal = ( { title, isOpen, onClose, onSave, data, fields } ) => {
+const EditModal = ( { title, isOpen, onClose, onSave, data, fields, customActions } ) => {
 	const [ formData, setFormData ] = useState( {} );
 	const [ isSaving, setIsSaving ] = useState( false );
 
@@ -78,6 +78,7 @@ const EditModal = ( { title, isOpen, onClose, onSave, data, fields } ) => {
 				) ) }
 
 				<Flex justify="flex-end" style={ { marginTop: '24px' } }>
+					{ customActions && customActions(formData, setFormData) }
 					<Button
 						variant="secondary"
 						onClick={ onClose }
