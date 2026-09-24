@@ -82,10 +82,10 @@ class SAHAJANAND_ERP_Mail_Sender {
 			};
 			add_action( 'phpmailer_init', $phpmailer_action );
 			
-			$result = wp_mail( $customer_email, $subject, nl2br( $body ), $headers );
+			$result = wp_mail( $customer_email, $subject, $body, $headers );
 			remove_action( 'phpmailer_init', $phpmailer_action );
 		} else {
-			$result = wp_mail( $customer_email, $subject, nl2br( $body ), $headers );
+			$result = wp_mail( $customer_email, $subject, $body, $headers );
 		}
 		
 		remove_action( 'wp_mail_failed', $error_action );

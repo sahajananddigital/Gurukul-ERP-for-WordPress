@@ -102,6 +102,10 @@ final class Sahajanand_ERP {
 		if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
 			require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php';
 		}
+		
+		if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php' ) ) {
+			require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+		}
 
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/class-sahajanand-erp-install.php";
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/update-db.php";
@@ -189,6 +193,11 @@ final class Sahajanand_ERP {
 
 		// Enqueue media scripts for wp.media
 		wp_enqueue_media();
+		
+		// Enqueue WP Editor (TinyMCE)
+		if ( function_exists( 'wp_enqueue_editor' ) ) {
+			wp_enqueue_editor();
+		}
 		
 		// Check if build files exist
 		$build_js = SAHAJANAND_ERP_PLUGIN_DIR . 'build/index.js';

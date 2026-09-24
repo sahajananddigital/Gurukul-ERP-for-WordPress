@@ -13,6 +13,7 @@ import {
 } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import EditModal from '../../../components/EditModal';
+import WPEditor from '../../../components/WPEditor';
 
 const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 	const [ ticket, setTicket ] = useState( null );
@@ -176,7 +177,8 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 						>
 							{ ( tab ) => (
 								<div style={{ marginTop: '16px' }}>
-									<TextareaControl
+									<WPEditor
+										id="ticket-reply-editor"
 										value={ replyText }
 										onChange={ setReplyText }
 										placeholder={ isNote ? __( 'Type an internal note...', 'sahajanand-erp' ) : __( 'Type your reply...', 'sahajanand-erp' ) }

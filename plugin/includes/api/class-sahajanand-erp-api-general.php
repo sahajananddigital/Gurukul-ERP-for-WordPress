@@ -44,7 +44,6 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 		) );
-
 		register_rest_route( $this->namespace, '/helpdesk/mailboxes', array(
 			array(
 				'methods' => WP_REST_Server::READABLE,

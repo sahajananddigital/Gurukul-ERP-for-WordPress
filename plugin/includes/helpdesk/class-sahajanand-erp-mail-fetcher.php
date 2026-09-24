@@ -16,9 +16,14 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 	public static function init() {
 		add_action( 'erp_helpdesk_fetch_emails', array( __CLASS__, 'fetch_emails' ) );
 		
-		// Schedule event if not exists
-		if ( ! wp_next_scheduled( 'erp_helpdesk_fetch_emails' ) ) {
-			wp_schedule_event( time(), 'hourly', 'erp_helpdesk_fetch_emails' );
+		// Migrate from wp_cron to Action Scheduler
+		if ( wp_next_scheduled( 'erp_helpdesk_fetch_emails' ) ) {
+			wp_clear_scheduled_hook( 'erp_helpdesk_fetch_emails' );
+		}
+		
+		// Schedule event if not exists via Action Scheduler
+		if ( function_exists( 'as_next_scheduled_action' ) && false === as_next_scheduled_action( 'erp_helpdesk_fetch_emails' ) ) {
+			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, 'erp_helpdesk_fetch_emails' );
 		}
 	}
 
