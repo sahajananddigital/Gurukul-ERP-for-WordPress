@@ -298,6 +298,25 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				'permission_callback' => array( $this, 'check_permission' ),
 			),
 		) );
+
+		// Dashboard Summary
+		register_rest_route( $this->namespace, '/dashboard/summary', array(
+			array(
+				'methods' => WP_REST_Server::READABLE,
+				'callback' => array( $this, 'get_dashboard_summary' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+			),
+		) );
+	}
+
+	/**
+	 * Module-wise summary used by the dashboards.
+	 */
+	public function get_dashboard_summary( $request ) {
+		if ( ! class_exists( 'SAHAJANAND_ERP_Summary' ) ) {
+			return new WP_Error( 'summary_unavailable', __( 'Summary data is unavailable.', 'sahajanand-erp' ), array( 'status' => 500 ) );
+		}
+		return rest_ensure_response( SAHAJANAND_ERP_Summary::get_module_summary() );
 	}
 
     // Accounting Methods
@@ -341,19 +360,64 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		if ( ! $ticket ) {
 			return new WP_Error( 'not_found', 'Ticket not found', array( 'status' => 404 ) );
 		}
-		
+
+		$ticket->attachments = $this->get_reply_attachments( $ticket->attachment_ids );
+
 		return rest_ensure_response( $ticket );
 	}
 
+	/**
+	 * Update a ticket's editable fields (including the folder flags).
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response|WP_Error
+	 */
 	public function update_ticket( $request ) {
 		global $wpdb;
-		$id = intval( $request['id'] );
+		$id    = intval( $request['id'] );
 		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
-		$data = $request->get_json_params();
-		$wpdb->update( $table, $data, array( 'id' => $id ) );
-		return rest_ensure_response( array( 'message' => 'Ticket updated.' ) );
+		$data  = (array) $request->get_json_params();
+
+		$text_fields = array(
+			'subject'     => 'sanitize_text_field',
+			'description' => 'wp_kses_post',
+			'status'      => 'sanitize_text_field',
+			'priority'    => 'sanitize_text_field',
+		);
+		$int_fields  = array( 'assignee_id', 'mailbox_id', 'contact_id', 'is_starred', 'is_spam', 'is_deleted' );
+
+		$fields = array();
+		foreach ( $text_fields as $key => $sanitizer ) {
+			if ( array_key_exists( $key, $data ) ) {
+				$fields[ $key ] = call_user_func( $sanitizer, (string) $data[ $key ] );
+			}
+		}
+		foreach ( $int_fields as $key ) {
+			if ( array_key_exists( $key, $data ) ) {
+				$fields[ $key ] = ( '' === $data[ $key ] || null === $data[ $key ] ) ? null : intval( $data[ $key ] );
+			}
+		}
+
+		if ( empty( $fields ) ) {
+			return new WP_Error( 'no_fields', __( 'No valid fields to update.', 'sahajanand-erp' ), array( 'status' => 400 ) );
+		}
+
+		if ( isset( $fields['description'] ) ) {
+			$fields['description'] = wpautop( $fields['description'] );
+		}
+
+		$wpdb->update( $table, $fields, array( 'id' => $id ) );
+
+		$ticket = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id = %d", $id ) );
+		return rest_ensure_response( $ticket ? $ticket : array( 'message' => 'Ticket updated.' ) );
 	}
 	
+	/**
+	 * Delete a ticket permanently.
+	 *
+	 * @param WP_REST_Request $request Request object.
+	 * @return WP_REST_Response
+	 */
 	public function delete_ticket( $request ) {
 		global $wpdb;
 		$id = intval( $request['id'] );
@@ -412,7 +476,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 				array(
 					'ticket_id' => $ticket_id,
 					'user_id' => get_current_user_id(),
-					'message' => wp_kses_post($data['description']),
+					'message' => wpautop( wp_kses_post( $data['description'] ) ),
 					'is_note' => 0
 				)
 			);
@@ -570,7 +634,38 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		$ticket_id = intval( $request['id'] );
 		$table_name = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
 		$results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE ticket_id = %d ORDER BY created_at ASC", $ticket_id ) );
+		foreach ( $results as $reply ) {
+			$reply->attachments = $this->get_reply_attachments( $reply->attachment_ids );
+		}
 		return rest_ensure_response( $results );
+	}
+
+	/**
+	 * Resolve stored attachment IDs into attachment data for the UI.
+	 *
+	 * @param string $attachment_ids Comma separated attachment IDs.
+	 * @return array
+	 */
+	private function get_reply_attachments( $attachment_ids ) {
+		$attachments = array();
+		if ( empty( $attachment_ids ) ) {
+			return $attachments;
+		}
+
+		$ids = array_filter( array_map( 'intval', explode( ',', (string) $attachment_ids ) ) );
+		foreach ( $ids as $attachment_id ) {
+			$url = wp_get_attachment_url( $attachment_id );
+			if ( ! $url ) {
+				continue;
+			}
+			$attachments[] = array(
+				'id'       => $attachment_id,
+				'url'      => $url,
+				'filename' => wp_basename( (string) get_attached_file( $attachment_id ) ),
+				'mime'     => get_post_mime_type( $attachment_id ),
+			);
+		}
+		return $attachments;
 	}
 
 	/**
@@ -584,8 +679,12 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		$table_name = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
 		
 		$is_note = isset( $params['is_note'] ) && $params['is_note'] ? 1 : 0;
-		$message = wp_kses_post( $params['message'] ?? '' );
+		$message = wpautop( wp_kses_post( $params['message'] ?? '' ) );
 		$user_id = get_current_user_id();
+
+		$attachment_ids = isset( $params['attachment_ids'] )
+			? implode( ',', array_filter( array_map( 'intval', explode( ',', (string) $params['attachment_ids'] ) ) ) )
+			: '';
 
 		// Save reply to database
 		$data = array(
@@ -593,7 +692,7 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 			'user_id' => $user_id,
 			'message' => $message,
 			'is_note' => $is_note,
-			'attachment_ids' => isset( $params['attachment_ids'] ) ? sanitize_text_field( $params['attachment_ids'] ) : ''
+			'attachment_ids' => $attachment_ids,
 		);
 		
 		$wpdb->insert( $table_name, $data );
@@ -612,12 +711,14 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		}
 		
 		$new_reply = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $reply_id ) );
+		if ( $new_reply ) {
+			$new_reply->attachments = $this->get_reply_attachments( $new_reply->attachment_ids );
+		}
 		return rest_ensure_response( $new_reply );
 	}
 
 
 	public function update_mailbox( $request ) {
-		file_put_contents(dirname(__FILE__) . '/debug.txt', 'Hit update_mailbox');
 		global $wpdb;
 		$id = intval( $request['id'] );
 		$table_name = $wpdb->prefix . 'erp_helpdesk_mailboxes';
@@ -698,10 +799,6 @@ class SAHAJANAND_ERP_API_General extends SAHAJANAND_ERP_API_Controller {
 		
 		$phpmailer_action = function( $phpmailer ) use ( $mailbox ) {
 			$phpmailer->isSMTP();
-			$phpmailer->SMTPDebug = 3; // Detailed debug output
-			$phpmailer->Debugoutput = function($str, $level) {
-				file_put_contents(dirname(__FILE__) . '/smtp_debug.txt', $str . "\n", FILE_APPEND);
-			};
 			$phpmailer->Host = $mailbox->smtp_host;
 			$phpmailer->SMTPAuth = true;
 			$phpmailer->Port = $mailbox->smtp_port;

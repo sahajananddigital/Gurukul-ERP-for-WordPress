@@ -211,7 +211,6 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 			{
 				id: 'delete',
 				label: __( 'Delete', 'sahajanand-erp' ),
-				isDestructive: true,
 				callback: ( items ) => {
 					if ( items.length > 0 ) {
 						handleDelete( items[ 0 ] );
@@ -225,9 +224,7 @@ const HRApp = ( { view: initialTab = 'employees' } ) => {
 	const defaultLayouts = useMemo(
 		() => ( {
 			table: {
-				layout: {
-					primaryField: 'employee_id',
-				},
+				titleField: 'employee_id',
 			},
 		} ),
 		[]

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(npx wp-scripts lint-js src/modules/helpdesk 2 >& 1)",
+      "Shell(npx jest tests/modules/helpdesk 2 >& 1)",
+      "Shell(npx wp-scripts lint-js --fix src/modules/helpdesk 2 >& 1)",
+      "Shell(grep:*)",
+      "Shell(git:*)",
+      "Shell(npx wp-scripts lint-js src/modules/helpdesk 2 > /dev/null)",
+      "Shell(sed:*)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

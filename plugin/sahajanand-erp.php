@@ -3,15 +3,16 @@
  * Plugin Name: Sahajanand ERP
  * Plugin URI: https://github.com/sahajananddigital/Simple-ERP-for-WordPress
  * Description: A comprehensive Management System (ERP) for WordPress. Includes CRM, Accounting, HR, Helpdesk, and API.
- * Version: 1.0.0
+ * Version: 1.1.4
  * Author: Sahajanand Digital
  * Author URI: https://sahajananddigital.in
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: sahajanand-erp
  * Domain Path: /languages
- * Requires at least: 5.8
+ * Requires at least: 6.8
  * Requires PHP: 7.4
+ * Update URI: false
  */
 
 // Exit if accessed directly
@@ -20,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'SAHAJANAND_ERP_VERSION', '1.0.0' );
+define( 'SAHAJANAND_ERP_VERSION', '1.1.4' );
 define( 'SAHAJANAND_ERP_PLUGIN_FILE', __FILE__ );
 define( 'SAHAJANAND_ERP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SAHAJANAND_ERP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -117,6 +118,8 @@ final class Sahajanand_ERP {
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-api.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-admin.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-spa.php';
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-summary.php';
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-dashboard-widget.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/functions.php';
 		
 		// Helpdesk Mail Integrations
@@ -143,6 +146,8 @@ final class Sahajanand_ERP {
 		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+
+		SAHAJANAND_ERP_Dashboard_Widget::init();
 	}
 	
 	/**

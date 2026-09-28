@@ -116,7 +116,6 @@ const AccountsList = ( { accounts, loading, onAccountUpdated } ) => {
 			{
 				id: 'delete',
 				label: __( 'Delete', 'sahajanand-erp' ),
-				isDestructive: true,
 				callback: ( items ) => {
 					if ( items.length > 0 ) handleDelete( items[ 0 ] );
 				},
@@ -125,7 +124,7 @@ const AccountsList = ( { accounts, loading, onAccountUpdated } ) => {
 		[]
 	);
 
-	const defaultLayouts = useMemo( () => ( { table: { layout: { primaryField: 'code' } } } ), [] );
+	const defaultLayouts = useMemo( () => ( { table: { titleField: 'code' } } ), [] );
 
 	if ( loading ) {
 		return <Flex justify="center" style={{ padding: '32px' }}><Spinner /></Flex>;

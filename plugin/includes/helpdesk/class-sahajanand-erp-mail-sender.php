@@ -50,8 +50,25 @@ class SAHAJANAND_ERP_Mail_Sender {
 			$body .= "\n\n--\n" . $mailbox->signature;
 		}
 
-		$headers = array('Content-Type: text/html; charset=UTF-8');
-		
+		$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+		if ( $mailbox && ! empty( $mailbox->email_address ) ) {
+			$from_name = ! empty( $mailbox->name ) ? $mailbox->name : $mailbox->email_address;
+			$headers[] = sprintf( 'From: %s <%s>', $from_name, $mailbox->email_address );
+			$headers[] = 'Reply-To: ' . $mailbox->email_address;
+		}
+
+		$attachments = array();
+		if ( ! empty( $reply->attachment_ids ) ) {
+			$attachment_ids = array_filter( array_map( 'intval', explode( ',', (string) $reply->attachment_ids ) ) );
+			foreach ( $attachment_ids as $attachment_id ) {
+				$path = get_attached_file( $attachment_id );
+				if ( $path && file_exists( $path ) ) {
+					$attachments[] = $path;
+				}
+			}
+		}
+
 		$result = false;
 		$error_message = '';
 		
@@ -82,10 +99,10 @@ class SAHAJANAND_ERP_Mail_Sender {
 			};
 			add_action( 'phpmailer_init', $phpmailer_action );
 			
-			$result = wp_mail( $customer_email, $subject, $body, $headers );
+			$result = wp_mail( $customer_email, $subject, $body, $headers, $attachments );
 			remove_action( 'phpmailer_init', $phpmailer_action );
 		} else {
-			$result = wp_mail( $customer_email, $subject, $body, $headers );
+			$result = wp_mail( $customer_email, $subject, $body, $headers, $attachments );
 		}
 		
 		remove_action( 'wp_mail_failed', $error_action );

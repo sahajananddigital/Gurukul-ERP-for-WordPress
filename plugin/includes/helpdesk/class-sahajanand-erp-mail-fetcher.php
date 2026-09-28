@@ -75,6 +75,7 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 		$body = $message->getTextBody() ?: $message->getHTMLBody();
 		$from = $message->getFrom()[0]->mail;
 		$message_id = $message->getMessageId();
+		$attachment_ids = self::import_attachments( $message );
 		
 		// Very basic parsing for Phase 1. 
 		// If subject contains [Ticket #123], map to existing ticket.
@@ -90,9 +91,10 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 				array(
 					'ticket_id' => $ticket_id,
 					'user_id' => 0, // 0 for customer
-					'message' => $body,
+					'message' => wpautop( wp_kses_post( $body ) ),
 					'is_note' => 0,
 					'message_id' => $message_id,
+					'attachment_ids' => $attachment_ids,
 				)
 			);
 		} else {
@@ -125,15 +127,78 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 				$wpdb->prefix . 'erp_helpdesk_tickets',
 				array(
 					'subject' => sanitize_text_field( $subject ),
-					'description' => wp_kses_post( $body ),
+					'description' => wpautop( wp_kses_post( $body ) ),
 					'contact_id' => $contact_id,
 					'mailbox_id' => $mailbox->id,
 					'message_id' => $message_id,
+					'attachment_ids' => $attachment_ids,
 					'status' => 'open'
 				)
 			);
 			$ticket_id = $wpdb->insert_id;
 			$wpdb->update( $wpdb->prefix . 'erp_helpdesk_tickets', array( 'ticket_no' => '#' . $ticket_id ), array( 'id' => $ticket_id ) );
 		}
+	}
+
+	/**
+	 * Import a message's attachments into the media library.
+	 *
+	 * @param object $message IMAP message.
+	 * @return string Comma separated attachment IDs.
+	 */
+	private static function import_attachments( $message ) {
+		try {
+			$attachments = $message->getAttachments();
+		} catch ( \Exception $e ) {
+			return '';
+		}
+
+		if ( empty( $attachments ) ) {
+			return '';
+		}
+
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+
+		$attachment_ids = array();
+
+		foreach ( $attachments as $attachment ) {
+			try {
+				$filename = sanitize_file_name( $attachment->getName() );
+				$content  = $attachment->getContent();
+
+				if ( empty( $filename ) || empty( $content ) ) {
+					continue;
+				}
+
+				$upload = wp_upload_bits( $filename, null, $content );
+				if ( ! empty( $upload['error'] ) ) {
+					continue;
+				}
+
+				$mime = $attachment->getMimeType();
+
+				$attachment_id = wp_insert_attachment(
+					array(
+						'post_mime_type' => $mime ? $mime : 'application/octet-stream',
+						'post_title'     => pathinfo( $filename, PATHINFO_FILENAME ),
+						'post_status'    => 'inherit',
+					),
+					$upload['file']
+				);
+
+				if ( is_wp_error( $attachment_id ) || ! $attachment_id ) {
+					continue;
+				}
+
+				wp_update_attachment_metadata( $attachment_id, wp_generate_attachment_metadata( $attachment_id, $upload['file'] ) );
+
+				$attachment_ids[] = $attachment_id;
+			} catch ( \Exception $e ) {
+				continue;
+			}
+		}
+
+		return implode( ',', $attachment_ids );
 	}
 }

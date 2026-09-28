@@ -182,9 +182,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 	const defaultLayouts = useMemo(
 		() => ( {
 			table: {
-				layout: {
-					primaryField: 'voucher_no',
-				},
+				titleField: 'voucher_no',
 			},
 		} ),
 		[]

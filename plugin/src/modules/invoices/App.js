@@ -193,9 +193,7 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 	const defaultLayouts = useMemo(
 		() => ( {
 			table: {
-				layout: {
-					primaryField: 'invoice_no',
-				},
+				titleField: 'invoice_no',
 			},
 		} ),
 		[]

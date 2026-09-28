@@ -105,7 +105,6 @@ const OrganizationsList = ( { organizations, loading, onOrganizationUpdated } ) 
 		{
 			id: 'delete',
 			label: __( 'Delete', 'sahajanand-erp' ),
-			isDestructive: true,
 			callback: ( items ) => {
 				if ( items.length > 0 ) {
 					handleDelete( items[ 0 ] );
@@ -116,9 +115,7 @@ const OrganizationsList = ( { organizations, loading, onOrganizationUpdated } ) 
 
 	const defaultLayouts = {
 		table: {
-			layout: {
-				primaryField: 'name',
-			},
+			titleField: 'name',
 		},
 	};
 

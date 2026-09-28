@@ -125,46 +125,127 @@ class SAHAJANAND_ERP_Addon_Manager {
 	}
 	
 	/**
+	 * Get the addons installed in the addons directory with their status.
+	 *
+	 * @return array
+	 */
+	public function get_installed_addons() {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . 'erp_addons';
+		$active     = array();
+
+		$rows = $wpdb->get_results( "SELECT addon_key, active FROM $table_name" );
+		foreach ( (array) $rows as $row ) {
+			$active[ $row->addon_key ] = (int) $row->active;
+		}
+
+		$addons = array();
+		if ( ! is_dir( $this->addon_dir ) ) {
+			return $addons;
+		}
+
+		foreach ( glob( $this->addon_dir . '/*', GLOB_ONLYDIR ) as $addon_folder ) {
+			$addon_key  = basename( $addon_folder );
+			$addon_file = $addon_folder . '/' . $addon_key . '.php';
+
+			if ( ! file_exists( $addon_file ) ) {
+				continue;
+			}
+
+			$headers = $this->get_addon_headers( $addon_file );
+
+			$addons[] = array(
+				'key'         => $addon_key,
+				'name'        => ! empty( $headers['name'] ) ? $headers['name'] : $addon_key,
+				'version'     => isset( $headers['version'] ) ? $headers['version'] : '',
+				'description' => isset( $headers['description'] ) ? $headers['description'] : '',
+				'author'      => isset( $headers['author'] ) ? $headers['author'] : '',
+				'active'      => isset( $active[ $addon_key ] ) ? $active[ $addon_key ] : 0,
+			);
+		}
+
+		return $addons;
+	}
+
+	/**
+	 * Read the addon file headers.
+	 *
+	 * @param string $addon_file Addon main file.
+	 * @return array
+	 */
+	private function get_addon_headers( $addon_file ) {
+		return get_file_data(
+			$addon_file,
+			array(
+				'name'        => 'Addon Name',
+				'version'     => 'Version',
+				'description' => 'Description',
+				'author'      => 'Author',
+			)
+		);
+	}
+
+	/**
 	 * Activate an addon
 	 *
 	 * @param string $addon_key Addon key
 	 */
 	public function activate_addon( $addon_key ) {
-		global $wpdb;
-		
-		$table_name = $wpdb->prefix . 'erp_addons';
-		
-		$wpdb->update(
-			$table_name,
-			array( 'active' => 1 ),
-			array( 'addon_key' => $addon_key ),
-			array( '%d' ),
-			array( '%s' )
-		);
-		
-		// Reload addons
+		$this->set_addon_active( $addon_key, true );
+
+		// Reload addon
 		$this->load_addon( $addon_key );
 	}
-	
+
 	/**
 	 * Deactivate an addon
 	 *
 	 * @param string $addon_key Addon key
 	 */
 	public function deactivate_addon( $addon_key ) {
-		global $wpdb;
-		
-		$table_name = $wpdb->prefix . 'erp_addons';
-		
-		$wpdb->update(
-			$table_name,
-			array( 'active' => 0 ),
-			array( 'addon_key' => $addon_key ),
-			array( '%d' ),
-			array( '%s' )
-		);
-		
+		$this->set_addon_active( $addon_key, false );
+
 		unset( $this->addons[ $addon_key ] );
+	}
+
+	/**
+	 * Persist an addon's active state, creating the record when it is missing.
+	 *
+	 * @param string $addon_key Addon key
+	 * @param bool   $active    Whether the addon should be active
+	 */
+	private function set_addon_active( $addon_key, $active ) {
+		global $wpdb;
+
+		$table_name = $wpdb->prefix . 'erp_addons';
+		$value      = $active ? 1 : 0;
+
+		$exists = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE addon_key = %s", $addon_key ) );
+		if ( $exists ) {
+			$wpdb->update(
+				$table_name,
+				array( 'active' => $value ),
+				array( 'addon_key' => $addon_key ),
+				array( '%d' ),
+				array( '%s' )
+			);
+			return;
+		}
+
+		$addon_file = $this->addon_dir . '/' . $addon_key . '/' . $addon_key . '.php';
+		$headers    = file_exists( $addon_file ) ? $this->get_addon_headers( $addon_file ) : array();
+
+		$wpdb->insert(
+			$table_name,
+			array(
+				'addon_key' => $addon_key,
+				'name'      => ! empty( $headers['name'] ) ? $headers['name'] : $addon_key,
+				'version'   => ! empty( $headers['version'] ) ? $headers['version'] : '',
+				'active'    => $value,
+			),
+			array( '%s', '%s', '%s', '%d' )
+		);
 	}
 }
 

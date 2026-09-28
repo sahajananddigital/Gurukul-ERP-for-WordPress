@@ -437,6 +437,10 @@ class SAHAJANAND_ERP_Database {
 			message_id varchar(255) DEFAULT NULL,
 			priority varchar(20) DEFAULT 'medium',
 			status varchar(20) DEFAULT 'open',
+			is_starred tinyint(1) NOT NULL DEFAULT 0,
+			is_spam tinyint(1) NOT NULL DEFAULT 0,
+			is_deleted tinyint(1) NOT NULL DEFAULT 0,
+			attachment_ids varchar(255) DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
@@ -466,8 +470,77 @@ class SAHAJANAND_ERP_Database {
 			KEY user_id (user_id)
 		) $charset_collate;";
 		dbDelta( $sql );
+
+		self::migrate_helpdesk_ticket_columns();
+		self::migrate_helpdesk_message_formatting();
 	}
-	
+
+	/**
+	 * Add ticket columns to installs created before they existed.
+	 */
+	private static function migrate_helpdesk_ticket_columns() {
+		global $wpdb;
+
+		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
+
+		$existing = array();
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is an internal constant.
+		$row = $wpdb->get_row( "SELECT * FROM {$table} LIMIT 1", ARRAY_A );
+		if ( is_array( $row ) ) {
+			$existing = array_keys( $row );
+		}
+
+		$columns = array(
+			'is_starred' => 'TINYINT(1) NOT NULL DEFAULT 0',
+			'is_spam'    => 'TINYINT(1) NOT NULL DEFAULT 0',
+			'is_deleted' => 'TINYINT(1) NOT NULL DEFAULT 0',
+			'attachment_ids' => 'VARCHAR(255) DEFAULT NULL',
+		);
+
+		$suppress = $wpdb->suppress_errors();
+		foreach ( $columns as $column => $definition ) {
+			if ( ! in_array( $column, $existing, true ) ) {
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Column/table names are internal constants.
+				$wpdb->query( "ALTER TABLE {$table} ADD COLUMN {$column} {$definition}" );
+			}
+		}
+		$wpdb->suppress_errors( $suppress );
+	}
+
+	/**
+	 * Convert plain-text ticket messages (e.g. imported emails) to HTML so line
+	 * breaks and paragraphs are preserved when rendered.
+	 */
+	private static function migrate_helpdesk_message_formatting() {
+		global $wpdb;
+
+		$replies = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
+		$tickets = $wpdb->prefix . 'erp_helpdesk_tickets';
+
+		// Matches real HTML tags (not plain-text angle brackets like email addresses).
+		$has_html = static function ( $content ) {
+			return (bool) preg_match( '/<(p|br|div|span|a|ul|ol|li|strong|em|b|i|blockquote|pre|code|h[1-6]|img|table|tbody|thead|tr|td|th)\b/i', (string) $content );
+		};
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is an internal constant.
+		$reply_rows = $wpdb->get_results( "SELECT id, message FROM {$replies}", ARRAY_A );
+		foreach ( (array) $reply_rows as $row ) {
+			if ( $has_html( $row['message'] ) ) {
+				continue;
+			}
+			$wpdb->update( $replies, array( 'message' => wpautop( $row['message'] ) ), array( 'id' => $row['id'] ) );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is an internal constant.
+		$ticket_rows = $wpdb->get_results( "SELECT id, description FROM {$tickets}", ARRAY_A );
+		foreach ( (array) $ticket_rows as $row ) {
+			if ( $has_html( $row['description'] ) ) {
+				continue;
+			}
+			$wpdb->update( $tickets, array( 'description' => wpautop( $row['description'] ) ), array( 'id' => $row['id'] ) );
+		}
+	}
+
 	/**
 	 * Create Vouchers tables
 	 */
