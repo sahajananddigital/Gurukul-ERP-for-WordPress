@@ -14,7 +14,14 @@ module.exports = defineConfig({
     storageState: process.env.STORAGE_STATE_PATH,
   },
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.js/ },
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.js/,
+      // The setup project logs in and writes the storage state file. It must not
+      // inherit the global `storageState`, or Playwright tries to read the file
+      // before the setup test has created it and fails with ENOENT.
+      use: { storageState: undefined },
+    },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },

@@ -22,7 +22,9 @@ const DataViews = ( {
 						const next = selection.includes( id )
 							? selection.filter( ( s ) => s !== id )
 							: [ ...selection, id ];
-						onChangeSelection && onChangeSelection( next );
+						if ( onChangeSelection ) {
+							onChangeSelection( next );
+						}
 					},
 					'aria-label': `Select ${ id }`,
 				} ),
@@ -68,10 +70,11 @@ const DataViews = ( {
 									const items = data.filter( ( item ) =>
 										selection.includes( getItemId( item ) )
 									);
-									action.callback &&
+									if ( action.callback ) {
 										action.callback( items, {
 											onActionPerformed: () => {},
 										} );
+									}
 								},
 							},
 							action.label
