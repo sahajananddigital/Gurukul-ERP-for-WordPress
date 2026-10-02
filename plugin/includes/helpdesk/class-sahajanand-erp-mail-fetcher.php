@@ -2,7 +2,7 @@
 /**
  * Mail Fetcher for Helpdesk using Webklex/php-imap
  *
- * @package Gurukul_ERP
+ * @package Sahajanand_ERP
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -76,6 +76,13 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 		$from = $message->getFrom()[0]->mail;
 		$message_id = $message->getMessageId();
 		$attachment_ids = self::import_attachments( $message );
+
+		$raw_email = '';
+		try {
+			$raw_email = $message->getRawSource();
+		} catch ( \Exception $e ) {
+			$raw_email = '';
+		}
 		
 		// Very basic parsing for Phase 1. 
 		// If subject contains [Ticket #123], map to existing ticket.
@@ -132,6 +139,7 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 					'mailbox_id' => $mailbox->id,
 					'message_id' => $message_id,
 					'attachment_ids' => $attachment_ids,
+					'raw_email' => $raw_email,
 					'status' => 'open'
 				)
 			);

@@ -53,7 +53,7 @@ const MailboxesList = ( { addSnackbar } ) => {
 				path: '/sahajanand-erp/v1/helpdesk/mailboxes',
 			} );
 			setMailboxes( data );
-		} catch ( err ) {
+		} catch {
 			addSnackbar( __( 'Failed to fetch mailboxes.', 'sahajanand-erp' ) );
 		} finally {
 			setLoading( false );
@@ -105,7 +105,7 @@ const MailboxesList = ( { addSnackbar } ) => {
 			} );
 			addSnackbar( __( 'Mailbox deleted.', 'sahajanand-erp' ) );
 			fetchMailboxes();
-		} catch ( err ) {
+		} catch {
 			addSnackbar( __( 'Error deleting mailbox.', 'sahajanand-erp' ) );
 		}
 		setItemToDelete( null );

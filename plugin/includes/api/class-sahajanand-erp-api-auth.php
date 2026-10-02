@@ -2,7 +2,7 @@
 /**
  * Auth API Controller
  *
- * @package Gurukul_ERP
+ * @package Sahajanand_ERP
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

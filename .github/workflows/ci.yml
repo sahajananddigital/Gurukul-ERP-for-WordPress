@@ -1,0 +1,100 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master, 'feature/**' ]
+  pull_request:
+
+jobs:
+  js:
+    name: JS lint, unit, build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: plugin/package-lock.json
+      - run: npm ci
+      - run: npm run lint:js
+      - run: npm run test:js:coverage
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: js-coverage
+          path: plugin/coverage/js
+          if-no-files-found: ignore
+
+  php:
+    name: PHPCS, PHPStan, PHPUnit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugin
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          coverage: pcov
+          tools: composer
+          extensions: mysqli, zip
+      - run: composer install --no-interaction --prefer-dist
+      - run: composer phpcs
+      - run: composer phpstan || true
+      - name: Install WP test suite
+        run: |
+          chmod +x bin/install-wp-tests.sh
+          bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest true
+      - name: PHPUnit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+        run: composer test:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: php-coverage
+          path: plugin/coverage/php
+          if-no-files-found: ignore
+
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugin
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: plugin/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run env:start
+      - name: Run E2E
+        env:
+          WP_BASE_URL: http://localhost:8889
+        run: npm run test:e2e
+      - run: npm run env:stop
+        if: always()

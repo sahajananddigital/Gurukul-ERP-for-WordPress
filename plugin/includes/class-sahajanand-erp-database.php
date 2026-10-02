@@ -441,6 +441,7 @@ class SAHAJANAND_ERP_Database {
 			is_spam tinyint(1) NOT NULL DEFAULT 0,
 			is_deleted tinyint(1) NOT NULL DEFAULT 0,
 			attachment_ids varchar(255) DEFAULT NULL,
+			raw_email longtext DEFAULT NULL,
 			created_at datetime DEFAULT CURRENT_TIMESTAMP,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 			PRIMARY KEY (id),
@@ -495,6 +496,7 @@ class SAHAJANAND_ERP_Database {
 			'is_spam'    => 'TINYINT(1) NOT NULL DEFAULT 0',
 			'is_deleted' => 'TINYINT(1) NOT NULL DEFAULT 0',
 			'attachment_ids' => 'VARCHAR(255) DEFAULT NULL',
+			'raw_email' => 'LONGTEXT DEFAULT NULL',
 		);
 
 		$suppress = $wpdb->suppress_errors();

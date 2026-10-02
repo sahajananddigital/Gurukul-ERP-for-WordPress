@@ -1,7 +1,7 @@
 /**
  * Helpdesk Module App
  */
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	Spinner,
@@ -30,6 +30,16 @@ const HelpdeskApp = () => {
 	const [ snackbars, setSnackbars ] = useState( [] );
 	const [ isFetchingEmails, setIsFetchingEmails ] = useState( false );
 
+	const [ pagination, setPagination ] = useState( {
+		total: 0,
+		totalPages: 0,
+		page: 1,
+		perPage: 20,
+	} );
+	const [ stats, setStats ] = useState( null );
+	const lastFetch = useRef( {} );
+	const appReady = useRef( false );
+
 	const [ editingTicket, setEditingTicket ] = useState( null );
 	const [ isEditModalOpen, setIsEditModalOpen ] = useState( false );
 	const [ ticketToDelete, setTicketToDelete ] = useState( null );
@@ -47,23 +57,65 @@ const HelpdeskApp = () => {
 	}, [] );
 
 	useEffect( () => {
-		fetchTickets();
-		fetchMailboxes();
+		( async () => {
+			await Promise.all( [ fetchMailboxes(), fetchStats() ] );
+			appReady.current = true;
+			setLoading( false );
+		} )();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 
-	const fetchTickets = async () => {
+	const fetchTickets = async ( params = {} ) => {
+		lastFetch.current = { ...params };
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( {
-				path: '/sahajanand-erp/v1/helpdesk/tickets',
-			} );
+			const query = new URLSearchParams();
+			if ( params.mailbox_id ) {
+				query.set( 'mailbox_id', params.mailbox_id );
+			}
+			if ( params.folder !== undefined && params.folder !== null ) {
+				query.set( 'folder', params.folder );
+			}
+			const perPage = params.per_page || pagination.perPage;
+			const page = params.page || 1;
+			query.set( 'per_page', perPage );
+			query.set( 'page', page );
+
+			const base = window.sahajanandErp?.restUrl || '/wp-json/';
+			const res = await fetch(
+				`${ base }sahajanand-erp/v1/helpdesk/tickets?${ query.toString() }`,
+				{
+					headers: {
+						'X-WP-Nonce': window.sahajanandErp?.nonce || '',
+					},
+				}
+			);
+			const data = await res.json();
+			if ( ! res.ok ) {
+				throw new Error( data.message || res.statusText );
+			}
 			setTickets( data );
+			setPagination( {
+				total: Number( res.headers.get( 'x-wp-total' ) ) || 0,
+				totalPages: Number( res.headers.get( 'x-wp-totalpages' ) ) || 0,
+				page,
+				perPage,
+			} );
 		} catch ( err ) {
 			setError( err.message );
 		} finally {
 			setLoading( false );
 		}
+	};
+
+	const fetchStats = async () => {
+		try {
+			const data = await apiFetch( {
+				path: '/sahajanand-erp/v1/helpdesk/stats',
+			} );
+			setStats( data );
+		} catch {}
 	};
 
 	const fetchMailboxes = async () => {
@@ -72,7 +124,7 @@ const HelpdeskApp = () => {
 				path: '/sahajanand-erp/v1/helpdesk/mailboxes',
 			} );
 			setMailboxes( data );
-		} catch ( e ) {}
+		} catch {}
 	};
 
 	const addSnackbar = ( message ) => {
@@ -96,8 +148,8 @@ const HelpdeskApp = () => {
 			addSnackbar(
 				__( 'Emails fetched successfully from IMAP.', 'sahajanand-erp' )
 			);
-			fetchTickets();
-		} catch ( e ) {
+			fetchTickets( lastFetch.current );
+		} catch {
 			addSnackbar( __( 'Failed to fetch emails.', 'sahajanand-erp' ) );
 		} finally {
 			setIsFetchingEmails( false );
@@ -125,8 +177,8 @@ const HelpdeskApp = () => {
 			addSnackbar(
 				__( 'Ticket deleted successfully.', 'sahajanand-erp' )
 			);
-			fetchTickets();
-		} catch ( err ) {
+			fetchTickets( lastFetch.current );
+		} catch {
 			addSnackbar( __( 'Failed to delete ticket.', 'sahajanand-erp' ) );
 		}
 		setTicketToDelete( null );
@@ -157,7 +209,7 @@ const HelpdeskApp = () => {
 					__( 'Ticket created successfully.', 'sahajanand-erp' )
 				);
 			}
-			fetchTickets();
+			fetchTickets( lastFetch.current );
 			setIsEditModalOpen( false );
 		} catch ( err ) {
 			addSnackbar(
@@ -170,7 +222,7 @@ const HelpdeskApp = () => {
 		}
 	};
 
-	if ( loading && ! tickets.length ) {
+	if ( ! appReady.current && ! tickets.length ) {
 		return (
 			<Flex justify="center" style={ { padding: '32px' } }>
 				<Spinner />
@@ -217,7 +269,7 @@ const HelpdeskApp = () => {
 				{ viewState === 'dashboard' && (
 					<Dashboard
 						mailboxes={ mailboxes }
-						tickets={ tickets }
+						stats={ stats }
 						currentUser={ currentUser }
 						onSelectMailbox={ ( id ) => {
 							setCurrentMailboxId( id );
@@ -232,6 +284,9 @@ const HelpdeskApp = () => {
 							( m ) => m.id === currentMailboxId
 						) }
 						tickets={ tickets }
+						pagination={ pagination }
+						loading={ loading }
+						stats={ stats }
 						currentUser={ currentUser }
 						onBackToDashboard={ () => setViewState( 'dashboard' ) }
 						onSettingsClick={ () => setViewState( 'settings' ) }

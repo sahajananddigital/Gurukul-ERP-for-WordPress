@@ -28,7 +28,7 @@ define( 'SAHAJANAND_ERP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SAHAJANAND_ERP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
- * Main WP ERP Class
+ * Main Sahajanand ERP Class
  */
 final class Sahajanand_ERP {
 	
@@ -263,7 +263,7 @@ final class Sahajanand_ERP {
 		?>
 		<div class="notice notice-error">
 			<p>
-				<strong><?php esc_html_e( 'WP ERP:', 'sahajanand-erp' ); ?></strong>
+				<strong><?php esc_html_e( 'Sahajanand ERP:', 'sahajanand-erp' ); ?></strong>
 				<?php esc_html_e( 'Build files are missing. Please run "npm install" and "npm run build" in the plugin directory.', 'sahajanand-erp' ); ?>
 			</p>
 		</div>
@@ -279,7 +279,7 @@ final class Sahajanand_ERP {
 }
 
 /**
- * Main function to get WP ERP instance
+ * Main function to get Sahajanand ERP instance
  *
  * @return Sahajanand_ERP
  */

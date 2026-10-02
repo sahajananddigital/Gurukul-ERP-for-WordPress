@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { Card, CardBody, CardHeader, Flex } from '@wordpress/components';
 import { Grid, Heading, Text, VStack } from '../../../components/wp-compat';
 
-const Dashboard = ( { mailboxes, tickets, currentUser, onSelectMailbox } ) => {
+const Dashboard = ( { mailboxes, stats, onSelectMailbox } ) => {
 	if ( mailboxes.length === 0 ) {
 		return (
 			<Flex justify="center" style={ { padding: '48px' } }>
@@ -16,42 +16,39 @@ const Dashboard = ( { mailboxes, tickets, currentUser, onSelectMailbox } ) => {
 		);
 	}
 
+	const lookup = {};
+	if ( stats ) {
+		stats.forEach( ( s ) => {
+			lookup[ s.id ] = s;
+		} );
+	}
+
 	return (
 		<Grid columns={ [ 1, 2, 3 ] } gap={ 5 }>
 			{ mailboxes.map( ( mb ) => {
-				const mbTickets = tickets.filter(
-					( t ) =>
-						t.mailbox_id == mb.id &&
-						! Number( t.is_deleted ) &&
-						! Number( t.is_spam )
-				);
+				const s = lookup[ mb.id ] || {
+					unassigned: 0,
+					mine: 0,
+					assigned: 0,
+					closed: 0,
+					total: 0,
+				};
 				const counts = [
 					{
 						label: __( 'Unassigned', 'sahajanand-erp' ),
-						value: mbTickets.filter(
-							( t ) => ! t.assignee_id && t.status !== 'closed'
-						).length,
+						value: s.unassigned,
 					},
 					{
 						label: __( 'Mine', 'sahajanand-erp' ),
-						value: mbTickets.filter(
-							( t ) =>
-								currentUser &&
-								t.assignee_id == currentUser.id &&
-								t.status !== 'closed'
-						).length,
+						value: s.mine,
 					},
 					{
 						label: __( 'Assigned', 'sahajanand-erp' ),
-						value: mbTickets.filter(
-							( t ) => t.assignee_id && t.status !== 'closed'
-						).length,
+						value: s.assigned,
 					},
 					{
 						label: __( 'Closed', 'sahajanand-erp' ),
-						value: mbTickets.filter(
-							( t ) => t.status === 'closed'
-						).length,
+						value: s.closed,
 					},
 				];
 

@@ -82,7 +82,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 				} );
 				setContact( contactData );
 			}
-		} catch ( err ) {
+		} catch {
 			addSnackbar(
 				__( 'Failed to load ticket details.', 'sahajanand-erp' )
 			);
@@ -101,7 +101,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 			addSnackbar( __( 'CRM Contact updated.', 'sahajanand-erp' ) );
 			setIsEditContactModalOpen( false );
 			loadTicketAndDeps(); // reload to get fresh contact data
-		} catch ( err ) {
+		} catch {
 			addSnackbar(
 				__( 'Failed to update CRM Contact.', 'sahajanand-erp' )
 			);
@@ -150,6 +150,28 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 	const removeAttachment = ( id ) =>
 		setAttachments( ( prev ) => prev.filter( ( file ) => file.id !== id ) );
 
+	const detachAttachment = async ( id ) => {
+		const remaining = ( ticket.attachments || [] )
+			.filter( ( f ) => f.id !== id )
+			.map( ( f ) => f.id );
+		try {
+			await apiFetch( {
+				path: `/sahajanand-erp/v1/helpdesk/tickets/${ ticketId }`,
+				method: 'POST',
+				data: { attachment_ids: remaining },
+			} );
+			setTicket( ( t ) => ( {
+				...t,
+				attachments: t.attachments.filter( ( f ) => f.id !== id ),
+			} ) );
+			addSnackbar( __( 'Attachment removed.', 'sahajanand-erp' ) );
+		} catch {
+			addSnackbar(
+				__( 'Failed to remove attachment.', 'sahajanand-erp' )
+			);
+		}
+	};
+
 	const handleAddReply = async () => {
 		if ( ! replyText.trim() && attachments.length === 0 ) {
 			return;
@@ -180,7 +202,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 				setStatus( 'pending' );
 				handleFieldChange( 'status', 'pending' );
 			}
-		} catch ( err ) {
+		} catch {
 			addSnackbar( __( 'Failed to send reply.', 'sahajanand-erp' ) );
 		} finally {
 			setSaving( false );
@@ -198,7 +220,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 				/* translators: %s: Ticket field name. */
 				sprintf( __( '%s updated.', 'sahajanand-erp' ), field )
 			);
-		} catch ( err ) {
+		} catch {
 			addSnackbar(
 				/* translators: %s: Ticket field name. */
 				sprintf( __( 'Failed to update %s.', 'sahajanand-erp' ), field )
@@ -258,8 +280,8 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 
 				<VStack spacing={ 4 }>
 					{ replies.map( ( reply, idx ) => {
-						const isInternalNote = reply.is_note == 1;
-						const isAgent = reply.user_id != '0';
+						const isInternalNote = reply.is_note === 1;
+						const isAgent = reply.user_id !== '0';
 						let authorLabel = __( 'Customer', 'sahajanand-erp' );
 						if ( isInternalNote ) {
 							authorLabel = __(
@@ -581,6 +603,44 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 												: '' }
 										</Text>
 									) }
+								</VStack>
+							</VStack>
+						</CardBody>
+					</Card>
+				) }
+
+				{ ticket.attachments && ticket.attachments.length > 0 && (
+					<Card>
+						<CardBody>
+							<VStack spacing={ 3 }>
+								<Heading level={ 4 }>
+									{ __( 'Attachments', 'sahajanand-erp' ) }
+								</Heading>
+								<VStack spacing={ 1 } alignment="stretch">
+									{ ticket.attachments.map( ( file ) => (
+										<Flex
+											key={ file.id }
+											justify="space-between"
+											align="center"
+										>
+											<ExternalLink href={ file.url }>
+												{ file.filename }
+											</ExternalLink>
+											<Button
+												variant="tertiary"
+												isDestructive
+												size="small"
+												onClick={ () =>
+													detachAttachment( file.id )
+												}
+											>
+												{ __(
+													'Remove',
+													'sahajanand-erp'
+												) }
+											</Button>
+										</Flex>
+									) ) }
 								</VStack>
 							</VStack>
 						</CardBody>

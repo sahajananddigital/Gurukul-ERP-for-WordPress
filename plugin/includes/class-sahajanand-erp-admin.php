@@ -65,7 +65,7 @@ class SAHAJANAND_ERP_Admin {
 	public function render_settings_page() {
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'WP ERP Settings', 'sahajanand-erp' ); ?></h1>
+			<h1><?php esc_html_e( 'Sahajanand ERP Settings', 'sahajanand-erp' ); ?></h1>
 			<form method="post" action="options.php">
 				<?php settings_fields( 'sahajanand_erp_settings' ); ?>
 				<table class="form-table">
@@ -96,7 +96,7 @@ class SAHAJANAND_ERP_Admin {
 		
 		// Check if table exists
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) != $table_name ) {
-			echo '<div class="wrap"><h1>' . esc_html__( 'WP ERP Addons', 'sahajanand-erp' ) . '</h1>';
+			echo '<div class="wrap"><h1>' . esc_html__( 'Sahajanand ERP Addons', 'sahajanand-erp' ) . '</h1>';
 			echo '<p>' . esc_html__( 'Database tables not initialized. Please deactivate and reactivate the plugin.', 'sahajanand-erp' ) . '</p></div>';
 			return;
 		}
@@ -122,7 +122,7 @@ class SAHAJANAND_ERP_Admin {
 		
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'WP ERP Addons', 'sahajanand-erp' ); ?></h1>
+			<h1><?php esc_html_e( 'Sahajanand ERP Addons', 'sahajanand-erp' ); ?></h1>
 			
 			<?php if ( empty( $addons ) ) : ?>
 				<p><?php esc_html_e( 'No addons installed.', 'sahajanand-erp' ); ?></p>

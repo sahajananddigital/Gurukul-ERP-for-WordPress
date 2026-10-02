@@ -20,7 +20,7 @@ const SavedRepliesList = ( { addSnackbar } ) => {
 				path: '/sahajanand-erp/v1/helpdesk/saved-replies',
 			} );
 			setReplies( data );
-		} catch ( err ) {
+		} catch {
 			addSnackbar(
 				__( 'Failed to fetch saved replies.', 'sahajanand-erp' )
 			);
@@ -52,7 +52,7 @@ const SavedRepliesList = ( { addSnackbar } ) => {
 			}
 			setIsModalOpen( false );
 			fetchReplies();
-		} catch ( err ) {
+		} catch {
 			addSnackbar( __( 'Error saving reply.', 'sahajanand-erp' ) );
 		}
 	};
@@ -68,7 +68,7 @@ const SavedRepliesList = ( { addSnackbar } ) => {
 			} );
 			addSnackbar( __( 'Saved reply deleted.', 'sahajanand-erp' ) );
 			fetchReplies();
-		} catch ( err ) {
+		} catch {
 			addSnackbar( __( 'Error deleting reply.', 'sahajanand-erp' ) );
 		}
 		setItemToDelete( null );

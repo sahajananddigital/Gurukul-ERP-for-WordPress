@@ -1,0 +1,17 @@
+{
+	"core": "WordPress/WordPress",
+	"phpVersion": "8.1",
+	"plugins": [ ".", "../addons/gurukul-addon" ],
+	"config": {
+		"WP_DEBUG": true,
+		"SCRIPT_DEBUG": true,
+		"WP_DEBUG_LOG": true
+	},
+	"env": {
+		"tests": {
+			"config": {
+				"WP_DEBUG": true
+			}
+		}
+	}
+}

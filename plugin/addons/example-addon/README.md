@@ -1,11 +1,11 @@
-# Example Addon for WP ERP
+# Example Addon for Sahajanand ERP
 
-This is an example addon demonstrating how to extend WP ERP functionality.
+This is an example addon demonstrating how to extend Sahajanand ERP functionality.
 
 ## Installation
 
 1. Copy this folder to `/wp-content/sahajanand-erp-addons/example-addon/`
-2. Go to WP ERP > Addons in WordPress admin
+2. Go to Sahajanand ERP > Addons in WordPress admin
 3. Activate the addon
 
 ## Structure
@@ -18,17 +18,17 @@ example-addon/
 
 ## How It Works
 
-The addon hooks into WP ERP's initialization process and adds custom functionality. You can:
+The addon hooks into Sahajanand ERP's initialization process and adds custom functionality. You can:
 
 - Add custom admin pages
 - Extend existing modules
 - Add new REST API endpoints
-- Hook into WP ERP actions and filters
+- Hook into Sahajanand ERP actions and filters
 
 ## Example Usage
 
 ```php
-// Hook into WP ERP initialization
+// Hook into Sahajanand ERP initialization
 add_action( 'sahajanand_erp_init', function() {
     // Your custom code here
 });
@@ -47,5 +47,5 @@ if ( sahajanand_erp_is_module_active( 'crm' ) ) {
 1. Create a new folder in `/wp-content/sahajanand-erp-addons/`
 2. Create a main PHP file with your addon class
 3. Follow the naming convention: `SAHAJANAND_ERP_Addon_Your_Addon_Name`
-4. Register your addon in the WP ERP addons table
+4. Register your addon in the Sahajanand ERP addons table
 

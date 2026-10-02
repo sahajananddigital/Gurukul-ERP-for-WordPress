@@ -1,0 +1,21 @@
+includes:
+	- vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 2
+	paths:
+		- includes/api
+		- includes/helpdesk
+		- includes/class-sahajanand-erp-database.php
+	excludePaths:
+		- includes/lib/*
+		- vendor/*
+	bootstrapFiles:
+		- tests/php/phpstan-bootstrap.php
+	reportUnmatchedIgnoredErrors: false
+	treatPhpDocTypesAsCertain: false
+	ignoreErrors:
+		- '#Access to an undefined property#'
+		- '#Call to an undefined method#'
+		- '#Function [a-zA-Z0-9_\\\\]+ not found#'
+		- '#Constant [A-Z0-9_]+ not found#'

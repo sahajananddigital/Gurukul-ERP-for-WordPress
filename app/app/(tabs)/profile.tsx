@@ -64,7 +64,7 @@ export default function ProfileScreen() {
     const handleShareApp = async () => {
         try {
             await Share.share({
-                message: 'Check out the Gurukul ERP App! Download now to stay connected with Daily Darshan and Satsang.',
+                message: 'Check out the Sahajanand ERP App! Download now to stay connected with Daily Darshan and Satsang.',
                 url: 'https://gurukul.org', 
             });
         } catch (error) {

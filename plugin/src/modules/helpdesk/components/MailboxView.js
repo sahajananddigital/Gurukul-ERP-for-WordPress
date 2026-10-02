@@ -1,4 +1,4 @@
-import { useState, useMemo } from '@wordpress/element';
+import { useState, useMemo, useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import {
 	Flex,
@@ -6,6 +6,7 @@ import {
 	Card,
 	CardBody,
 	CardFooter,
+	Spinner,
 } from '@wordpress/components';
 import { Heading, Text, VStack } from '../../../components/wp-compat';
 import { arrowLeft, cog, envelope } from '@wordpress/icons';
@@ -16,7 +17,8 @@ import TicketDetail from './TicketDetail';
 const MailboxView = ( {
 	mailbox,
 	tickets,
-	currentUser,
+	pagination,
+	loading,
 	onBackToDashboard,
 	onSettingsClick,
 	handleAddNew,
@@ -28,6 +30,9 @@ const MailboxView = ( {
 } ) => {
 	const [ selectedFolder, setSelectedFolder ] = useState( 'unassigned' );
 	const [ selectedTicketId, setSelectedTicketId ] = useState( null );
+
+	// Server returns the current page, already filtered by mailbox + folder.
+	const filteredTickets = tickets;
 
 	const folders = useMemo(
 		() => [
@@ -45,41 +50,7 @@ const MailboxView = ( {
 		[]
 	);
 
-	const filteredTickets = useMemo( () => {
-		const all = tickets.filter( ( t ) => t.mailbox_id == mailbox.id );
-		const active = all.filter(
-			( t ) => ! Number( t.is_deleted ) && ! Number( t.is_spam )
-		);
-		const myId = currentUser ? currentUser.id : null;
-
-		switch ( selectedFolder ) {
-			case 'mine':
-				return active.filter(
-					( t ) => t.assignee_id == myId && t.status !== 'closed'
-				);
-			case 'starred':
-				return all.filter(
-					( t ) => Number( t.is_starred ) && ! Number( t.is_deleted )
-				);
-			case 'assigned':
-				return active.filter(
-					( t ) => t.assignee_id && t.status !== 'closed'
-				);
-			case 'closed':
-				return active.filter( ( t ) => t.status === 'closed' );
-			case 'spam':
-				return all.filter(
-					( t ) => Number( t.is_spam ) && ! Number( t.is_deleted )
-				);
-			case 'trash':
-				return all.filter( ( t ) => Number( t.is_deleted ) );
-			case 'unassigned':
-			default:
-				return active.filter(
-					( t ) => ! t.assignee_id && t.status !== 'closed'
-				);
-		}
-	}, [ tickets, mailbox, selectedFolder, currentUser ] );
+	const [ selection, setSelection ] = useState( [] );
 
 	const updateTicket = async ( ticket, data, message ) => {
 		if ( ! ticket ) {
@@ -92,7 +63,7 @@ const MailboxView = ( {
 				data,
 			} );
 			addSnackbar( message );
-			fetchTickets();
+			refetchPage();
 		} catch {
 			addSnackbar(
 				__( 'Failed to update the conversation.', 'sahajanand-erp' )
@@ -266,6 +237,111 @@ const MailboxView = ( {
 		[]
 	);
 
+	// Load the first page whenever a mailbox is opened.
+	useEffect( () => {
+		if ( mailbox ) {
+			fetchTickets( {
+				mailbox_id: mailbox.id,
+				folder: selectedFolder,
+				page: 1,
+				per_page: view.perPage,
+			} );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ mailbox?.id ] );
+
+	const handleViewChange = ( nextView ) => {
+		setView( nextView );
+		if (
+			nextView.page !== view.page ||
+			nextView.perPage !== view.perPage
+		) {
+			fetchTickets( {
+				mailbox_id: mailbox.id,
+				folder: selectedFolder,
+				page: nextView.page,
+				per_page: nextView.perPage,
+			} );
+		}
+	};
+
+	// Re-fetch the current page of the current mailbox + folder.
+	const refetchPage = () =>
+		fetchTickets( {
+			mailbox_id: mailbox.id,
+			folder: selectedFolder,
+			page: view.page,
+			per_page: view.perPage,
+		} );
+
+	const postBulk = async ( ids, action, value ) => {
+		if ( ! ids.length ) {
+			return;
+		}
+		try {
+			await apiFetch( {
+				path: '/sahajanand-erp/v1/helpdesk/tickets/bulk',
+				method: 'POST',
+				data: { ids, action, value },
+			} );
+			addSnackbar( __( 'Bulk action applied.', 'sahajanand-erp' ) );
+			setSelection( [] );
+			refetchPage();
+		} catch {
+			addSnackbar( __( 'Bulk action failed.', 'sahajanand-erp' ) );
+		}
+	};
+
+	const bulkActions = useMemo( () => {
+		const wrap = ( id, label, action, value ) => ( {
+			id,
+			label,
+			supportsBulk: true,
+			callback: ( items, context ) => {
+				postBulk(
+					items.map( ( t ) => t.id ),
+					action,
+					value
+				);
+				context.onActionPerformed?.( items );
+			},
+		} );
+
+		if ( selectedFolder === 'trash' ) {
+			return [
+				wrap(
+					'bulk-restore',
+					__( 'Restore', 'sahajanand-erp' ),
+					'restore'
+				),
+			];
+		}
+		if ( selectedFolder === 'spam' ) {
+			return [
+				wrap(
+					'bulk-not-spam',
+					__( 'Not Spam', 'sahajanand-erp' ),
+					'spam',
+					0
+				),
+			];
+		}
+		return [
+			wrap( 'bulk-star', __( 'Star', 'sahajanand-erp' ), 'star', 1 ),
+			wrap(
+				'bulk-spam',
+				__( 'Mark as Spam', 'sahajanand-erp' ),
+				'spam',
+				1
+			),
+			wrap(
+				'bulk-trash',
+				__( 'Move to Trash', 'sahajanand-erp' ),
+				'trash'
+			),
+		];
+	}, [ selectedFolder ] );
+
 	return (
 		<Flex
 			align="stretch"
@@ -310,6 +386,12 @@ const MailboxView = ( {
 									onClick={ () => {
 										setSelectedFolder( folder.value );
 										setSelectedTicketId( null );
+										fetchTickets( {
+											mailbox_id: mailbox.id,
+											folder: folder.value,
+											page: 1,
+											per_page: view.perPage,
+										} );
 									} }
 									style={ { justifyContent: 'flex-start' } }
 								>
@@ -348,7 +430,7 @@ const MailboxView = ( {
 								ticketId={ selectedTicketId }
 								onBack={ () => {
 									setSelectedTicketId( null );
-									fetchTickets();
+									refetchPage();
 								} }
 								addSnackbar={ addSnackbar }
 							/>
@@ -361,20 +443,31 @@ const MailboxView = ( {
 								{ __( 'New Conversation', 'sahajanand-erp' ) }
 							</Button>
 						</Flex>
-						<DataViews
-							data={ filteredTickets }
-							fields={ fields }
-							actions={ actions }
-							view={ view }
-							onChangeView={ setView }
-							defaultLayouts={ defaultLayouts }
-							paginationInfo={ {
-								totalItems: filteredTickets.length,
-								totalPages: Math.ceil(
-									filteredTickets.length / view.perPage
-								),
-							} }
-						/>
+						{ loading && filteredTickets.length === 0 ? (
+							<Flex
+								justify="center"
+								style={ { padding: '32px' } }
+							>
+								<Spinner />
+							</Flex>
+						) : (
+							<DataViews
+								data={ filteredTickets }
+								fields={ fields }
+								actions={ [ ...actions, ...bulkActions ] }
+								view={ view }
+								onChangeView={ handleViewChange }
+								onChangeSelection={ setSelection }
+								selection={ selection }
+								getItemId={ ( item ) => String( item.id ) }
+								isLoading={ loading }
+								defaultLayouts={ defaultLayouts }
+								paginationInfo={ {
+									totalItems: pagination.total,
+									totalPages: pagination.totalPages,
+								} }
+							/>
+						) }
 					</VStack>
 				) }
 			</VStack>

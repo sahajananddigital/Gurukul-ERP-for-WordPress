@@ -1,10 +1,10 @@
 <?php
 /**
- * Plugin Name: WP ERP Addon - Example Addon
- * Description: Example addon demonstrating how to extend WP ERP
+ * Plugin Name: Sahajanand ERP Addon - Example Addon
+ * Description: Example addon demonstrating how to extend Sahajanand ERP
  * Version: 1.0.0
  * Author: Your Name
- * Requires WP ERP: 1.0.0
+ * Requires Sahajanand ERP: 1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -29,7 +29,7 @@ class SAHAJANAND_ERP_Addon_Example_Addon {
 	 */
 	public function init() {
 		// Add custom functionality here
-		// You can hook into WP ERP actions and filters
+		// You can hook into Sahajanand ERP actions and filters
 		do_action( 'sahajanand_erp_example_addon_init' );
 	}
 	
@@ -54,7 +54,7 @@ class SAHAJANAND_ERP_Addon_Example_Addon {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Example Addon', 'sahajanand-erp' ); ?></h1>
-			<p><?php esc_html_e( 'This is an example addon for WP ERP.', 'sahajanand-erp' ); ?></p>
+			<p><?php esc_html_e( 'This is an example addon for Sahajanand ERP.', 'sahajanand-erp' ); ?></p>
 		</div>
 		<?php
 	}
