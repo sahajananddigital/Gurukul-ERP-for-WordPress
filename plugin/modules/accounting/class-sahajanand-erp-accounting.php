@@ -2,6 +2,9 @@
 /**
  * Accounting Module
  *
+ * Unified Accounting module encompassing chart of accounts, transactions,
+ * invoices, expenses, and vouchers.
+ *
  * @package Sahajanand_ERP
  */
 
@@ -24,6 +27,27 @@ class SAHAJANAND_ERP_Accounting {
 	 * @var string
 	 */
 	public $name = 'Accounting';
+
+	/**
+	 * Invoices submodule instance
+	 *
+	 * @var object|null
+	 */
+	public $invoices = null;
+
+	/**
+	 * Expenses submodule instance
+	 *
+	 * @var object|null
+	 */
+	public $expenses = null;
+
+	/**
+	 * Vouchers submodule instance
+	 *
+	 * @var object|null
+	 */
+	public $vouchers = null;
 	
 	/**
 	 * Constructor
@@ -33,10 +57,12 @@ class SAHAJANAND_ERP_Accounting {
 	}
 	
 	/**
-	 * Initialize module
+	 * Initialize module and sub-modules
 	 */
 	private function init() {
-		// add_action( 'admin_menu', array( , 'add_admin_menu' ) );
+		$this->invoices = new SAHAJANAND_ERP_Invoices();
+		$this->expenses = new SAHAJANAND_ERP_Expenses();
+		$this->vouchers = new SAHAJANAND_ERP_Vouchers();
 	}
 	
 	/**
@@ -52,8 +78,6 @@ class SAHAJANAND_ERP_Accounting {
 			'dashicons-chart-line',
 			31
 		);
-		
-
 	}
 	
 	/**
@@ -66,8 +90,6 @@ class SAHAJANAND_ERP_Accounting {
 		<?php
 	}
 	
-
-	
 	/**
 	 * Check if module is active
 	 *
@@ -78,3 +100,92 @@ class SAHAJANAND_ERP_Accounting {
 	}
 }
 
+if ( ! class_exists( 'SAHAJANAND_ERP_Invoices' ) ) {
+	/**
+	 * Invoices submodule compatibility class.
+	 */
+	class SAHAJANAND_ERP_Invoices {
+		/**
+		 * Module slug
+		 *
+		 * @var string
+		 */
+		public $slug = 'invoices';
+
+		/**
+		 * Module name
+		 *
+		 * @var string
+		 */
+		public $name = 'Invoices';
+
+		/**
+		 * Check if active
+		 *
+		 * @return bool
+		 */
+		public function is_active() {
+			return true;
+		}
+	}
+}
+
+if ( ! class_exists( 'SAHAJANAND_ERP_Expenses' ) ) {
+	/**
+	 * Expenses submodule compatibility class.
+	 */
+	class SAHAJANAND_ERP_Expenses {
+		/**
+		 * Module slug
+		 *
+		 * @var string
+		 */
+		public $slug = 'expenses';
+
+		/**
+		 * Module name
+		 *
+		 * @var string
+		 */
+		public $name = 'Expenses';
+
+		/**
+		 * Check if active
+		 *
+		 * @return bool
+		 */
+		public function is_active() {
+			return true;
+		}
+	}
+}
+
+if ( ! class_exists( 'SAHAJANAND_ERP_Vouchers' ) ) {
+	/**
+	 * Vouchers submodule compatibility class.
+	 */
+	class SAHAJANAND_ERP_Vouchers {
+		/**
+		 * Module slug
+		 *
+		 * @var string
+		 */
+		public $slug = 'vouchers';
+
+		/**
+		 * Module name
+		 *
+		 * @var string
+		 */
+		public $name = 'Vouchers';
+
+		/**
+		 * Check if active
+		 *
+		 * @return bool
+		 */
+		public function is_active() {
+			return true;
+		}
+	}
+}

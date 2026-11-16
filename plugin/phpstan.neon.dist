@@ -6,6 +6,7 @@ parameters:
 	paths:
 		- includes/api
 		- includes/helpdesk
+		- includes/database
 		- includes/class-sahajanand-erp-database.php
 	excludePaths:
 		- includes/lib/*

@@ -2,6 +2,7 @@ const React = require( 'react' );
 
 const DataViews = ( {
 	data = [],
+	fields = [],
 	actions = [],
 	onChangeSelection,
 	selection = [],
@@ -12,6 +13,18 @@ const DataViews = ( {
 		{ 'data-testid': 'dataviews' },
 		data.map( ( item ) => {
 			const id = getItemId( item );
+			const defaultLabel =
+				( item.first_name
+					? `${ item.first_name } ${ item.last_name || '' }`.trim()
+					: null ) ||
+				item.employee_id ||
+				item.invoice_no ||
+				item.voucher_no ||
+				item.expense_no ||
+				item.subject ||
+				item.name ||
+				item.title ||
+				id;
 			return React.createElement(
 				'div',
 				{ key: id, 'data-testid': `row-${ id }` },
@@ -28,11 +41,19 @@ const DataViews = ( {
 					},
 					'aria-label': `Select ${ id }`,
 				} ),
-				React.createElement(
-					'span',
-					null,
-					item.subject || item.name || item.title || id
-				),
+				fields.length > 0
+					? fields.map( ( f ) => {
+							const text =
+								typeof f.getValue === 'function'
+									? f.getValue( { item } )
+									: item[ f.id ];
+							return React.createElement(
+								'span',
+								{ key: f.id },
+								text
+							);
+					  } )
+					: React.createElement( 'span', null, defaultLabel ),
 				actions
 					.filter( ( a ) => ! a.supportsBulk )
 					.map( ( action ) =>

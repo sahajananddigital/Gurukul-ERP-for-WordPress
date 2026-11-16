@@ -28,12 +28,19 @@ module.exports = {
 			children
 		),
 	Flex: passthrough( 'div' ),
+	FlexBlock: passthrough( 'div' ),
+	FlexItem: passthrough( 'div' ),
 	Card: passthrough( 'div' ),
 	CardBody: passthrough( 'div' ),
 	CardHeader: passthrough( 'div' ),
 	CardFooter: passthrough( 'div' ),
-	TabPanel: ( { tabs = [], children, onSelect } ) =>
-		React.createElement(
+	TabPanel: ( { tabs = [], children, onSelect, initialTabName } ) => {
+		const [ active, setActive ] = React.useState(
+			initialTabName || tabs[ 0 ]?.name
+		);
+		const currentTab =
+			tabs.find( ( t ) => t.name === active ) || tabs[ 0 ] || {};
+		return React.createElement(
 			'div',
 			null,
 			tabs.map( ( tab ) =>
@@ -42,14 +49,41 @@ module.exports = {
 					{
 						key: tab.name,
 						type: 'button',
-						onClick: () => onSelect && onSelect( tab.name ),
+						onClick: () => {
+							setActive( tab.name );
+							if ( onSelect ) {
+								onSelect( tab.name );
+							}
+						},
 					},
 					tab.title
 				)
 			),
-			typeof children === 'function'
-				? children( tabs[ 0 ] || {} )
-				: children
+			typeof children === 'function' ? children( currentTab ) : children
+		);
+	},
+	TextControl: ( { label, value, onChange, type = 'text', ...props } ) =>
+		React.createElement(
+			'label',
+			null,
+			label,
+			React.createElement( 'input', {
+				type,
+				value: value || '',
+				onChange: ( e ) => onChange && onChange( e.target.value ),
+				...props,
+			} )
+		),
+	TextareaControl: ( { label, value, onChange, ...props } ) =>
+		React.createElement(
+			'label',
+			null,
+			label,
+			React.createElement( 'textarea', {
+				value: value || '',
+				onChange: ( e ) => onChange && onChange( e.target.value ),
+				...props,
+			} )
 		),
 	SelectControl: ( { label, value, options = [], onChange } ) =>
 		React.createElement(

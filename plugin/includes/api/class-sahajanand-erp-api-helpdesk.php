@@ -258,7 +258,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 
 		$text_fields = array(
 			'subject'     => 'sanitize_text_field',
-			'description' => 'wp_kses_post',
+			'description' => 'sanitize_text_field',
 			'status'      => 'sanitize_text_field',
 			'priority'    => 'sanitize_text_field',
 		);
@@ -290,9 +290,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 			return new WP_Error( 'no_fields', __( 'No valid fields to update.', 'sahajanand-erp' ) );
 		}
 
-		if ( isset( $fields['description'] ) ) {
-			$fields['description'] = wpautop( $fields['description'] );
-		}
+		// Email HTML is sanitized by the mail fetcher, no wpautop needed
 
 		$wpdb->update( $table, $fields, array( 'id' => $id ) );
 
@@ -528,7 +526,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 				array(
 					'ticket_id' => $ticket_id,
 					'user_id'   => get_current_user_id(),
-					'message'   => wpautop( wp_kses_post( $data['description'] ) ),
+					'message'   => $data['description'],
 					'is_note'   => 0,
 				)
 			);
@@ -556,7 +554,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 
 		$data = array(
 			'title'   => sanitize_text_field( $params['title'] ?? '' ),
-			'content' => wp_kses_post( $params['content'] ?? '' ),
+			'content' => $params['content'] ?? '',
 		);
 
 		$wpdb->insert( $table_name, $data );
@@ -698,7 +696,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 		$table_name = $wpdb->prefix . 'erp_helpdesk_ticket_replies';
 
 		$is_note = isset( $params['is_note'] ) && $params['is_note'] ? 1 : 0;
-		$message = wpautop( wp_kses_post( $params['message'] ?? '' ) );
+		$message = wp_kses_post( $params['message'] ?? '' );
 		$user_id = get_current_user_id();
 
 		$attachment_ids = isset( $params['attachment_ids'] )
@@ -774,7 +772,7 @@ class SAHAJANAND_ERP_API_Helpdesk extends SAHAJANAND_ERP_API_Controller {
 			$data['smtp_pass'] = sanitize_text_field( $params['smtp_pass'] );
 		}
 		if ( isset( $params['signature'] ) ) {
-			$data['signature'] = wp_kses_post( $params['signature'] );
+			$data['signature'] = $params['signature'];
 		}
 
 		$wpdb->update( $table_name, $data, array( 'id' => $id ) );

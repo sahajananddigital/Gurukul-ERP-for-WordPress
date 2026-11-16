@@ -6,6 +6,13 @@ import apiFetch from '@wordpress/api-fetch';
 import TicketDetail from '../../../src/modules/helpdesk/components/TicketDetail';
 
 jest.mock( '@wordpress/api-fetch' );
+jest.mock( '../../../src/modules/helpdesk/components/EmailBody', () => {
+	const React = require( 'react' );
+	return ( { html } ) =>
+		React.createElement( 'div', {
+			dangerouslySetInnerHTML: { __html: html },
+		} );
+} );
 jest.mock( '../../../src/components/EditModal', () => {
 	const React = require( 'react' );
 	return ( { isOpen, title, onSave } ) =>

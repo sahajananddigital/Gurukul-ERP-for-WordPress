@@ -1,20 +1,20 @@
 /**
- * Invoices App Tests
+ * Invoices List Tests
  */
 import { render, screen, waitFor } from '@testing-library/react';
-import InvoicesApp from '../../../src/modules/invoices/App';
+import InvoicesList from '../../../src/modules/accounting/components/InvoicesList';
 import apiFetch from '@wordpress/api-fetch';
 
 jest.mock( '@wordpress/api-fetch' );
 
-describe( 'InvoicesApp', () => {
+describe( 'InvoicesList', () => {
 	beforeEach( () => {
 		apiFetch.mockClear();
 	} );
 
-	it( 'renders Invoices module', async () => {
+	it( 'renders Invoices component', async () => {
 		apiFetch.mockResolvedValue( [] );
-		render( <InvoicesApp /> );
+		render( <InvoicesList /> );
 		await waitFor( () => {
 			expect(
 				screen.getAllByText( /All Invoices/i )[ 0 ]
@@ -35,7 +35,7 @@ describe( 'InvoicesApp', () => {
 		];
 
 		apiFetch.mockResolvedValue( mockInvoices );
-		render( <InvoicesApp /> );
+		render( <InvoicesList /> );
 
 		await waitFor( () => {
 			expect( screen.getByText( 'INV-001' ) ).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe( 'InvoicesApp', () => {
 
 	it( 'renders create invoice form', async () => {
 		apiFetch.mockResolvedValue( [] );
-		render( <InvoicesApp view="create" /> );
+		render( <InvoicesList view="create" /> );
 		await waitFor( () => {
 			expect(
 				screen.getAllByText( /Invoice Date/i )[ 0 ]

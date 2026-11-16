@@ -63,19 +63,7 @@ const ModuleSummary = () => {
 		},
 		{
 			label: __( 'Accounting', 'sahajanand-erp' ),
-			details: `${ count( summary.accounting.accounts ) } ${ __( 'accounts', 'sahajanand-erp' ) } · ${ count( summary.accounting.transactions ) } ${ __( 'transactions', 'sahajanand-erp' ) }`,
-		},
-		{
-			label: __( 'Invoices', 'sahajanand-erp' ),
-			details: `${ count( summary.invoices.count ) } ${ __( 'invoices', 'sahajanand-erp' ) } · ${ money( summary.invoices.total ) } ${ __( 'invoiced', 'sahajanand-erp' ) }`,
-		},
-		{
-			label: __( 'Expenses', 'sahajanand-erp' ),
-			details: `${ count( summary.expenses.count ) } ${ __( 'expenses', 'sahajanand-erp' ) } · ${ money( summary.expenses.total ) } ${ __( 'spent', 'sahajanand-erp' ) }`,
-		},
-		{
-			label: __( 'Vouchers', 'sahajanand-erp' ),
-			details: `${ count( summary.vouchers.count ) } ${ __( 'vouchers', 'sahajanand-erp' ) } · ${ money( summary.vouchers.total ) }`,
+			details: `${ count( summary.accounting.accounts ) } ${ __( 'accounts', 'sahajanand-erp' ) } · ${ count( summary.accounting.transactions ) } ${ __( 'transactions', 'sahajanand-erp' ) } · ${ count( summary.invoices?.count || 0 ) } ${ __( 'invoices', 'sahajanand-erp' ) } · ${ count( summary.expenses?.count || 0 ) } ${ __( 'expenses', 'sahajanand-erp' ) } · ${ count( summary.vouchers?.count || 0 ) } ${ __( 'vouchers', 'sahajanand-erp' ) }`,
 		},
 		{
 			label: __( 'HR', 'sahajanand-erp' ),

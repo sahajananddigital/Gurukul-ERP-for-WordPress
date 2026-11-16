@@ -53,3 +53,4 @@ app/web-build/
 *.tgz
 *.zip
 *.tar.gz
+scratch/

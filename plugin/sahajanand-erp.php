@@ -123,6 +123,7 @@ final class Sahajanand_ERP {
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/functions.php';
 		
 		// Helpdesk Mail Integrations
+		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-html.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-sender.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-fetcher.php';
 		
@@ -131,9 +132,6 @@ final class Sahajanand_ERP {
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/accounting/class-sahajanand-erp-accounting.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/hr/class-sahajanand-erp-hr.php';
 		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/helpdesk/class-sahajanand-erp-helpdesk.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/vouchers/class-sahajanand-erp-vouchers.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/invoices/class-sahajanand-erp-invoices.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/expenses/class-sahajanand-erp-expenses.php';
 	}
 	
 	/**
@@ -169,14 +167,11 @@ final class Sahajanand_ERP {
 		$this->user_management = new SAHAJANAND_ERP_User_Management();
 		$this->user_sync = new SAHAJANAND_ERP_User_Sync();
 		
-		// Load core modules
+		// Load core modules (Accounting unifies invoices, expenses, and vouchers)
 		$this->modules->register_module( 'crm', new SAHAJANAND_ERP_CRM() );
 		$this->modules->register_module( 'accounting', new SAHAJANAND_ERP_Accounting() );
 		$this->modules->register_module( 'hr', new SAHAJANAND_ERP_HR() );
 		$this->modules->register_module( 'helpdesk', new SAHAJANAND_ERP_Helpdesk() );
-		$this->modules->register_module( 'vouchers', new SAHAJANAND_ERP_Vouchers() );
-		$this->modules->register_module( 'invoices', new SAHAJANAND_ERP_Invoices() );
-		$this->modules->register_module( 'expenses', new SAHAJANAND_ERP_Expenses() );
 		
 		// Load addons
 		$this->addons->load_addons();

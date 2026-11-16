@@ -1,20 +1,20 @@
 /**
- * Expenses App Tests
+ * Expenses List Tests
  */
 import { render, screen, waitFor } from '@testing-library/react';
-import ExpensesApp from '../../../src/modules/expenses/App';
+import ExpensesList from '../../../src/modules/accounting/components/ExpensesList';
 import apiFetch from '@wordpress/api-fetch';
 
 jest.mock( '@wordpress/api-fetch' );
 
-describe( 'ExpensesApp', () => {
+describe( 'ExpensesList', () => {
 	beforeEach( () => {
 		apiFetch.mockClear();
 	} );
 
-	it( 'renders Expenses module', async () => {
+	it( 'renders Expenses component', async () => {
 		apiFetch.mockResolvedValue( [] );
-		render( <ExpensesApp /> );
+		render( <ExpensesList /> );
 		await waitFor( () => {
 			expect(
 				screen.getAllByText( /All Expenses/i )[ 0 ]
@@ -36,7 +36,7 @@ describe( 'ExpensesApp', () => {
 		];
 
 		apiFetch.mockResolvedValue( mockExpenses );
-		render( <ExpensesApp /> );
+		render( <ExpensesList /> );
 
 		await waitFor( () => {
 			expect( screen.getByText( 'EXP-001' ) ).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe( 'ExpensesApp', () => {
 	} );
 
 	it( 'renders create expense form', async () => {
-		render( <ExpensesApp view="create" /> );
+		render( <ExpensesList view="create" /> );
 		await waitFor( () => {
 			expect(
 				screen.getAllByText( /Add Expense/i )[ 0 ]

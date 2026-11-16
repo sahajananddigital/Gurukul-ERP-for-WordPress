@@ -72,7 +72,9 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 		global $wpdb;
 		
 		$subject = $message->getSubject();
-		$body = $message->getTextBody() ?: $message->getHTMLBody();
+		// HTML wins over the plain-text alternative: the text part carries no
+		// layout, so preferring it flattens every designed email.
+		$body = SAHAJANAND_ERP_Mail_HTML::prepare( $message->getHTMLBody(), $message->getTextBody() );
 		$from = $message->getFrom()[0]->mail;
 		$message_id = $message->getMessageId();
 		$attachment_ids = self::import_attachments( $message );
@@ -98,7 +100,7 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 				array(
 					'ticket_id' => $ticket_id,
 					'user_id' => 0, // 0 for customer
-					'message' => wpautop( wp_kses_post( $body ) ),
+					'message' => $body,
 					'is_note' => 0,
 					'message_id' => $message_id,
 					'attachment_ids' => $attachment_ids,
@@ -134,7 +136,7 @@ class SAHAJANAND_ERP_Mail_Fetcher {
 				$wpdb->prefix . 'erp_helpdesk_tickets',
 				array(
 					'subject' => sanitize_text_field( $subject ),
-					'description' => wpautop( wp_kses_post( $body ) ),
+					'description' => $body,
 					'contact_id' => $contact_id,
 					'mailbox_id' => $mailbox->id,
 					'message_id' => $message_id,

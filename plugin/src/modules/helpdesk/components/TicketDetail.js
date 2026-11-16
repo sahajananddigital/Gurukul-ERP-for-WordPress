@@ -18,6 +18,7 @@ import { arrowLeft } from '@wordpress/icons';
 import apiFetch from '@wordpress/api-fetch';
 import EditModal from '../../../components/EditModal';
 import WPEditor from '../../../components/WPEditor';
+import EmailBody from './EmailBody';
 
 const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 	const [ ticket, setTicket ] = useState( null );
@@ -256,11 +257,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 				<Card>
 					<CardBody>
 						<VStack spacing={ 2 }>
-							<div
-								dangerouslySetInnerHTML={ {
-									__html: ticket.description,
-								} }
-							/>
+							<EmailBody html={ ticket.description } />
 							{ ticket.attachments &&
 								ticket.attachments.length > 0 && (
 									<VStack spacing={ 1 }>
@@ -295,13 +292,7 @@ const TicketDetail = ( { ticketId, onBack, addSnackbar } ) => {
 							reply.created_at
 						).toLocaleString();
 						const meta = `${ authorLabel } - ${ createdAt }`;
-						const body = (
-							<div
-								dangerouslySetInnerHTML={ {
-									__html: reply.message,
-								} }
-							/>
-						);
+						const body = <EmailBody html={ reply.message } />;
 						const attachmentList =
 							reply.attachments &&
 							reply.attachments.length > 0 ? (

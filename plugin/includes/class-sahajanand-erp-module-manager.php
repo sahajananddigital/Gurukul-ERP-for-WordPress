@@ -44,6 +44,13 @@ class SAHAJANAND_ERP_Module_Manager {
 	 * @return object|null
 	 */
 	public function get_module( $slug ) {
+		if ( in_array( $slug, array( 'invoices', 'vouchers', 'expenses' ), true ) ) {
+			$accounting = isset( $this->modules['accounting'] ) ? $this->modules['accounting'] : null;
+			if ( $accounting && isset( $accounting->$slug ) && $accounting->$slug ) {
+				return $accounting->$slug;
+			}
+			return $accounting;
+		}
 		return isset( $this->modules[ $slug ] ) ? $this->modules[ $slug ] : null;
 	}
 	
@@ -54,8 +61,10 @@ class SAHAJANAND_ERP_Module_Manager {
 	 * @return bool
 	 */
 	public function is_module_active( $slug ) {
+		if ( in_array( $slug, array( 'invoices', 'vouchers', 'expenses' ), true ) ) {
+			return $this->is_module_active( 'accounting' );
+		}
 		$module = $this->get_module( $slug );
 		return $module && method_exists( $module, 'is_active' ) ? $module->is_active() : true;
 	}
 }
-

@@ -1,20 +1,20 @@
 /**
- * Vouchers App Tests
+ * Vouchers List Tests
  */
 import { render, screen, waitFor } from '@testing-library/react';
-import VouchersApp from '../../../src/modules/vouchers/App';
+import VouchersList from '../../../src/modules/accounting/components/VouchersList';
 import apiFetch from '@wordpress/api-fetch';
 
 jest.mock( '@wordpress/api-fetch' );
 
-describe( 'VouchersApp', () => {
+describe( 'VouchersList', () => {
 	beforeEach( () => {
 		apiFetch.mockClear();
 	} );
 
-	it( 'renders Vouchers module', () => {
+	it( 'renders Vouchers component', () => {
 		apiFetch.mockResolvedValue( [] );
-		render( <VouchersApp /> );
+		render( <VouchersList /> );
 		expect( screen.getByText( /Vouchers/i ) ).toBeInTheDocument();
 	} );
 
@@ -32,7 +32,7 @@ describe( 'VouchersApp', () => {
 		];
 
 		apiFetch.mockResolvedValue( mockVouchers );
-		render( <VouchersApp /> );
+		render( <VouchersList /> );
 
 		await waitFor( () => {
 			expect( screen.getByText( 'VCH-001' ) ).toBeInTheDocument();
@@ -40,8 +40,7 @@ describe( 'VouchersApp', () => {
 	} );
 
 	it( 'renders create voucher form', () => {
-		render( <VouchersApp view="create" /> );
-		// Check for form-specific field instead of title which might appear multiple times
+		render( <VouchersList view="create" /> );
 		expect( screen.getByLabelText( /Voucher Type/i ) ).toBeInTheDocument();
 	} );
 } );

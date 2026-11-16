@@ -1,5 +1,6 @@
 /**
- * Invoices Module App
+ * Invoices List and Management Component
+ * Part of Accounting Module
  */
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -17,11 +18,13 @@ import {
 	TabPanel,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
-import apiFetch from '@wordpress/api-fetch';
+import {
+	fetchInvoices as fetchInvoicesApi,
+	createInvoice as createInvoiceApi,
+} from '../services/api';
 
-const InvoicesApp = ( { view: initialTab = 'list' } ) => {
+const InvoicesList = ( { view: initialTab = 'list' } ) => {
 	const [ invoices, setInvoices ] = useState( [] );
-
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
 	const [ isCreating, setIsCreating ] = useState( false );
@@ -62,19 +65,22 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 
 	useEffect( () => {
 		if ( activeTab === 'list' ) {
-			fetchInvoices();
+			loadInvoices();
+		} else {
+			setLoading( false );
 		}
 	}, [ activeTab ] );
 
-	const fetchInvoices = async () => {
+	const loadInvoices = async () => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( { path: '/sahajanand-erp/v1/invoices' } );
+			const data = await fetchInvoicesApi();
 			setInvoices( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch invoices', 'sahajanand-erp' )
+				err.message ||
+					__( 'Failed to fetch invoices', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
@@ -87,19 +93,26 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 		setError( null );
 
 		try {
-			await apiFetch( {
-				path: '/sahajanand-erp/v1/invoices',
-				method: 'POST',
-				data: formData,
+			await createInvoiceApi( formData );
+			setFormData( {
+				contact_id: '',
+				invoice_date: new Date().toISOString().split( 'T' )[ 0 ],
+				due_date: '',
+				subtotal: '',
+				tax_amount: '',
+				total_amount: '',
+				notes: '',
+				status: 'draft',
 			} );
 			if ( activeTab === 'create' ) {
 				setActiveTab( 'list' );
 			} else {
-				fetchInvoices();
+				loadInvoices();
 			}
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to create invoice', 'sahajanand-erp' )
+				err.message ||
+					__( 'Failed to create invoice', 'sahajanand-erp' )
 			);
 		} finally {
 			setIsCreating( false );
@@ -260,7 +273,10 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							<Flex>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Invoice Date', 'sahajanand-erp' ) }
+										label={ __(
+											'Invoice Date',
+											'sahajanand-erp'
+										) }
 										type="date"
 										value={ formData.invoice_date }
 										onChange={ ( value ) =>
@@ -274,7 +290,10 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 								</FlexBlock>
 								<FlexBlock>
 									<TextControl
-										label={ __( 'Due Date', 'sahajanand-erp' ) }
+										label={ __(
+											'Due Date',
+											'sahajanand-erp'
+										) }
 										type="date"
 										value={ formData.due_date }
 										onChange={ ( value ) =>
@@ -310,7 +329,10 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Tax Amount', 'sahajanand-erp' ) }
+									label={ __(
+										'Tax Amount',
+										'sahajanand-erp'
+									) }
 									type="number"
 									step="0.01"
 									value={ formData.tax_amount }
@@ -331,11 +353,20 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 							</FlexBlock>
 							<FlexBlock>
 								<TextControl
-									label={ __( 'Total Amount', 'sahajanand-erp' ) }
+									label={ __(
+										'Total Amount',
+										'sahajanand-erp'
+									) }
 									type="number"
 									step="0.01"
 									value={ formData.total_amount }
-									readOnly
+									onChange={ ( value ) =>
+										setFormData( {
+											...formData,
+											total_amount: value,
+										} )
+									}
+									required
 								/>
 							</FlexBlock>
 							<FlexBlock>
@@ -381,33 +412,33 @@ const InvoicesApp = ( { view: initialTab = 'list' } ) => {
 
 			<div>
 				<TabPanel
-						className="sahajanand-erp-invoices-tabs"
-						activeClass="is-active"
-						initialTabName={ activeTab }
-						onSelect={ ( tabName ) => setActiveTab( tabName ) }
-						tabs={ [
-							{
-								name: 'list',
-								title: __( 'All Invoices', 'sahajanand-erp' ),
-								className: 'tab-list',
-							},
-							{
-								name: 'create',
-								title: __( 'Create Invoice', 'sahajanand-erp' ),
-								className: 'tab-create',
-							},
-						] }
-					>
-						{ ( tab ) => {
-							if ( tab.name === 'list' ) {
-								return renderInvoicesList();
-							}
-							return renderCreateInvoice();
-						} }
-					</TabPanel>
+					className="sahajanand-erp-invoices-tabs"
+					activeClass="is-active"
+					initialTabName={ activeTab }
+					onSelect={ ( tabName ) => setActiveTab( tabName ) }
+					tabs={ [
+						{
+							name: 'list',
+							title: __( 'All Invoices', 'sahajanand-erp' ),
+							className: 'tab-list',
+						},
+						{
+							name: 'create',
+							title: __( 'Create Invoice', 'sahajanand-erp' ),
+							className: 'tab-create',
+						},
+					] }
+				>
+					{ ( tab ) => {
+						if ( tab.name === 'list' ) {
+							return renderInvoicesList();
+						}
+						return renderCreateInvoice();
+					} }
+				</TabPanel>
 			</div>
 		</div>
 	);
 };
 
-export default InvoicesApp;
+export default InvoicesList;

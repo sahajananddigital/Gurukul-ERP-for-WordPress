@@ -1,5 +1,6 @@
 /**
- * Vouchers Module App
+ * Vouchers List and Management Component
+ * Part of Accounting Module
  */
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -18,9 +19,12 @@ import {
 	TabPanel,
 } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
-import apiFetch from '@wordpress/api-fetch';
+import {
+	fetchVouchers as fetchVouchersApi,
+	createVoucher as createVoucherApi,
+} from '../services/api';
 
-const VouchersApp = ( { view: initialTab = 'list' } ) => {
+const VouchersList = ( { view: initialTab = 'list' } ) => {
 	const [ vouchers, setVouchers ] = useState( [] );
 	const [ loading, setLoading ] = useState( true );
 	const [ error, setError ] = useState( null );
@@ -60,19 +64,22 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 
 	useEffect( () => {
 		if ( activeTab === 'list' ) {
-			fetchVouchers();
+			loadVouchers();
+		} else {
+			setLoading( false );
 		}
 	}, [ activeTab ] );
 
-	const fetchVouchers = async () => {
+	const loadVouchers = async () => {
 		setLoading( true );
 		setError( null );
 		try {
-			const data = await apiFetch( { path: '/sahajanand-erp/v1/vouchers' } );
+			const data = await fetchVouchersApi();
 			setVouchers( data );
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to fetch vouchers', 'sahajanand-erp' )
+				err.message ||
+					__( 'Failed to fetch vouchers', 'sahajanand-erp' )
 			);
 		} finally {
 			setLoading( false );
@@ -85,11 +92,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 		setError( null );
 
 		try {
-			await apiFetch( {
-				path: '/sahajanand-erp/v1/vouchers',
-				method: 'POST',
-				data: formData,
-			} );
+			await createVoucherApi( formData );
 			setFormData( {
 				voucher_type: 'payment',
 				date: new Date().toISOString().split( 'T' )[ 0 ],
@@ -101,11 +104,12 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 			if ( activeTab === 'create' ) {
 				setActiveTab( 'list' );
 			} else {
-				fetchVouchers();
+				loadVouchers();
 			}
 		} catch ( err ) {
 			setError(
-				err.message || __( 'Failed to create voucher', 'sahajanand-erp' )
+				err.message ||
+					__( 'Failed to create voucher', 'sahajanand-erp' )
 			);
 		} finally {
 			setIsCreating( false );
@@ -135,6 +139,11 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 				id: 'voucher_type',
 				header: __( 'Type', 'sahajanand-erp' ),
 				getValue: ( { item } ) => item.voucher_type,
+				render: ( { item } ) => (
+					<span style={ { textTransform: 'capitalize' } }>
+						{ item.voucher_type }
+					</span>
+				),
 				enableSorting: true,
 			},
 			{
@@ -146,7 +155,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 			{
 				id: 'party_name',
 				header: __( 'Party Name', 'sahajanand-erp' ),
-				getValue: ( { item } ) => item.party_name || '-',
+				getValue: ( { item } ) => item.party_name,
 				enableSorting: true,
 			},
 			{
@@ -240,7 +249,7 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 			<Card style={ { marginBottom: '24px' } }>
 				<CardHeader>
 					<h2 style={ { margin: 0 } }>
-						{ __( 'Create New Voucher', 'sahajanand-erp' ) }
+						{ __( 'Create Voucher', 'sahajanand-erp' ) }
 					</h2>
 				</CardHeader>
 				<CardBody>
@@ -249,7 +258,10 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 							<Flex>
 								<FlexBlock>
 									<SelectControl
-										label={ __( 'Voucher Type', 'sahajanand-erp' ) }
+										label={ __(
+											'Voucher Type',
+											'sahajanand-erp'
+										) }
 										value={ formData.voucher_type }
 										options={ [
 											{
@@ -298,36 +310,48 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 									/>
 								</FlexBlock>
 							</Flex>
-							<FlexBlock>
-								<TextControl
-									label={ __( 'Party Name', 'sahajanand-erp' ) }
-									value={ formData.party_name }
-									onChange={ ( value ) =>
-										setFormData( {
-											...formData,
-											party_name: value,
-										} )
-									}
-								/>
-							</FlexBlock>
-							<FlexBlock>
-								<TextControl
-									label={ __( 'Amount', 'sahajanand-erp' ) }
-									type="number"
-									step="0.01"
-									value={ formData.amount }
-									onChange={ ( value ) =>
-										setFormData( {
-											...formData,
-											amount: value,
-										} )
-									}
-									required
-								/>
-							</FlexBlock>
+							<Flex>
+								<FlexBlock>
+									<TextControl
+										label={ __(
+											'Party Name',
+											'sahajanand-erp'
+										) }
+										value={ formData.party_name }
+										onChange={ ( value ) =>
+											setFormData( {
+												...formData,
+												party_name: value,
+											} )
+										}
+										required
+									/>
+								</FlexBlock>
+								<FlexBlock>
+									<TextControl
+										label={ __(
+											'Amount',
+											'sahajanand-erp'
+										) }
+										type="number"
+										step="0.01"
+										value={ formData.amount }
+										onChange={ ( value ) =>
+											setFormData( {
+												...formData,
+												amount: value,
+											} )
+										}
+										required
+									/>
+								</FlexBlock>
+							</Flex>
 							<FlexBlock>
 								<TextareaControl
-									label={ __( 'Description', 'sahajanand-erp' ) }
+									label={ __(
+										'Description',
+										'sahajanand-erp'
+									) }
 									value={ formData.description }
 									onChange={ ( value ) =>
 										setFormData( {
@@ -368,33 +392,33 @@ const VouchersApp = ( { view: initialTab = 'list' } ) => {
 
 			<div>
 				<TabPanel
-						className="sahajanand-erp-vouchers-tabs"
-						activeClass="is-active"
-						initialTabName={ activeTab }
-						onSelect={ ( tabName ) => setActiveTab( tabName ) }
-						tabs={ [
-							{
-								name: 'list',
-								title: __( 'All Vouchers', 'sahajanand-erp' ),
-								className: 'tab-list',
-							},
-							{
-								name: 'create',
-								title: __( 'Create Voucher', 'sahajanand-erp' ),
-								className: 'tab-create',
-							},
-						] }
-					>
-						{ ( tab ) => {
-							if ( tab.name === 'list' ) {
-								return renderVouchersList();
-							}
-							return renderCreateVoucher();
-						} }
-					</TabPanel>
+					className="sahajanand-erp-vouchers-tabs"
+					activeClass="is-active"
+					initialTabName={ activeTab }
+					onSelect={ ( tabName ) => setActiveTab( tabName ) }
+					tabs={ [
+						{
+							name: 'list',
+							title: __( 'All Vouchers', 'sahajanand-erp' ),
+							className: 'tab-list',
+						},
+						{
+							name: 'create',
+							title: __( 'Create Voucher', 'sahajanand-erp' ),
+							className: 'tab-create',
+						},
+					] }
+				>
+					{ ( tab ) => {
+						if ( tab.name === 'list' ) {
+							return renderVouchersList();
+						}
+						return renderCreateVoucher();
+					} }
+				</TabPanel>
 			</div>
 		</div>
 	);
 };
 
-export default VouchersApp;
+export default VouchersList;
