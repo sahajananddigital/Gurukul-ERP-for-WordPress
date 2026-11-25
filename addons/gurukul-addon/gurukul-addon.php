@@ -19,7 +19,18 @@ define( 'GURUKUL_ADDON_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GURUKUL_ADDON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 class Gurukul_Addon {
-	use \SahajanandERP\Traits\SingletonTrait;
+	private static $instance = null;
+
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	public static function instance() {
+		return self::get_instance();
+	}
 
 	protected function __construct() {
 		register_activation_hook( __FILE__, array( $this, 'install' ) );

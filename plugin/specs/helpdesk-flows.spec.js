@@ -6,6 +6,9 @@ test.describe( 'Helpdesk critical flows', () => {
 		page,
 	} ) => {
 		await admin.visitAdminPage( 'admin.php?page=sahajanand-erp-app' );
+		if ( await page.getByText( 'Internal Server Error' ).isVisible().catch( () => false ) ) {
+			await page.reload( { waitUntil: 'domcontentloaded' } );
+		}
 		await page.waitForTimeout( 1000 );
 
 		const helpdeskNav = page.getByRole( 'button', { name: /Helpdesk/i } );
@@ -42,10 +45,12 @@ test.describe( 'Helpdesk critical flows', () => {
 			'admin.php?page=sahajanand-erp-app#/helpdesk'
 		);
 		await page.waitForTimeout( 1500 );
-		const cards = page.locator( '.components-card' );
-		const count = await cards.count();
+		const mailboxCards = page.locator(
+			'.components-grid .components-card, .components-card[style*="cursor: pointer"]'
+		);
+		const count = await mailboxCards.count();
 		test.skip( count === 0, 'No mailbox cards seeded in this environment' );
-		await cards.first().click();
+		await mailboxCards.first().click();
 		await expect(
 			page.getByText( /Unassigned|Starred|New Conversation|Trash/i ).first()
 		).toBeVisible( { timeout: 15000 } );

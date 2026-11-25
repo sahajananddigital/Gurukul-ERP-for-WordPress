@@ -31,6 +31,8 @@ lint_output.txt
 # Testing
 coverage/
 .phpunit.result.cache
+artifacts/
+test-results/
 
 # Environment
 .env

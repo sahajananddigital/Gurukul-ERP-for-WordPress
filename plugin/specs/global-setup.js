@@ -8,12 +8,34 @@ const path = require( 'path' );
  * @param {import('@playwright/test').FullConfig} config Full Playwright config.
  */
 module.exports = async function globalSetup( config ) {
-	const { baseURL, storageState } = config.projects[ 0 ].use;
+	let baseURL = process.env.WP_BASE_URL || config.projects?.[ 0 ]?.use?.baseURL || 'http://127.0.0.1:9400';
+	if ( baseURL.includes( 'localhost:8889' ) ) {
+		baseURL = 'http://127.0.0.1:9400';
+		process.env.WP_BASE_URL = baseURL;
+	}
+	const storageState = config.projects?.[ 0 ]?.use?.storageState || process.env.STORAGE_STATE_PATH;
 	const browser = await chromium.launch( { headless: true } );
 	const page = await browser.newPage( { baseURL } );
 
 	try {
-		await page.goto( '/wp-login.php', { waitUntil: 'domcontentloaded', timeout: 30000 } ).catch( () => {} );
+		let ready = false;
+		for ( let attempt = 0; attempt < 30; attempt++ ) {
+			try {
+				const res = await page.goto( '/wp-login.php', { waitUntil: 'domcontentloaded', timeout: 10000 } );
+				if ( res && res.status() < 500 ) {
+					ready = true;
+					break;
+				}
+			} catch {
+				// Server still booting
+			}
+			await new Promise( ( resolve ) => setTimeout( resolve, 2000 ) );
+		}
+
+		if ( ! ready ) {
+			throw new Error( `WordPress Playground at ${ baseURL } did not respond within 60s` );
+		}
+
 		const isLoginFormVisible = await page
 			.locator( '#user_login' )
 			.isVisible( { timeout: 3000 } )

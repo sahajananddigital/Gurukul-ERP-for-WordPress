@@ -2,7 +2,7 @@
 /**
  * Test PSR-4 Autoloading and Architecture
  *
- * Verifies PSR-4 loading, traits, interfaces, inheritance, and legacy compatibility.
+ * Verifies PSR-4 loading, traits, interfaces, inheritance, and unnamespaced backward compatibility.
  *
  * @package SahajanandERP\Tests
  */
@@ -173,11 +173,11 @@ foreach ( $modern_classes as $class ) {
 	erp_assert( class_exists( $class ), "Modern class $class is autoloaded" );
 }
 
-// Test 11: Confirm strict modern PSR-4 architecture (no legacy aliases registered)
-erp_assert( ! class_exists( 'SAHAJANAND_ERP_API_Controller', false ), 'Legacy alias SAHAJANAND_ERP_API_Controller is absent' );
-erp_assert( ! class_exists( 'SAHAJANAND_ERP_CRM', false ), 'Legacy alias SAHAJANAND_ERP_CRM is absent' );
-erp_assert( ! class_exists( 'SAHAJANAND_ERP_Accounting', false ), 'Legacy alias SAHAJANAND_ERP_Accounting is absent' );
-erp_assert( ! class_exists( 'SAHAJANAND_ERP_Install', false ), 'Legacy alias SAHAJANAND_ERP_Install is absent' );
-erp_assert( ! class_exists( 'SAHAJANAND_ERP_Database', false ), 'Legacy alias SAHAJANAND_ERP_Database is absent' );
+// Test 11: Confirm strict modern PSR-4 architecture (no unnamespaced aliases registered)
+erp_assert( ! class_exists( 'SAHAJANAND_ERP_API_Controller', false ), 'Unnamespaced alias SAHAJANAND_ERP_API_Controller is absent' );
+erp_assert( ! class_exists( 'SAHAJANAND_ERP_CRM', false ), 'Unnamespaced alias SAHAJANAND_ERP_CRM is absent' );
+erp_assert( ! class_exists( 'SAHAJANAND_ERP_Accounting', false ), 'Unnamespaced alias SAHAJANAND_ERP_Accounting is absent' );
+erp_assert( ! class_exists( 'SAHAJANAND_ERP_Install', false ), 'Unnamespaced alias SAHAJANAND_ERP_Install is absent' );
+erp_assert( ! class_exists( 'SAHAJANAND_ERP_Database', false ), 'Unnamespaced alias SAHAJANAND_ERP_Database is absent' );
 
 echo "=== All PSR-4 Architecture Tests Passed! ===\n";

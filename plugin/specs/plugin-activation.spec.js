@@ -23,7 +23,7 @@ test.describe('Plugin Activation', () => {
 		await erpMenu.click();
 
 		// Expect the page title to contain our plugin name or dashboard
-		const pageTitle = page.locator('h1');
+		const pageTitle = page.locator('#sahajanand-erp-root h1, #wpbody-content h1').first();
 		await expect(pageTitle).toContainText(/Dashboard|CRM|Sahajanand/);
 	});
 });

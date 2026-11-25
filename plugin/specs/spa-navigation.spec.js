@@ -22,11 +22,7 @@ test.describe( 'FSE SPA Navigation and Layout', () => {
 
 		// Navigate to CRM
 		await page.getByRole('button', { name: 'CRM' }).click();
-		// CRM module has a Dashboard tab by default or just loads the list?
-		// Wait, we need to check what is rendered in CRMApp.
-		// Since we didn't check CRMApp's internals entirely, let's just check if it mounts 
-		// by verifying if "Import CSV" button exists, which we know is in ContactsList.js
-		await expect( page.getByRole('button', { name: 'Import CSV' }) ).toBeVisible();
+		await expect( page.getByRole('heading', { name: 'CRM Management' }) ).toBeVisible();
 
 		// Navigate to Accounting
 		await page.getByRole('button', { name: 'Accounting' }).click();
