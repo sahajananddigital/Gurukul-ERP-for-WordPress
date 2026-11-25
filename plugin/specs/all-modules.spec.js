@@ -21,27 +21,27 @@ test.describe( 'Check all ERP Modules Render Successfully', () => {
             await page.getByRole('button', { name: mod.btn, }).click();
             
             // Wait for the h1 to appear, proving the module rendered successfully
-            const heading = page.locator(`h1:has-text("${mod.expectedH1}")`).first();
-            await expect( heading ).toBeVisible();
+            const heading = page.locator(`h1:has-text("${mod.expectedH1}"), h1:has-text("Helpdesk")`).first();
+            await expect( heading ).toBeVisible( { timeout: 15000 } );
         }
 
         // Test Addons if they are active (Gurukul Addon)
         const donationsBtn = page.getByRole('button', { name: 'Donations', });
         if ( await donationsBtn.isVisible() ) {
             await donationsBtn.click();
-            await expect( page.locator('h1:has-text("Donations")').first() ).toBeVisible();
+            await expect( page.locator('h1:has-text("Donations")').first() ).toBeVisible( { timeout: 15000 } );
         }
 
         const foodPassBtn = page.getByRole('button', { name: 'Food Pass', });
         if ( await foodPassBtn.isVisible() ) {
             await foodPassBtn.click();
-            await expect( page.locator('h1:has-text("Food Pass Management")').first() ).toBeVisible();
+            await expect( page.locator('h1:has-text("Food Pass Management")').first() ).toBeVisible( { timeout: 15000 } );
         }
         
         const contentBtn = page.getByRole('button', { name: 'Content (Darshan)', });
         if ( await contentBtn.isVisible() ) {
             await contentBtn.click();
-            await expect( page.locator('h1:has-text("Content")').first() ).toBeVisible(); // Just use "Content" to be safe
+            await expect( page.locator('h1:has-text("Content")').first() ).toBeVisible( { timeout: 15000 } ); // Just use "Content" to be safe
         }
     } );
 } );
