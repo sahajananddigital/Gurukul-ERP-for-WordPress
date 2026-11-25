@@ -22,7 +22,7 @@ const OrganizationsList = ( { organizations, loading, onOrganizationUpdated } ) 
 	};
 	
 	const handleAddNew = () => {
-		setEditingOrganizati( null );
+		setEditingOrganization( null );
 		setIsEditModalOpen( true );
 	};
 

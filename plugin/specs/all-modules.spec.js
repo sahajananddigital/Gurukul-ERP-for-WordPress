@@ -1,10 +1,6 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 
 test.describe( 'Check all ERP Modules Render Successfully', () => {
-    test.beforeAll( async ( { requestUtils } ) => {
-        // Any setup if needed
-    } );
-
     test( 'should navigate to every module without errors', async ( { admin, page } ) => {
         // Start at the SPA root
         await admin.visitAdminPage( 'admin.php?page=sahajanand-erp-app' );

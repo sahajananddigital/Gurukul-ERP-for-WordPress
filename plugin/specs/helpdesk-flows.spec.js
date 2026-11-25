@@ -24,7 +24,6 @@ test.describe( 'Helpdesk critical flows', () => {
 
 	test( 'helpdesk stats endpoint is available when authenticated', async ( {
 		page,
-		request,
 	} ) => {
 		// Use browser context cookies from storageState via page request.
 		const response = await page.request.get(

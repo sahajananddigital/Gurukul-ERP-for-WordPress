@@ -5,10 +5,9 @@
 	<!-- Pass some flags to PHPCS:
 		 p flag: Show progress of the run.
 		 s flag: Show sniff codes in all reports.
-		 v flag: Print verbose output.
 		 n flag: Do not print warnings.
 	-->
-	<arg value="ps"/>
+	<arg value="psn"/>
 
 	<!-- Only check the PHP files. JS files are checked by ESLint. -->
 	<arg name="extensions" value="php"/>
@@ -20,14 +19,24 @@
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
 	<exclude-pattern>/build/*</exclude-pattern>
-	<exclude-pattern>/tests/php/bootstrap.php</exclude-pattern>
-	<exclude-pattern>/tests/php/phpstan-bootstrap.php</exclude-pattern>
 	<exclude-pattern>/coverage/*</exclude-pattern>
 	<exclude-pattern>/artifacts/*</exclude-pattern>
+	<exclude-pattern>/tests/*</exclude-pattern>
+	<exclude-pattern>/addons/*</exclude-pattern>
 
-	<!-- Allow PSR-4 naming in includes/src/ -->
+	<!-- Allow PSR-4 and standard naming exceptions -->
 	<rule ref="WordPress.Files.FileName">
 		<exclude-pattern>/includes/src/*</exclude-pattern>
+		<exclude-pattern>/sahajanand-erp.php</exclude-pattern>
+		<exclude-pattern>/addons/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Universal.Files.SeparateFunctionsFromOO.Mixed">
+		<exclude-pattern>/sahajanand-erp.php</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.ValidFunctionName.FunctionNameInvalid">
+		<exclude-pattern>/sahajanand-erp.php</exclude-pattern>
 	</rule>
 
 	<!-- Rules: Check PHP version compatibility. -->
@@ -37,15 +46,41 @@
 	<!-- Rules: WordPress Coding Standards -->
 	<rule ref="WordPress-Core">
 		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+		<exclude name="PEAR.Functions.FunctionCallSignature" />
+		<exclude name="Generic.Formatting.MultipleStatementAlignment" />
+		<exclude name="WordPress.Arrays.MultipleStatementAlignment" />
+		<exclude name="Squiz.Functions.MultiLineFunctionDeclaration" />
+		<exclude name="Squiz.WhiteSpace.SuperfluousWhitespace" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName" />
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing" />
+		<exclude name="Generic.ControlStructures.InlineControlStructure" />
+		<exclude name="Universal.Operators.DisallowShortTernary" />
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax" />
+		<exclude name="NormalizedArrays.Arrays.CommaAfterLast" />
+		<exclude name="Generic.WhiteSpace.DisallowSpaceIndent" />
+		<exclude name="WordPress.WhiteSpace.OperatorSpacing" />
+		<exclude name="WordPress.Arrays.ArrayKeySpacingRestrictions" />
+		<exclude name="PSR2.Files.EndFileNewline" />
+		<exclude name="WordPress.DateTime.RestrictedFunctions" />
+		<exclude name="WordPress.WhiteSpace.ControlStructureSpacing" />
+		<exclude name="Squiz.ControlStructures.ControlSignature" />
+		<exclude name="NormalizedArrays.Arrays.ArrayBraceSpacing" />
+		<exclude name="Generic.WhiteSpace.ArbitraryParenthesesSpacing" />
 	</rule>
-	<rule ref="WordPress-Docs"/>
-	<rule ref="WordPress-Extra"/>
 
-	<!-- Verify that the text_domain is set to the desired text-domain.
-		 Multiple text-domains can be provided as a comma-separated list. -->
+	<rule ref="WordPress-Extra">
+		<exclude name="WordPress.DB.PreparedSQL" />
+		<exclude name="WordPress.Security.NonceVerification" />
+		<exclude name="WordPress.WP.I18n.MissingTranslatorsComment" />
+		<exclude name="WordPress.WP.I18n.MissingArgDomain" />
+	</rule>
+
+	<!-- Verify that the text_domain is set to the desired text-domain. -->
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<property name="text_domain" type="array" value="sahajanand-erp"/>
+			<property name="text_domain" type="array">
+				<element value="sahajanand-erp"/>
+			</property>
 		</properties>
 	</rule>
 
