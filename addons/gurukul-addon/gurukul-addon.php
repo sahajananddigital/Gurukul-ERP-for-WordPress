@@ -19,22 +19,25 @@ define( 'GURUKUL_ADDON_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GURUKUL_ADDON_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 class Gurukul_Addon {
-	
 	private static $instance = null;
-	
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
+
+	public static function get_instance() {
+		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
 		return self::$instance;
 	}
-	
-	private function __construct() {
+
+	public static function instance() {
+		return self::get_instance();
+	}
+
+	protected function __construct() {
 		register_activation_hook( __FILE__, array( $this, 'install' ) );
 		add_action( 'sahajanand_erp_init', array( $this, 'init' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
-	
+
 	public function install() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -42,7 +45,7 @@ class Gurukul_Addon {
 
 		// Create Donations table
 		$table_name = $wpdb->prefix . 'erp_donations';
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			donor_name varchar(255) NOT NULL,
 			phone varchar(50) NOT NULL,
@@ -61,7 +64,7 @@ class Gurukul_Addon {
 
 		// Create Food Pass tables
 		$table_name = $wpdb->prefix . 'erp_food_passes';
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			pass_no varchar(50) NOT NULL,
 			employee_id bigint(20) unsigned DEFAULT NULL,
@@ -83,7 +86,7 @@ class Gurukul_Addon {
 		dbDelta( $sql );
 
 		$table_name = $wpdb->prefix . 'erp_food_pass_usage';
-		$sql = "CREATE TABLE IF NOT EXISTS $table_name (
+		$sql = "CREATE TABLE $table_name (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			pass_id bigint(20) unsigned NOT NULL,
 			meal_date date NOT NULL,
@@ -93,10 +96,8 @@ class Gurukul_Addon {
 			KEY pass_id (pass_id)
 		) $charset_collate;";
 		dbDelta( $sql );
-
-		// Add Content/Darshan tables if needed...
 	}
-	
+
 	public function init() {
 		// Verify core is available
 		if ( ! function_exists( 'Sahajanand_ERP' ) ) {
@@ -112,6 +113,11 @@ class Gurukul_Addon {
 		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/donations/class-sahajanand-erp-donations.php';
 		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/food-pass/class-sahajanand-erp-food-pass.php';
 		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/content/class-sahajanand-erp-content.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/calendar/class-sahajanand-erp-calendar.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/satsang/class-sahajanand-erp-satsang.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/quotes/class-sahajanand-erp-quotes.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/updates/class-sahajanand-erp-updates.php';
+		require_once GURUKUL_ADDON_PLUGIN_DIR . 'modules/programs/class-sahajanand-erp-programs.php';
 
 		$erp = Sahajanand_ERP();
 		
@@ -119,6 +125,11 @@ class Gurukul_Addon {
 		$erp->modules->register_module( 'donations', new SAHAJANAND_ERP_Donations() );
 		$erp->modules->register_module( 'food-pass', new SAHAJANAND_ERP_Food_Pass() );
 		$erp->modules->register_module( 'content', new SAHAJANAND_ERP_Content() );
+		$erp->modules->register_module( 'calendar', new SAHAJANAND_ERP_Calendar() );
+		$erp->modules->register_module( 'satsang', new SAHAJANAND_ERP_Satsang() );
+		$erp->modules->register_module( 'quotes', new SAHAJANAND_ERP_Quotes() );
+		$erp->modules->register_module( 'updates', new SAHAJANAND_ERP_Updates() );
+		$erp->modules->register_module( 'programs', new SAHAJANAND_ERP_Programs() );
 		
 		// Register APIs
 		add_action( 'rest_api_init', function() {
@@ -154,4 +165,7 @@ class Gurukul_Addon {
 	}
 }
 
-Gurukul_Addon::instance();
+// Support modern namespaced resolution and backward compatibility.
+class_alias( 'Gurukul_Addon', 'SahajanandERP\\Addons\\GurukulAddon' );
+
+Gurukul_Addon::get_instance();

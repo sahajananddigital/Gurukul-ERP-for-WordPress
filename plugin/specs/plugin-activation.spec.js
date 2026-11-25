@@ -5,16 +5,15 @@ test.describe('Plugin Activation', () => {
 		// Login and visit plugins page
 		await admin.visitAdminPage('plugins.php');
 		
-		// If the plugin is not active, activate it.
-		// Note: wp-env usually activates plugins defined in .wp-env.json automatically,
-		// but we can check if the menu item exists first.
+		const activateLink = page.locator('tr[data-plugin*="sahajanand-erp"] .activate a');
+		if ( await activateLink.isVisible().catch(() => false) ) {
+			await activateLink.click();
+		}
 
 		// Visit the dashboard to see if the menu item is present
 		await admin.visitAdminPage('index.php');
 
 		// The menu should be visible in the admin sidebar.
-		// WordPress usually assigns an ID to top-level menu items based on the menu slug.
-		// For Sahajanand ERP, the slug is 'sahajanand-erp-crm', but let's just look for the text.
 		const erpMenu = page.locator('#adminmenu').getByText('Sahajanand ERP');
 		
 		// Wait for the menu item to be visible, ensuring it loaded successfully.
@@ -23,8 +22,8 @@ test.describe('Plugin Activation', () => {
 		// Click the menu item to ensure it loads without fatal PHP errors
 		await erpMenu.click();
 
-		// Expect the page title to contain our plugin name or settings
-		const pageTitle = page.locator('h1');
-		await expect(pageTitle).toContainText('CRM');
+		// Expect the page title to contain our plugin name or dashboard
+		const pageTitle = page.locator('#sahajanand-erp-root h1, #wpbody-content h1').first();
+		await expect(pageTitle).toContainText(/Dashboard|CRM|Sahajanand/);
 	});
 });

@@ -1,14 +1,14 @@
-# Project Context: Gurukul ERP & Mobile App
+# Project Context: Sahajanand ERP & Mobile App
 
 **Usage**: Provide this document to any LLM/AI assistant to establish immediate context for the project.
 
 ## 1. Project Overview
-**Name**: Gurukul ERP (Monorepo)
+**Name**: Sahajanand ERP (Monorepo)
 **Goal**: A comprehensive management system for a Gurukul (spiritual educational institute) consisting of a WordPress Backend and a React Native Mobile App.
 
 ### Directory Structure
 - **root**: Monorepo root.
-- **`plugin/`**: WordPress Plugin ("Gurukul ERP").
+- **`plugin/`**: WordPress Plugin ("Sahajanand ERP").
     - Acts as the Backend, Admin Panel, and API Provider.
 - **`app/`**: React Native Mobile Application ("Gurukul App").
     - Built with **Expo** (Managed workflow).
@@ -251,7 +251,7 @@ Standard data-entry components.
 
 ### 7. Media & Feedback
 *   **`Icon`**: The SVG wrapper component.
-*   **`Dashicon`**: Standard WordPress legacy icons.
+*   **`Dashicon`**: Standard WordPress admin icons.
 *   **`Spinner`**: The standard WordPress loading circle.
 *   **`ProgressBar`**: A horizontal loading indicator.
 *   **`FormFileUpload` / `DropZone`**: Components for handling drag-and-drop or file upload selection.

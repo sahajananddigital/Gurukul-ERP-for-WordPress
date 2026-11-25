@@ -3,15 +3,16 @@
  * Plugin Name: Sahajanand ERP
  * Plugin URI: https://github.com/sahajananddigital/Simple-ERP-for-WordPress
  * Description: A comprehensive Management System (ERP) for WordPress. Includes CRM, Accounting, HR, Helpdesk, and API.
- * Version: 1.0.0
+ * Version: 1.1.4
  * Author: Sahajanand Digital
  * Author URI: https://sahajananddigital.in
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: sahajanand-erp
  * Domain Path: /languages
- * Requires at least: 5.8
+ * Requires at least: 6.8
  * Requires PHP: 7.4
+ * Update URI: false
  */
 
 // Exit if accessed directly
@@ -20,154 +21,143 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'SAHAJANAND_ERP_VERSION', '1.0.0' );
+define( 'SAHAJANAND_ERP_VERSION', '1.1.4' );
 define( 'SAHAJANAND_ERP_PLUGIN_FILE', __FILE__ );
 define( 'SAHAJANAND_ERP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SAHAJANAND_ERP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SAHAJANAND_ERP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
+// 1. Load Composer Autoloader
+if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
+	require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php';
+}
+
+// 2. Fallback PSR-4 Autoloader for SahajanandERP namespace (WooCommerce style)
+spl_autoload_register( function ( $class ) {
+	$prefix   = 'SahajanandERP\\';
+	$base_dir = SAHAJANAND_ERP_PLUGIN_DIR . 'includes/src/';
+	$len      = strlen( $prefix );
+	if ( strncmp( $prefix, $class, $len ) !== 0 ) {
+		return;
+	}
+	$relative_class = substr( $class, $len );
+	$file           = $base_dir . str_replace( '\\', '/', $relative_class ) . '.php';
+	if ( file_exists( $file ) ) {
+		require_once $file;
+	}
+} );
+
+// 3. Action Scheduler & helper functions
+if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php' ) ) {
+	require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/woocommerce/action-scheduler/action-scheduler.php';
+}
+require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/update-db.php';
+require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/functions.php';
+
 /**
- * Main WP ERP Class
+ * Main Sahajanand ERP Class
  */
 final class Sahajanand_ERP {
-	
-	/**
-	 * Plugin instance
-	 *
-	 * @var Sahajanand_ERP
-	 */
-	private static $instance = null;
-	
+
+	use \SahajanandERP\Traits\SingletonTrait;
+
 	/**
 	 * Addon manager instance
 	 *
-	 * @var SAHAJANAND_ERP_Addon_Manager
+	 * @var \SahajanandERP\Managers\AddonManager
 	 */
 	public $addons;
-	
+
 	/**
 	 * Module manager instance
 	 *
-	 * @var SAHAJANAND_ERP_Module_Manager
+	 * @var \SahajanandERP\Managers\ModuleManager
 	 */
 	public $modules;
 
 	/**
 	 * User Management instance
 	 *
-	 * @var SAHAJANAND_ERP_User_Management
+	 * @var \SahajanandERP\Managers\UserManagement
 	 */
 	public $user_management;
-	
+
 	/**
 	 * User Sync instance
 	 *
-	 * @var SAHAJANAND_ERP_User_Sync
+	 * @var \SahajanandERP\Managers\UserSync
 	 */
 	public $user_sync;
 
 	/**
 	 * API instance
 	 *
-	 * @var SAHAJANAND_ERP_API
+	 * @var \SahajanandERP\API\Server
 	 */
 	public $api;
 
 	/**
-	 * Get plugin instance
+	 * Admin settings instance
 	 *
-	 * @return Sahajanand_ERP
+	 * @var \SahajanandERP\Admin\Admin
 	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new self();
-		}
-		return self::$instance;
-	}
-	
+	public $admin;
+
+	/**
+	 * SPA handler instance
+	 *
+	 * @var \SahajanandERP\Admin\SPA
+	 */
+	public $spa;
+
 	/**
 	 * Constructor
 	 */
-	private function __construct() {
-		$this->includes();
+	protected function __construct() {
 		$this->init_hooks();
-		$this->api = new SAHAJANAND_ERP_API();
+		$this->api   = new \SahajanandERP\API\Server();
+		$this->admin = new \SahajanandERP\Admin\Admin();
+		$this->spa   = new \SahajanandERP\Admin\SPA();
 	}
-	
-	/**
-	 * Include required files
-	 */
-	private function includes() {
-		// Load Composer Autoloader
-		if ( file_exists( SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php' ) ) {
-			require_once SAHAJANAND_ERP_PLUGIN_DIR . 'vendor/autoload.php';
-		}
 
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/class-sahajanand-erp-install.php";
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . "includes/update-db.php";
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-database.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-module-manager.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-addon-manager.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-user-management.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-user-sync.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-api.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-admin.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/class-sahajanand-erp-spa.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/functions.php';
-		
-		// Helpdesk Mail Integrations
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-sender.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/helpdesk/class-sahajanand-erp-mail-fetcher.php';
-		
-		// Load core modules
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/crm/class-sahajanand-erp-crm.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/accounting/class-sahajanand-erp-accounting.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/hr/class-sahajanand-erp-hr.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/helpdesk/class-sahajanand-erp-helpdesk.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/vouchers/class-sahajanand-erp-vouchers.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/invoices/class-sahajanand-erp-invoices.php';
-		require_once SAHAJANAND_ERP_PLUGIN_DIR . 'modules/expenses/class-sahajanand-erp-expenses.php';
-	}
-	
 	/**
 	 * Initialize hooks
 	 */
 	private function init_hooks() {
-		register_activation_hook( SAHAJANAND_ERP_PLUGIN_FILE, array( 'SAHAJANAND_ERP_Install', 'install' ) );
-		register_deactivation_hook( SAHAJANAND_ERP_PLUGIN_FILE, array( 'SAHAJANAND_ERP_Install', 'deactivate' ) );
-		
+		register_activation_hook( SAHAJANAND_ERP_PLUGIN_FILE, array( '\SahajanandERP\Install', 'install' ) );
+		register_deactivation_hook( SAHAJANAND_ERP_PLUGIN_FILE, array( '\SahajanandERP\Install', 'deactivate' ) );
+
 		add_action( 'init', array( $this, 'init' ), 0 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
+
+		\SahajanandERP\Admin\DashboardWidget::init();
 	}
-	
+
 	/**
 	 * Initialize plugin
 	 */
 	public function init() {
 		// Load text domain
 		load_plugin_textdomain( 'sahajanand-erp', false, dirname( SAHAJANAND_ERP_PLUGIN_BASENAME ) . '/languages' );
-		
+
 		// Check for updates
-		SAHAJANAND_ERP_Install::check_for_updates();
-		
+		\SahajanandERP\Install::check_for_updates();
+
 		// Init Mail Fetcher
-		SAHAJANAND_ERP_Mail_Fetcher::init();
+		\SahajanandERP\Helpdesk\MailFetcher::init();
 
 		// Initialize managers
-		$this->modules = new SAHAJANAND_ERP_Module_Manager();
-		$this->addons = new SAHAJANAND_ERP_Addon_Manager();
-		$this->user_management = new SAHAJANAND_ERP_User_Management();
-		$this->user_sync = new SAHAJANAND_ERP_User_Sync();
-		
-		// Load core modules
-		$this->modules->register_module( 'crm', new SAHAJANAND_ERP_CRM() );
-		$this->modules->register_module( 'accounting', new SAHAJANAND_ERP_Accounting() );
-		$this->modules->register_module( 'hr', new SAHAJANAND_ERP_HR() );
-		$this->modules->register_module( 'helpdesk', new SAHAJANAND_ERP_Helpdesk() );
-		$this->modules->register_module( 'vouchers', new SAHAJANAND_ERP_Vouchers() );
-		$this->modules->register_module( 'invoices', new SAHAJANAND_ERP_Invoices() );
-		$this->modules->register_module( 'expenses', new SAHAJANAND_ERP_Expenses() );
+		$this->modules         = new \SahajanandERP\Managers\ModuleManager();
+		$this->addons          = new \SahajanandERP\Managers\AddonManager();
+		$this->user_management = new \SahajanandERP\Managers\UserManagement();
+		$this->user_sync       = new \SahajanandERP\Managers\UserSync();
+
+		// Load core modules (Accounting unifies invoices, expenses, and vouchers)
+		$this->modules->register_module( 'crm', new \SahajanandERP\Modules\CRM() );
+		$this->modules->register_module( 'accounting', new \SahajanandERP\Modules\Accounting() );
+		$this->modules->register_module( 'hr', new \SahajanandERP\Modules\HR() );
+		$this->modules->register_module( 'helpdesk', new \SahajanandERP\Modules\Helpdesk() );
 		
 		// Load addons
 		$this->addons->load_addons();
@@ -189,6 +179,11 @@ final class Sahajanand_ERP {
 
 		// Enqueue media scripts for wp.media
 		wp_enqueue_media();
+		
+		// Enqueue WP Editor (TinyMCE)
+		if ( function_exists( 'wp_enqueue_editor' ) ) {
+			wp_enqueue_editor();
+		}
 		
 		// Check if build files exist
 		$build_js = SAHAJANAND_ERP_PLUGIN_DIR . 'build/index.js';
@@ -249,7 +244,7 @@ final class Sahajanand_ERP {
 		?>
 		<div class="notice notice-error">
 			<p>
-				<strong><?php esc_html_e( 'WP ERP:', 'sahajanand-erp' ); ?></strong>
+				<strong><?php esc_html_e( 'Sahajanand ERP:', 'sahajanand-erp' ); ?></strong>
 				<?php esc_html_e( 'Build files are missing. Please run "npm install" and "npm run build" in the plugin directory.', 'sahajanand-erp' ); ?>
 			</p>
 		</div>
@@ -265,7 +260,7 @@ final class Sahajanand_ERP {
 }
 
 /**
- * Main function to get WP ERP instance
+ * Main function to get Sahajanand ERP instance
  *
  * @return Sahajanand_ERP
  */

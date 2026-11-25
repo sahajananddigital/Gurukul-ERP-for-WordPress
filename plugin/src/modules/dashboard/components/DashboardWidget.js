@@ -1,4 +1,9 @@
-import { createSlotFill, Card, CardBody, CardHeader } from '@wordpress/components';
+import {
+	createSlotFill,
+	Card,
+	CardBody,
+	CardHeader,
+} from '@wordpress/components';
 
 // Create a unique SlotFill pair for the Dashboard Widgets
 const { Slot: DashboardWidgetSlot, Fill: DashboardWidgetFill } = createSlotFill(
@@ -7,10 +12,10 @@ const { Slot: DashboardWidgetSlot, Fill: DashboardWidgetFill } = createSlotFill(
 
 /**
  * A wrapper component for Addon developers to use when registering a widget.
- * 
- * @param {Object} props
- * @param {string} props.title - The title of the widget
- * @param {React.ReactNode} props.children - Widget content
+ *
+ * @param {Object}          props          - The props object.
+ * @param {string}          props.title    - The title of the widget.
+ * @param {React.ReactNode} props.children - Widget content.
  */
 export const DashboardWidget = ( { title, children } ) => (
 	<DashboardWidgetFill>
@@ -20,9 +25,7 @@ export const DashboardWidget = ( { title, children } ) => (
 					<strong>{ title }</strong>
 				</CardHeader>
 			) }
-			<CardBody>
-				{ children }
-			</CardBody>
+			<CardBody>{ children }</CardBody>
 		</Card>
 	</DashboardWidgetFill>
 );

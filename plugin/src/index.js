@@ -13,14 +13,15 @@ import HRApp from './modules/hr/App';
 import HelpdeskApp from './modules/helpdesk/App';
 import SettingsApp from './modules/settings/App';
 import DashboardApp from './modules/dashboard/App';
+import AddonsApp from './modules/addons/App';
 import { DashboardWidget } from './modules/dashboard/components/DashboardWidget';
 
 // Expose APIs for 3rd party plugin authors on the global object
 if ( typeof window !== 'undefined' ) {
 	window.sahajanandErp = window.sahajanandErp || {};
 	window.sahajanandErp.components = {
-		...(window.sahajanandErp.components || {}),
-		DashboardWidget
+		...( window.sahajanandErp.components || {} ),
+		DashboardWidget,
 	};
 }
 
@@ -30,15 +31,22 @@ import { applyFilters } from '@wordpress/hooks';
 import Layout from './components/Layout';
 
 const App = () => {
-	
 	const coreRoutes = [
-		<Route key="dashboard" path="/dashboard" element={<DashboardApp />} />,
-		<Route key="crm" path="/crm" element={<CRMApp />} />,
-		<Route key="accounting" path="/accounting" element={<AccountingApp />} />,
-		<Route key="hr" path="/hr" element={<HRApp />} />,
-		<Route key="helpdesk" path="/helpdesk" element={<HelpdeskApp />} />,
-		<Route key="addons" path="/addons" element={<div><h1>Premium Add-ons</h1><p>Manage your modules here.</p></div>} />,
-		<Route key="settings" path="/settings/*" element={<SettingsApp />} />,
+		<Route
+			key="dashboard"
+			path="/dashboard"
+			element={ <DashboardApp /> }
+		/>,
+		<Route key="crm" path="/crm" element={ <CRMApp /> } />,
+		<Route
+			key="accounting"
+			path="/accounting"
+			element={ <AccountingApp /> }
+		/>,
+		<Route key="hr" path="/hr" element={ <HRApp /> } />,
+		<Route key="helpdesk" path="/helpdesk" element={ <HelpdeskApp /> } />,
+		<Route key="addons" path="/addons" element={ <AddonsApp /> } />,
+		<Route key="settings" path="/settings/*" element={ <SettingsApp /> } />,
 	];
 
 	// Premium Addons can inject their routes as configuration objects:
@@ -46,14 +54,21 @@ const App = () => {
 	const addonRoutesConfig = applyFilters( 'sahajanandErp.routes', [] );
 
 	const addonRoutes = addonRoutesConfig.map( ( routeConfig, index ) => (
-		<Route key={`addon-${index}`} path={routeConfig.path} element={routeConfig.element} />
+		<Route
+			key={ `addon-${ index }` }
+			path={ routeConfig.path }
+			element={ routeConfig.element }
+		/>
 	) );
 
 	return (
 		<HashRouter>
 			<Layout>
 				<Routes>
-					<Route path="/" element={<Navigate to="/dashboard" replace />} />
+					<Route
+						path="/"
+						element={ <Navigate to="/dashboard" replace /> }
+					/>
 					{ coreRoutes }
 					{ addonRoutes }
 				</Routes>

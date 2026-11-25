@@ -1,4 +1,4 @@
-# Gurukul ERP - WordPress Plugin + React Native Mobile App
+# Sahajanand ERP - WordPress Plugin + React Native Mobile App
 
 A comprehensive management system for Gurukul (spiritual educational institute) consisting of a WordPress backend and a React Native mobile application.
 
@@ -36,8 +36,8 @@ npm run playground
 
 **Plugin Installation:**
 1. Copy the `plugin` folder to `wp-content/plugins/sahajanand-erp`
-2. Activate "Gurukul ERP" in WordPress Admin → Plugins
-3. Access modules under "Gurukul ERP" in the admin menu
+2. Activate "Sahajanand ERP" in WordPress Admin → Plugins
+3. Access modules under "Sahajanand ERP" in the admin menu
 
 ### Mobile App
 

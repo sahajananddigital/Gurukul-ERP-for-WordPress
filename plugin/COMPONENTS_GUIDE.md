@@ -68,7 +68,7 @@ Standard data-entry components.
 
 ### 7. Media & Feedback
 *   **`Icon`**: The SVG wrapper component.
-*   **`Dashicon`**: Standard WordPress legacy icons.
+*   **`Dashicon`**: Standard WordPress admin icons.
 *   **`Spinner`**: The standard WordPress loading circle.
 *   **`ProgressBar`**: A horizontal loading indicator.
 *   **`FormFileUpload` / `DropZone`**: Components for handling drag-and-drop or file upload selection.

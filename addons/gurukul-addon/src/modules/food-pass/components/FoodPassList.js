@@ -173,7 +173,7 @@ const FoodPassList = ( { foodPasses, loading } ) => {
 									if ( notesData.amount ) {
 										amount = `₹${ notesData.amount }`;
 									} else if ( pass.total_meals ) {
-										// Fallback if data not in notes (legacy/manual entry)
+										// Fallback if data not in notes (manual entry)
 										amount = `₹${ pass.total_meals * 90 }`;
 									}
 
@@ -181,10 +181,10 @@ const FoodPassList = ( { foodPasses, loading } ) => {
 										mealType = notesData.mealType;
 									} else {
 										// Fallback inference if missing
-										mealType = 'Lunch'; // Legacy default
+										mealType = 'Lunch';
 									}
 								} catch ( e ) {
-									// Legacy plain text notes or error
+									// Plain text notes or error fallback
 									if ( pass.total_meals ) {
 										amount = `₹${ pass.total_meals * 90 }`;
 										mealType = 'Lunch';

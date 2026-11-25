@@ -119,7 +119,6 @@ const DealsList = ( { deals, loading, onDealUpdated } ) => {
 		{
 			id: 'delete',
 			label: __( 'Delete', 'sahajanand-erp' ),
-			isDestructive: true,
 			callback: ( items ) => {
 				if ( items.length > 0 ) {
 					handleDelete( items[ 0 ] );
@@ -130,9 +129,7 @@ const DealsList = ( { deals, loading, onDealUpdated } ) => {
 
 	const defaultLayouts = {
 		table: {
-			layout: {
-				primaryField: 'title',
-			},
+			titleField: 'title',
 		},
 	};
 

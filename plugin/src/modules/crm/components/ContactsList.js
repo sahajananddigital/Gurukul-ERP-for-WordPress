@@ -183,7 +183,6 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 		{
 			id: 'delete',
 			label: __( 'Delete', 'sahajanand-erp' ),
-			isDestructive: true,
 			callback: ( items ) => {
 				if ( items.length > 0 ) {
 					handleDelete( items[ 0 ] );
@@ -194,9 +193,7 @@ const ContactsList = ( { contacts, loading, onContactUpdated } ) => {
 
 	const defaultLayouts = {
 		table: {
-			layout: {
-				primaryField: 'name',
-			},
+			titleField: 'name',
 		},
 	};
 

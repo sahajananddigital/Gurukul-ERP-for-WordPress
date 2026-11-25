@@ -128,7 +128,6 @@ const TransactionsList = ( { transactions, loading, onTransactionUpdated } ) => 
 			{
 				id: 'delete',
 				label: __( 'Delete', 'sahajanand-erp' ),
-				isDestructive: true,
 				callback: ( items ) => {
 					if ( items.length > 0 ) handleDelete( items[ 0 ] );
 				},
@@ -137,7 +136,7 @@ const TransactionsList = ( { transactions, loading, onTransactionUpdated } ) => 
 		[]
 	);
 
-	const defaultLayouts = useMemo( () => ( { table: { layout: { primaryField: 'date' } } } ), [] );
+	const defaultLayouts = useMemo( () => ( { table: { titleField: 'date' } } ), [] );
 
 	if ( loading ) {
 		return <Flex justify="center" style={{ padding: '32px' }}><Spinner /></Flex>;
