@@ -8,7 +8,7 @@
 /**
  * Tests for helpdesk tables and migrations.
  */
-class \SahajanandERP\Database\Database_Helpdesk_Test extends WP_UnitTestCase {
+class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure tables exist after create_tables.

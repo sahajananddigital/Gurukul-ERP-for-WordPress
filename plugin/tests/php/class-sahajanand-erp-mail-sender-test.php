@@ -14,7 +14,7 @@ require_once __DIR__ . '/helpers/class-helpdesk-test-case.php';
 /**
  * Tests for \SahajanandERP\Helpdesk\MailSender.
  */
-class \SahajanandERP\Helpdesk\MailSender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case {
+class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case {
 
 	/**
 	 * Missing ticket returns false.
