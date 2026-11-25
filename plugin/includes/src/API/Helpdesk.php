@@ -263,7 +263,7 @@ class Helpdesk extends AbstractController {
 
 		$text_fields = array(
 			'subject'     => 'sanitize_text_field',
-			'description' => 'sanitize_text_field',
+			'description' => 'wp_kses_post',
 			'status'      => 'sanitize_text_field',
 			'priority'    => 'sanitize_text_field',
 		);
@@ -295,7 +295,9 @@ class Helpdesk extends AbstractController {
 			return new WP_Error( 'no_fields', __( 'No valid fields to update.', 'sahajanand-erp' ) );
 		}
 
-		// Email HTML is sanitized by the mail fetcher, no wpautop needed
+		if ( isset( $fields['description'] ) ) {
+			$fields['description'] = wpautop( $fields['description'] );
+		}
 
 		$wpdb->update( $table, $fields, array( 'id' => $id ) );
 
@@ -537,7 +539,7 @@ class Helpdesk extends AbstractController {
 				array(
 					'ticket_id' => $ticket_id,
 					'user_id'   => get_current_user_id(),
-					'message'   => $data['description'],
+					'message'   => wpautop( wp_kses_post( $data['description'] ) ),
 					'is_note'   => 0,
 				)
 			);

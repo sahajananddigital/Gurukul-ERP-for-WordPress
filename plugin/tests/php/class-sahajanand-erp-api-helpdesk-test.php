@@ -575,16 +575,16 @@ class SAHAJANAND_ERP_API_Helpdesk_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	}
 
 	/**
-	 * Tickets listing normalizes legacy ticket_no values.
+	 * Tickets listing normalizes ticket_no values.
 	 */
-	public function test_get_tickets_backfills_legacy_ticket_no() {
+	public function test_get_tickets_backfills_ticket_no() {
 		global $wpdb;
 		$wpdb->insert(
 			$wpdb->prefix . 'erp_helpdesk_tickets',
 			array(
-				'ticket_no'   => 'LEGACY-7',
+				'ticket_no'   => 'OLD-7',
 				'subject'     => 'Old import',
-				'description' => 'Legacy row',
+				'description' => 'Unformatted row',
 				'mailbox_id'  => $this->mailbox_id,
 				'status'      => 'open',
 				'priority'    => 'medium',
@@ -715,7 +715,7 @@ class SAHAJANAND_ERP_API_Helpdesk_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	 * Empty payload on update is rejected with no_fields.
 	 */
 	public function test_update_ticket_rejects_empty_payload() {
-		$controller = new SAHAJANAND_ERP_API_Helpdesk();
+		$controller = new \SahajanandERP\API\Helpdesk();
 		$request    = new WP_REST_Request( 'PUT', '/sahajanand-erp/v1/helpdesk/tickets/1' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( '{}' );
@@ -1060,7 +1060,7 @@ class SAHAJANAND_ERP_API_Helpdesk_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	 * The create_saved_reply handler is unrouted but works when invoked directly.
 	 */
 	public function test_create_saved_reply_direct_call() {
-		$controller = new SAHAJANAND_ERP_API_Helpdesk();
+		$controller = new \SahajanandERP\API\Helpdesk();
 		$request    = new WP_REST_Request( 'POST', '/sahajanand-erp/v1/helpdesk/saved-replies' );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body(

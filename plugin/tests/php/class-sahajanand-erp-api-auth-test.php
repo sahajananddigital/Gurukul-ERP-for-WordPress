@@ -22,6 +22,31 @@ class SAHAJANAND_ERP_API_Auth_Test extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Assert error response helper.
+	 *
+	 * @param string          $code     Expected error code.
+	 * @param mixed           $response Response object.
+	 * @param int|null        $status   Expected HTTP status.
+	 */
+	protected function assertErrorResponse( $code, $response, $status = null ) {
+		if ( $response instanceof WP_REST_Response ) {
+			if ( null !== $status ) {
+				$this->assertSame( $status, $response->get_status() );
+			}
+			$data = $response->get_data();
+			$this->assertIsArray( $data );
+			$this->assertSame( $code, $data['code'] ?? '' );
+			return;
+		}
+		$this->assertInstanceOf( 'WP_Error', $response );
+		$this->assertSame( $code, $response->get_error_code() );
+		if ( null !== $status ) {
+			$data = $response->get_error_data();
+			$this->assertSame( $status, is_array( $data ) ? ( $data['status'] ?? null ) : null );
+		}
+	}
+
+	/**
 	 * Test that the /auth/me route is registered
 	 */
 	public function test_auth_route_registered() {

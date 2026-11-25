@@ -11,7 +11,7 @@ class SAHAJANAND_ERP_Test extends WP_UnitTestCase {
 	 * Test plugin activation
 	 */
 	public function test_plugin_activation() {
-		SAHAJANAND_ERP_Install::install();
+		\SahajanandERP\Install::install();
 
 		$this->assertEquals( SAHAJANAND_ERP_VERSION, get_option( 'sahajanand_erp_version' ) );
 		$this->assertNotEmpty( get_option( 'sahajanand_erp_installed' ) );
@@ -23,7 +23,7 @@ class SAHAJANAND_ERP_Test extends WP_UnitTestCase {
 	public function test_database_tables_created() {
 		global $wpdb;
 
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		$tables = array(
 			$wpdb->prefix . 'erp_crm_contacts',
@@ -57,14 +57,13 @@ class SAHAJANAND_ERP_Test extends WP_UnitTestCase {
 
 		// Test all core modules
 		$modules = array(
-			'crm'        => 'SAHAJANAND_ERP_CRM',
-			'accounting' => 'SAHAJANAND_ERP_Accounting',
-			'hr'         => 'SAHAJANAND_ERP_HR',
-			'helpdesk'   => 'SAHAJANAND_ERP_Helpdesk',
-			'vouchers'   => 'SAHAJANAND_ERP_Vouchers',
-			'invoices'   => 'SAHAJANAND_ERP_Invoices',
-			'expenses'   => 'SAHAJANAND_ERP_Expenses',
-			'food-pass'  => 'SAHAJANAND_ERP_Food_Pass',
+			'crm'        => \SahajanandERP\Modules\CRM::class,
+			'accounting' => \SahajanandERP\Modules\Accounting::class,
+			'hr'         => \SahajanandERP\Modules\HR::class,
+			'helpdesk'   => \SahajanandERP\Modules\Helpdesk::class,
+			'vouchers'   => \SahajanandERP\Modules\Accounting\Vouchers::class,
+			'invoices'   => \SahajanandERP\Modules\Accounting\Invoices::class,
+			'expenses'   => \SahajanandERP\Modules\Accounting\Expenses::class,
 		);
 
 		foreach ( $modules as $slug => $class_name ) {
@@ -229,15 +228,7 @@ class SAHAJANAND_ERP_Test extends WP_UnitTestCase {
 			'/sahajanand-erp/v1/vouchers',
 			'/sahajanand-erp/v1/invoices',
 			'/sahajanand-erp/v1/expenses',
-			'/sahajanand-erp/v1/food-pass',
 			'/sahajanand-erp/v1/auth/me',
-			'/sahajanand-erp/v1/content/dashboard',
-			'/sahajanand-erp/v1/content/daily-darshan',
-			'/sahajanand-erp/v1/content/daily-quotes',
-			'/sahajanand-erp/v1/content/daily-updates',
-			'/sahajanand-erp/v1/content/daily-satsang',
-			'/sahajanand-erp/v1/content/daily-programs',
-			'/sahajanand-erp/v1/content/calendar-events',
 		);
 
 		foreach ( $expected_routes as $route ) {

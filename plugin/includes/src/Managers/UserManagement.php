@@ -63,7 +63,7 @@ class UserManagement {
 	}
 
 	/**
-	 * Render legacy user access page.
+	 * Render user access page.
 	 *
 	 * @return void
 	 */

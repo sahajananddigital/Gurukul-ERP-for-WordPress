@@ -88,15 +88,15 @@ class AddonManager {
 		if ( file_exists( $addon_file ) ) {
 			require_once $addon_file;
 
-			$pascal_case  = str_replace( ' ', '', ucwords( str_replace( array( '-', '_' ), ' ', $addon_key ) ) );
-			$modern_class = '\\SahajanandERP\\Addons\\' . $pascal_case;
-			$legacy_class = 'SAHAJANAND_ERP_Addon_' . str_replace( '-', '_', ucwords( $addon_key, '-' ) );
-			$snake_class  = str_replace( '-', '_', ucwords( $addon_key, '-' ) );
+			$pascal_case    = str_replace( ' ', '', ucwords( str_replace( array( '-', '_' ), ' ', $addon_key ) ) );
+			$modern_class   = '\\SahajanandERP\\Addons\\' . $pascal_case;
+			$prefixed_class = 'SAHAJANAND_ERP_Addon_' . str_replace( '-', '_', ucwords( $addon_key, '-' ) );
+			$snake_class    = str_replace( '-', '_', ucwords( $addon_key, '-' ) );
 
 			$candidate_classes = array(
-				'\\SahajanandERP\\Addons\\' . $pascal_case,
+				$modern_class,
 				$pascal_case,
-				$legacy_class,
+				$prefixed_class,
 				$snake_class,
 			);
 

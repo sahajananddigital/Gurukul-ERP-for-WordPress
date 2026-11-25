@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/helpers/class-helpdesk-test-case.php';
 
 /**
- * Tests for SAHAJANAND_ERP_Mail_Fetcher.
+ * Tests for \SahajanandERP\Helpdesk\MailFetcher.
  */
 class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case {
 
@@ -22,7 +22,7 @@ class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	public function setUp(): void {
 		parent::setUp();
 
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Fetcher' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailFetcher' ) ) {
 			$this->markTestSkipped( 'Mail fetcher missing' );
 		}
 	}
@@ -32,19 +32,19 @@ class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	 */
 	public function test_fetch_emails_action_is_registered() {
 		$this->assertNotFalse(
-			has_action( 'erp_helpdesk_fetch_emails', array( 'SAHAJANAND_ERP_Mail_Fetcher', 'fetch_emails' ) )
+			has_action( 'erp_helpdesk_fetch_emails', array( 'SahajanandERP\Helpdesk\MailFetcher', 'fetch_emails' ) )
 		);
 	}
 
 	/**
-	 * Legacy wp-cron events for the fetch hook are cleared by init().
+	 * Previously scheduled wp-cron events for the fetch hook are cleared by init().
 	 */
-	public function test_init_clears_legacy_cron_event() {
+	public function test_init_clears_cron_event() {
 		wp_unschedule_hook( 'erp_helpdesk_fetch_emails' );
 		wp_schedule_single_event( time(), 'erp_helpdesk_fetch_emails' );
 		$this->assertIsInt( wp_next_scheduled( 'erp_helpdesk_fetch_emails' ) );
 
-		SAHAJANAND_ERP_Mail_Fetcher::init();
+		\SahajanandERP\Helpdesk\MailFetcher::init();
 
 		$this->assertFalse( wp_next_scheduled( 'erp_helpdesk_fetch_emails' ) );
 		wp_unschedule_hook( 'erp_helpdesk_fetch_emails' );
@@ -58,10 +58,10 @@ class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 		$mailboxes = $wpdb->prefix . 'erp_helpdesk_mailboxes';
 
 		$wpdb->update( $mailboxes, array( 'imap_host' => null ), array( 'id' => $this->mailbox_id ) );
-		$this->assertNull( SAHAJANAND_ERP_Mail_Fetcher::fetch_emails() );
+		$this->assertNull( \SahajanandERP\Helpdesk\MailFetcher::fetch_emails() );
 
 		$wpdb->update( $mailboxes, array( 'imap_host' => '' ), array( 'id' => $this->mailbox_id ) );
-		$this->assertNull( SAHAJANAND_ERP_Mail_Fetcher::fetch_emails() );
+		$this->assertNull( \SahajanandERP\Helpdesk\MailFetcher::fetch_emails() );
 
 		$tickets = $wpdb->prefix . 'erp_helpdesk_tickets';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -270,7 +270,7 @@ class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	 * @return void
 	 */
 	private function invoke_process_message( $message, $mailbox ) {
-		$method = new ReflectionMethod( 'SAHAJANAND_ERP_Mail_Fetcher', 'process_message' );
+		$method = new ReflectionMethod( '\SahajanandERP\Helpdesk\MailFetcher', 'process_message' );
 		$method->setAccessible( true );
 		$method->invoke( null, $message, $mailbox );
 	}
@@ -282,7 +282,7 @@ class SAHAJANAND_ERP_Mail_Fetcher_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case
 	 * @return string
 	 */
 	private function invoke_import_attachments( $message ) {
-		$method = new ReflectionMethod( 'SAHAJANAND_ERP_Mail_Fetcher', 'import_attachments' );
+		$method = new ReflectionMethod( '\SahajanandERP\Helpdesk\MailFetcher', 'import_attachments' );
 		$method->setAccessible( true );
 		return (string) $method->invoke( null, $message );
 	}

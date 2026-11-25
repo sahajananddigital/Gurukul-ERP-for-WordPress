@@ -12,18 +12,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 require_once __DIR__ . '/helpers/class-helpdesk-test-case.php';
 
 /**
- * Tests for SAHAJANAND_ERP_Mail_Sender.
+ * Tests for \SahajanandERP\Helpdesk\MailSender.
  */
-class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case {
+class \SahajanandERP\Helpdesk\MailSender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case {
 
 	/**
 	 * Missing ticket returns false.
 	 */
 	public function test_send_reply_missing_ticket() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( 999999, 1 );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( 999999, 1 );
 		$this->assertFalse( $result );
 	}
 
@@ -31,7 +31,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Notes are not emailed.
 	 */
 	public function test_send_reply_skips_notes() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		$contact_id = $this->create_contact();
@@ -49,7 +49,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 		);
 		$reply_id = (int) $wpdb->insert_id;
 
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		$this->assertFalse( $result );
 	}
 
@@ -57,7 +57,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Missing contact email returns false.
 	 */
 	public function test_send_reply_requires_contact_email() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		$ticket_id = $this->create_ticket( array( 'contact_id' => null ) );
@@ -72,7 +72,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 			)
 		);
 		$reply_id = (int) $wpdb->insert_id;
-		$result   = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result   = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		$this->assertFalse( $result );
 	}
 
@@ -106,13 +106,13 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Failing wp_mail produces a WP_Error with the unknown-mail message.
 	 */
 	public function test_send_reply_failure_returns_wp_error() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		list( $ticket_id, $reply_id ) = $this->create_reply_fixture();
 
 		add_filter( 'pre_wp_mail', '__return_false' );
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		remove_filter( 'pre_wp_mail', '__return_false' );
 
 		$this->assertWPError( $result );
@@ -124,7 +124,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * The wp_mail_failed action message is surfaced through the returned WP_Error.
 	 */
 	public function test_send_reply_captures_wp_mail_failed_message() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		list( $ticket_id, $reply_id ) = $this->create_reply_fixture();
@@ -136,7 +136,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 				return false;
 			}
 		);
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		remove_all_filters( 'pre_wp_mail' );
 
 		$this->assertWPError( $result );
@@ -147,7 +147,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Subject, From/Reply-To headers and mailbox signature are composed.
 	 */
 	public function test_send_reply_composes_subject_headers_and_signature() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 
@@ -173,7 +173,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 			10,
 			2
 		);
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		remove_all_filters( 'pre_wp_mail' );
 
 		$this->assertTrue( $result );
@@ -190,7 +190,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * The phpmailer_init hook is only wired up when the mailbox declares an SMTP host.
 	 */
 	public function test_send_reply_registers_phpmailer_only_with_smtp_host() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 
@@ -205,7 +205,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 
 		// Mailbox fixture has smtp_host set -> hook registered while sending.
 		list( $ticket_id, $reply_id ) = $this->create_reply_fixture();
-		SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		\SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		$this->assertNotFalse( $observed[0], 'SMTP mailbox must register phpmailer_init.' );
 
 		// Mailbox without smtp_host -> no SMTP hook wiring.
@@ -218,7 +218,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 			)
 		);
 		list( $ticket_id, $reply_id ) = $this->create_reply_fixture( array( 'mailbox_id' => $plain_mailbox ) );
-		SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		\SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		$this->assertFalse( $observed[1], 'Mailbox without SMTP host must not register phpmailer_init.' );
 
 		remove_all_filters( 'pre_wp_mail' );
@@ -228,7 +228,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Attachments are resolved to existing files, missing IDs are skipped.
 	 */
 	public function test_send_reply_attaches_existing_files_only() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		$path = sys_get_temp_dir() . '/erp-send-' . wp_generate_password( 6, false ) . '.txt';
@@ -254,7 +254,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 			10,
 			2
 		);
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		remove_all_filters( 'pre_wp_mail' );
 
 		$this->assertTrue( $result );
@@ -268,7 +268,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 	 * Successful send uses wp_mail filter.
 	 */
 	public function test_send_reply_success_with_wp_mail() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Mail_Sender' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Helpdesk\MailSender' ) ) {
 			$this->markTestSkipped( 'Mail sender missing' );
 		}
 		list( $ticket_id, $reply_id ) = $this->create_reply_fixture();
@@ -285,7 +285,7 @@ class SAHAJANAND_ERP_Mail_Sender_Test extends SAHAJANAND_ERP_Helpdesk_Test_Case 
 			2
 		);
 
-		$result = SAHAJANAND_ERP_Mail_Sender::send_reply( $ticket_id, $reply_id );
+		$result = \SahajanandERP\Helpdesk\MailSender::send_reply( $ticket_id, $reply_id );
 		remove_all_filters( 'pre_wp_mail' );
 
 		$this->assertTrue( $result );

@@ -108,18 +108,10 @@ export const generateReceiptImage = ( data, type = 'food-pass' ) => {
 		drawField( 'Name', data.donor_name );
 		drawField( 'Amount', `₹${ data.amount }` );
 		drawField( 'Phone', data.phone || '-' );
-		drawField( 'Details', data.ledger || '-' ); // Ledger is mapped to "Details" in legacy? Note says "donationNote", user code says "Details: ${note}"
-		// However, in our form we passed ledger to 'ledger' and note to 'notes'.
-		// User legacy code: `Details: ${note || '-'}`.
-		// Wait, user's legacy code has a "Note" field and a "Ledger" field.
-		// In the printed text it says "Details: ${note}".
-		// Let's print Note if present, otherwise Ledger? Or both?
-		// Legacy code: `Details: ${note || '-'}`. It seems strict.
-		// I will print Note if passed.
+		drawField( 'Details', data.ledger || '-' );
 		if ( data.note ) {
 			drawField( 'Note', data.note );
 		}
-		// I'll also add Ledger because it's valuable.
 		drawField( 'Ledger', data.ledger );
 
 		y += 20;

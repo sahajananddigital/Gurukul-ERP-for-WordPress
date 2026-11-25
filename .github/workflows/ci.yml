@@ -92,10 +92,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - run: npm run env:start
       - name: Run E2E
         env:
-          WP_BASE_URL: http://localhost:8889
+          WP_BASE_URL: http://localhost:9400
         run: npm run test:e2e
-      - run: npm run env:stop
-        if: always()

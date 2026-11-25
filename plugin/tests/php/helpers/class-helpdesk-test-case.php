@@ -8,7 +8,7 @@
 /**
  * Base test case with REST + helpdesk fixtures.
  */
-class SAHAJANAND_ERP_Helpdesk_Test_Case extends WP_UnitTestCase {
+abstract class SAHAJANAND_ERP_Helpdesk_Test_Case extends WP_UnitTestCase {
 
 	/**
 	 * Admin user ID.
@@ -34,8 +34,8 @@ class SAHAJANAND_ERP_Helpdesk_Test_Case extends WP_UnitTestCase {
 		$wp_rest_server = new WP_REST_Server();
 		do_action( 'rest_api_init' );
 
-		if ( class_exists( 'SAHAJANAND_ERP_Database' ) ) {
-			SAHAJANAND_ERP_Database::create_tables();
+		if ( class_exists( '\SahajanandERP\Database\Database' ) ) {
+			\SahajanandERP\Database\Database::create_tables();
 		}
 
 		$this->admin_id = self::factory()->user->create(

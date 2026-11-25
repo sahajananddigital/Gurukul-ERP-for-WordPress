@@ -7,14 +7,12 @@ process.env.STORAGE_STATE_PATH ??= path.join(
 	'storage-states/admin.json'
 );
 
-const baseUrl = process.env.WP_BASE_URL || 'http://localhost:8889';
+const baseUrl = process.env.WP_BASE_URL || 'http://localhost:9400';
 
 module.exports = defineConfig( {
 	testDir: './specs',
 	timeout: 100_000,
-	globalSetup: require.resolve(
-		'@wordpress/scripts/config/playwright/global-setup.js'
-	),
+	globalSetup: require.resolve( './specs/global-setup.js' ),
 	use: {
 		baseURL: baseUrl,
 		headless: true,
@@ -23,6 +21,13 @@ module.exports = defineConfig( {
 		trace: 'retain-on-failure',
 		screenshot: 'only-on-failure',
 		video: 'on-first-retry',
+	},
+	webServer: {
+		command:
+			'node ./node_modules/@wp-playground/cli/cli.js server --port 9400 --login --blueprint blueprint.json --mount .:/wordpress/wp-content/plugins/plugin --mount ../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon',
+		port: 9400,
+		timeout: 120_000,
+		reuseExistingServer: ! process.env.CI,
 	},
 	projects: [
 		{

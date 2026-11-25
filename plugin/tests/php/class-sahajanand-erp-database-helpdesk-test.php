@@ -8,16 +8,16 @@
 /**
  * Tests for helpdesk tables and migrations.
  */
-class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
+class \SahajanandERP\Database\Database_Helpdesk_Test extends WP_UnitTestCase {
 
 	/**
 	 * Ensure tables exist after create_tables.
 	 */
 	public function test_helpdesk_tables_exist() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$tables = array(
@@ -38,10 +38,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Ticket columns include folder flags and raw_email.
 	 */
 	public function test_ticket_columns_include_folder_flags_and_raw_email() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
@@ -58,11 +58,11 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Migration is idempotent.
 	 */
 	public function test_migrate_helpdesk_ticket_columns_is_idempotent() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
@@ -80,10 +80,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Mailbox columns fall back to the standard IMAP/SMTP ports.
 	 */
 	public function test_mailbox_port_defaults() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$wpdb->insert(
@@ -105,10 +105,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Ticket rows default to open/medium when status fields are omitted.
 	 */
 	public function test_ticket_status_and_priority_defaults() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$wpdb->insert(
@@ -131,10 +131,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * The ticket_no column has a UNIQUE key.
 	 */
 	public function test_ticket_no_unique_constraint() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$insert = function () use ( $wpdb ) {
@@ -163,10 +163,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Replies and saved replies expose the expected columns.
 	 */
 	public function test_replies_and_saved_replies_columns() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
@@ -186,10 +186,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Dropping a folder-flag column is repaired by create_tables().
 	 */
 	public function test_migrate_ticket_columns_restores_dropped_column() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
@@ -199,7 +199,7 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 		$wpdb->query( "ALTER TABLE {$table} DROP COLUMN is_starred" );
 		$wpdb->suppress_errors( $suppress );
 
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$names = wp_list_pluck( $wpdb->get_results( "SHOW COLUMNS FROM {$table}", ARRAY_A ), 'Field' );
@@ -210,10 +210,10 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 	 * Plain-text messages are autop'd, HTML ones are left alone.
 	 */
 	public function test_migrate_message_formatting_converts_plain_text() {
-		if ( ! class_exists( 'SAHAJANAND_ERP_Database' ) ) {
+		if ( ! class_exists( '\SahajanandERP\Database\Database' ) ) {
 			$this->markTestSkipped( 'Database class missing' );
 		}
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		global $wpdb;
 		$wpdb->insert(
@@ -248,7 +248,7 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 		);
 		$plain_ticket = (int) $wpdb->insert_id;
 
-		SAHAJANAND_ERP_Database::create_tables();
+		\SahajanandERP\Database\Database::create_tables();
 
 		$message = $wpdb->get_var(
 			$wpdb->prepare( "SELECT message FROM {$wpdb->prefix}erp_helpdesk_ticket_replies WHERE id = %d", $plain_reply )
