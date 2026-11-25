@@ -16,6 +16,7 @@ import {
 	update,
 	plugins,
 	cog,
+	download,
 	chevronRight,
 	chevronLeft,
 } from '@wordpress/icons';
@@ -287,6 +288,11 @@ const Sidebar = ( { isCollapsed = false, onToggleCollapse } ) => {
 								name: __( 'User Access', 'sahajanand-erp' ),
 								path: '/settings/user-access',
 								icon: update,
+							} ) }
+							{ renderButton( {
+								name: __( 'Import / Export', 'sahajanand-erp' ),
+								path: '/settings/import-export',
+								icon: download,
 							} ) }
 						</div>
 					</NavigatorScreen>

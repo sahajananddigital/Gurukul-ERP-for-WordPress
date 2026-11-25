@@ -9,40 +9,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class SAHAJANAND_ERP_Food_Pass {
+class SAHAJANAND_ERP_Food_Pass extends \SahajanandERP\Abstracts\AbstractModule {
 	
 	/**
 	 * Module slug
 	 *
 	 * @var string
 	 */
-	public $slug = 'food-pass';
+	public string $slug = 'food-pass';
 	
 	/**
 	 * Module name
 	 *
 	 * @var string
 	 */
-	public $name = 'Food Pass';
-	
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->init();
-	}
+	public string $name = 'Food Pass';
 	
 	/**
 	 * Initialize module
 	 */
-	private function init() {
-		// add_action( 'admin_menu', array( , 'add_admin_menu' ) );
+	public function init(): void {
+		// Module initialization hooks.
 	}
 	
 	/**
 	 * Add admin menu
 	 */
-	public function add_admin_menu() {
+	public function add_admin_menu(): void {
 		add_menu_page(
 			__( 'Food Pass', 'sahajanand-erp' ),
 			__( 'Food Pass', 'sahajanand-erp' ),
@@ -52,28 +45,23 @@ class SAHAJANAND_ERP_Food_Pass {
 			'dashicons-food',
 			37
 		);
-		
-
 	}
 	
 	/**
 	 * Render Food Pass page
 	 */
-	public function render_page() {
+	public function render_page(): void {
 		?>
 		<div id="sahajanand-erp-food-pass-root"></div>
 		<?php
 	}
-	
 
-	
 	/**
 	 * Check if module is active
 	 *
 	 * @return bool
 	 */
-	public function is_active() {
+	public function is_active(): bool {
 		return true;
 	}
 }
-

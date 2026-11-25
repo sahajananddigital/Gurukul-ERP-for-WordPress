@@ -29,3 +29,7 @@ if ( ! function_exists( 'trailingslashit' ) ) {
 		return rtrim( $string, '/\\' ) . '/';
 	}
 }
+
+if ( file_exists( dirname( __DIR__, 2 ) . '/vendor/autoload.php' ) ) {
+	require_once dirname( __DIR__, 2 ) . '/vendor/autoload.php';
+}

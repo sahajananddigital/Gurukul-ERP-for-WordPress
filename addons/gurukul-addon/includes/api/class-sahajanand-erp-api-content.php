@@ -9,11 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! class_exists( 'SAHAJANAND_ERP_API_Controller' ) && defined( 'SAHAJANAND_ERP_PLUGIN_DIR' ) ) {
-	require_once SAHAJANAND_ERP_PLUGIN_DIR . 'includes/api/class-sahajanand-erp-api-controller.php';
-}
-
-class SAHAJANAND_ERP_API_Content extends SAHAJANAND_ERP_API_Controller {
+class SAHAJANAND_ERP_API_Content extends \SahajanandERP\Abstracts\AbstractController {
 
 	/**
 	 * Register routes

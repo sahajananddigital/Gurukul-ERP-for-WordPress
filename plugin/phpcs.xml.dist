@@ -25,6 +25,11 @@
 	<exclude-pattern>/coverage/*</exclude-pattern>
 	<exclude-pattern>/artifacts/*</exclude-pattern>
 
+	<!-- Allow PSR-4 naming in includes/src/ -->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>/includes/src/*</exclude-pattern>
+	</rule>
+
 	<!-- Rules: Check PHP version compatibility. -->
 	<config name="testVersion" value="8.1-"/>
 	<rule ref="PHPCompatibilityWP"/>

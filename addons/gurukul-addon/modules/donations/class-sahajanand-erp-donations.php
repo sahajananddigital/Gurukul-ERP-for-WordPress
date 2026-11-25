@@ -9,37 +9,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class SAHAJANAND_ERP_Donations {
+class SAHAJANAND_ERP_Donations extends \SahajanandERP\Abstracts\AbstractModule {
 
 	/**
 	 * Module slug
 	 *
 	 * @var string
 	 */
-	public $slug = 'donations';
+	public string $slug = 'donations';
 
 	/**
 	 * Module name
 	 *
 	 * @var string
 	 */
-	public $name = 'Donations';
-
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-		$this->init();
-	}
+	public string $name = 'Donations';
 
 	/**
 	 * Initialize module
 	 */
-	private function init() {
+	public function init(): void {
 		// Create tables on init (simplified for this proof of concept)
 		add_action( 'init', array( $this, 'create_tables' ) );
 		
-		// add_action( 'admin_menu', array( , 'add_admin_menu' ) );
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
@@ -72,7 +64,7 @@ class SAHAJANAND_ERP_Donations {
 	/**
 	 * Add admin menu
 	 */
-	public function add_admin_menu() {
+	public function add_admin_menu(): void {
 		add_menu_page(
 			__( 'Donations', 'sahajanand-erp' ),
 			__( 'Donations', 'sahajanand-erp' ),
@@ -87,7 +79,7 @@ class SAHAJANAND_ERP_Donations {
 	/**
 	 * Render Donations page
 	 */
-	public function render_page() {
+	public function render_page(): void {
 		?>
 		<div id="sahajanand-erp-donations-root"></div>
 		<?php
@@ -222,15 +214,9 @@ class SAHAJANAND_ERP_Donations {
 		$donation = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $new_id ) );
 
 		// Attach donor_id to response if we found/created one
-		// We need to re-fetch the CRM contact ID effectively if we didn't just create it?
-		// Actually, let's just re-query or use the one we found.
-		// Optimized: We already queried it earlier.
-		
-		// Re-lookup or use captured ID. For simplicity/reliability in this block:
 		if ( ! empty( $params['phone'] ) ) {
 			$crm_table = $wpdb->prefix . 'erp_crm_contacts';
 			if ( $wpdb->get_var( "SHOW TABLES LIKE '$crm_table'" ) == $crm_table ) {
-				// We can reuse the same query logic to be 100% sure we get the ID associated with this phone/name combo
 				$name_parts = explode( ' ', $params['donor_name'], 2 );
 				$first_name = trim( $name_parts[0] );
 				$last_name = isset( $name_parts[1] ) ? trim( $name_parts[1] ) : '';
@@ -250,90 +236,140 @@ class SAHAJANAND_ERP_Donations {
 
 		return rest_ensure_response( $donation );
 	}
-
+	
 	/**
 	 * Update donation
 	 */
 	public function update_donation( $request ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'erp_donations';
-		
-		$id = intval( $request['id'] );
+		$id = $request->get_param('id');
 		$params = $request->get_json_params();
-		
-		// Basic verification
-		if ( ! $id ) {
-			return new WP_Error( 'no_id', 'ID is required', array( 'status' => 400 ) );
-		}
 
 		$data = array();
-		if ( isset( $params['donor_name'] ) ) $data['donor_name'] = sanitize_text_field( $params['donor_name'] );
-		if ( isset( $params['phone'] ) ) $data['phone'] = sanitize_text_field( $params['phone'] );
-		if ( isset( $params['ledger'] ) ) $data['ledger'] = sanitize_text_field( $params['ledger'] );
-		if ( isset( $params['amount'] ) ) $data['amount'] = floatval( $params['amount'] );
-		if ( isset( $params['notes'] ) ) $data['notes'] = sanitize_textarea_field( $params['notes'] );
-		if ( isset( $params['issue_date'] ) ) $data['issue_date'] = sanitize_text_field( $params['issue_date'] );
+		$format = array();
 
-		if ( ! empty( $data ) ) {
-			$wpdb->update( $table_name, $data, array( 'id' => $id ) );
+		if ( isset( $params['donor_name'] ) ) {
+			$data['donor_name'] = sanitize_text_field( $params['donor_name'] );
+			$format[] = '%s';
 		}
-		
-		return rest_ensure_response( array( 'success' => true ) );
+		if ( isset( $params['phone'] ) ) {
+			$data['phone'] = sanitize_text_field( $params['phone'] );
+			$format[] = '%s';
+		}
+		if ( isset( $params['ledger'] ) ) {
+			$data['ledger'] = sanitize_text_field( $params['ledger'] );
+			$format[] = '%s';
+		}
+		if ( isset( $params['amount'] ) ) {
+			$data['amount'] = floatval( $params['amount'] );
+			$format[] = '%f';
+		}
+		if ( isset( $params['notes'] ) ) {
+			$data['notes'] = sanitize_textarea_field( $params['notes'] );
+			$format[] = '%s';
+		}
+		if ( isset( $params['issue_date'] ) ) {
+			$data['issue_date'] = sanitize_text_field( $params['issue_date'] );
+			$format[] = '%s';
+		}
+
+		if ( empty( $data ) ) {
+			return new WP_Error( 'no_data', 'No data to update', array( 'status' => 400 ) );
+		}
+
+		$wpdb->update( 
+			$table_name, 
+			$data, 
+			array( 'id' => $id ), 
+			$format, 
+			array( '%d' ) 
+		);
+
+		$updated = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE id = %d", $id ) );
+
+		return rest_ensure_response( $updated );
 	}
 
 	/**
-	 * Get donor by phone
+	 * Lookup donor by phone
 	 */
 	public function get_donor_by_phone( $request ) {
 		global $wpdb;
-		$table_name = $wpdb->prefix . 'erp_donations';
-		
 		$phone = sanitize_text_field( $request->get_param( 'phone' ) );
 		
 		if ( empty( $phone ) ) {
-			return new WP_Error( 'no_phone', 'Phone number required', array( 'status' => 400 ) );
+			return new WP_Error( 'missing_phone', 'Phone number is required', array( 'status' => 400 ) );
 		}
 
-		// 1. Check CRM Contacts
+		// 1. Try to find the latest donation from this phone
+		$donations_table = $wpdb->prefix . 'erp_donations';
+		$donation = $wpdb->get_row( $wpdb->prepare( 
+			"SELECT donor_name, phone, ledger FROM $donations_table WHERE phone = %s ORDER BY id DESC LIMIT 1", 
+			$phone 
+		) );
+
+		if ( $donation ) {
+			return rest_ensure_response( array(
+				'donor_name' => $donation->donor_name,
+				'phone'      => $donation->phone,
+				'ledger'     => $donation->ledger,
+				'source'     => 'donations'
+			) );
+		}
+
+		// 2. Fallback: Search in CRM Contacts
 		$crm_table = $wpdb->prefix . 'erp_crm_contacts';
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$crm_table'" ) == $crm_table ) {
-			$crm_contact = $wpdb->get_row( $wpdb->prepare( 
-				"SELECT first_name, last_name FROM $crm_table WHERE phone = %s ORDER BY id DESC LIMIT 1", 
+			$contact = $wpdb->get_row( $wpdb->prepare( 
+				"SELECT first_name, last_name, phone FROM $crm_table WHERE phone = %s LIMIT 1", 
 				$phone 
 			) );
 
-			if ( $crm_contact ) {
-				$full_name = trim( $crm_contact->first_name . ' ' . $crm_contact->last_name );
-				return rest_ensure_response( array( 'found' => true, 'donor_name' => $full_name ) );
+			if ( $contact ) {
+				return rest_ensure_response( array(
+					'donor_name' => trim( $contact->first_name . ' ' . $contact->last_name ),
+					'phone'      => $contact->phone,
+					'ledger'     => '',
+					'source'     => 'crm'
+				) );
 			}
 		}
-		
-		// Fallback removed as per requirement: "Do not fallback to past donation"
-		return rest_ensure_response( array( 'found' => false ) );
+
+		return rest_ensure_response( null );
 	}
 
 	/**
-	 * Get Ledgers
+	 * Get Ledgers List
 	 */
 	public function get_ledgers() {
-		// Return stored ledgers or defaults
-		$ledgers = get_option( 'sahajanand_erp_donation_ledgers', array( 'General Fund', 'Education Fund', 'Building Fund' ) );
+		$default_ledgers = array(
+			'General Fund',
+			'Building & Construction',
+			'Thakorji Seva',
+			'Annakshetra (Food Relief)',
+			'Education & Bal Sanskar',
+			'Festival / Utsav',
+			'Goshala',
+			'Medical Relief'
+		);
+
+		$ledgers = get_option( 'sahajanand_erp_donation_ledgers', $default_ledgers );
 		return rest_ensure_response( $ledgers );
 	}
 
 	/**
-	 * Update Ledgers
+	 * Update Ledgers List
 	 */
 	public function update_ledgers( $request ) {
 		$params = $request->get_json_params();
-		$ledgers = isset( $params['ledgers'] ) ? (array) $params['ledgers'] : array();
-		
-		// Sanitize
-		$ledgers = array_map( 'sanitize_text_field', $ledgers );
-		$ledgers = array_filter( $ledgers ); // Filter empty
-		
-		update_option( 'sahajanand_erp_donation_ledgers', $ledgers );
-		
-		return rest_ensure_response( $ledgers );
+		if ( ! isset( $params['ledgers'] ) || ! is_array( $params['ledgers'] ) ) {
+			return new WP_Error( 'invalid_data', 'Ledgers must be an array', array( 'status' => 400 ) );
+		}
+
+		$sanitized_ledgers = array_values( array_filter( array_map( 'sanitize_text_field', $params['ledgers'] ) ) );
+		update_option( 'sahajanand_erp_donation_ledgers', $sanitized_ledgers );
+
+		return rest_ensure_response( $sanitized_ledgers );
 	}
 }

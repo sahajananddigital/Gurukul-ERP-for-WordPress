@@ -19,7 +19,8 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Sahajanand_ERP\\": "includes/"
+			"SahajanandERP\\": "includes/src/",
+			"Sahajanand_ERP\\": "includes/src/"
 		}
 	},
 	"scripts": {
