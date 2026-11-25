@@ -67,12 +67,8 @@ class SAHAJANAND_ERP_Database_Helpdesk_Test extends WP_UnitTestCase {
 		global $wpdb;
 		$table = $wpdb->prefix . 'erp_helpdesk_tickets';
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM pragma_table_info('{$table}')" );
-		if ( 0 === $count ) {
-			// MySQL path.
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$count = (int) $wpdb->get_var( "SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_NAME = '{$table}'" );
-		}
+		$columns = $wpdb->get_results( "SHOW COLUMNS FROM {$table}" );
+		$count   = is_array( $columns ) ? count( $columns ) : 0;
 		$this->assertGreaterThan( 5, $count );
 	}
 

@@ -28,8 +28,17 @@ class MailFetcher {
 		}
 		
 		// Schedule event if not exists via Action Scheduler
-		if ( function_exists( 'as_next_scheduled_action' ) && false === as_next_scheduled_action( 'erp_helpdesk_fetch_emails' ) ) {
-			as_schedule_recurring_action( time(), HOUR_IN_SECONDS, 'erp_helpdesk_fetch_emails' );
+		if ( function_exists( 'as_next_scheduled_action' ) ) {
+			$schedule = function () {
+				if ( false === as_next_scheduled_action( 'erp_helpdesk_fetch_emails' ) ) {
+					as_schedule_recurring_action( time(), HOUR_IN_SECONDS, 'erp_helpdesk_fetch_emails' );
+				}
+			};
+			if ( did_action( 'action_scheduler_init' ) ) {
+				$schedule();
+			} else {
+				add_action( 'action_scheduler_init', $schedule );
+			}
 		}
 	}
 

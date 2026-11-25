@@ -170,7 +170,7 @@ class Helpdesk implements SchemaInterface {
 		$reply_rows = $wpdb->get_results( "SELECT id, message FROM {$replies}", ARRAY_A );
 		foreach ( (array) $reply_rows as $row ) {
 			$message = $row['message'];
-			if ( $has_html( $message ) || preg_match( '/^[^\n\r]*$/', $message ) || ! preg_match( '/\n\n/', $message ) ) {
+			if ( $has_html( $message ) || preg_match( '/^[^\n\r]*$/', $message ) ) {
 				continue;
 			}
 			$wpdb->update( $replies, array( 'message' => wpautop( $message ) ), array( 'id' => $row['id'] ) );
@@ -180,7 +180,7 @@ class Helpdesk implements SchemaInterface {
 		$ticket_rows = $wpdb->get_results( "SELECT id, description FROM {$tickets}", ARRAY_A );
 		foreach ( (array) $ticket_rows as $row ) {
 			$description = $row['description'];
-			if ( $has_html( $description ) || preg_match( '/^[^\n\r]*$/', $description ) || ! preg_match( '/\n\n/', $description ) ) {
+			if ( $has_html( $description ) || preg_match( '/^[^\n\r]*$/', $description ) ) {
 				continue;
 			}
 			$wpdb->update( $tickets, array( 'description' => wpautop( $description ) ), array( 'id' => $row['id'] ) );

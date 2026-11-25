@@ -7,11 +7,12 @@ process.env.STORAGE_STATE_PATH ??= path.join(
 	'storage-states/admin.json'
 );
 
-const baseUrl = process.env.WP_BASE_URL || 'http://localhost:9400';
+const baseUrl = process.env.WP_BASE_URL || 'http://127.0.0.1:9400';
 
 module.exports = defineConfig( {
 	testDir: './specs',
 	timeout: 100_000,
+	workers: 1,
 	globalSetup: require.resolve( './specs/global-setup.js' ),
 	use: {
 		baseURL: baseUrl,
@@ -25,9 +26,11 @@ module.exports = defineConfig( {
 	webServer: {
 		command:
 			'node ./node_modules/@wp-playground/cli/cli.js server --port 9400 --login --blueprint blueprint.json --mount .:/wordpress/wp-content/plugins/plugin --mount ../addons/gurukul-addon:/wordpress/wp-content/plugins/gurukul-addon',
-		port: 9400,
+		url: 'http://127.0.0.1:9400',
 		timeout: 120_000,
 		reuseExistingServer: ! process.env.CI,
+		stdout: 'pipe',
+		stderr: 'pipe',
 	},
 	projects: [
 		{

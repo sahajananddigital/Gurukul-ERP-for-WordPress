@@ -94,5 +94,5 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Run E2E
         env:
-          WP_BASE_URL: http://localhost:9400
+          WP_BASE_URL: http://127.0.0.1:9400
         run: npm run test:e2e

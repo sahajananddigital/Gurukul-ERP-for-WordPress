@@ -20,7 +20,6 @@ test.describe( 'Check all ERP Modules Render Successfully', () => {
         ];
 
         for ( const mod of modules ) {
-            console.log(`Testing ${mod.btn} module...`);
             await page.getByRole('button', { name: mod.btn, }).click();
             
             // Wait for the h1 to appear, proving the module rendered successfully

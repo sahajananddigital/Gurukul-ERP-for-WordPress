@@ -15,11 +15,11 @@
     },
     {
       "step": "activatePlugin",
-      "pluginPath": "/wordpress/wp-content/plugins/plugin"
+      "pluginPath": "plugin/sahajanand-erp.php"
     },
     {
       "step": "activatePlugin",
-      "pluginPath": "/wordpress/wp-content/plugins/gurukul-addon"
+      "pluginPath": "gurukul-addon/gurukul-addon.php"
     }
   ]
 }
